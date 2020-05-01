@@ -1,0 +1,62 @@
+version: '3'
+services:
+  game-api:
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile
+    command: >
+      bash -c "/wait && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8080"
+    image: game-api
+    container_name: game-api
+    volumes:
+      - ./api:/api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - game-mysql
+      - game-redis
+    environment:
+      - REDIS_HOST=game-redis
+      - WAIT_HOSTS=game-mysql:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=5
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+  game-client:
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+    image: game-client
+    container_name: game-client
+    command: >
+      bash -c "yarn start"
+    volumes:
+      - ./client:/client
+    ports:
+      - "8000:3000"
+    depends_on:
+      - game-api
+    restart: always
+  game-mysql:
+    build:
+      context: ./mysql
+      dockerfile: ./Dockerfile
+    image: game-mysql
+    container_name: game-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'game'
+      MYSQL_USER: 'api'
+      MYSQL_PASSWORD: 'api1234'
+      MYSQL_ROOT_PASSWORD: 'api1234'
+    ports:
+      - '8082:3306'
+    expose:
+      - '8082'
+      - '3306'
+    volumes:
+      - ./mysql/data:/var/lib/mysql:rw,delegated
+  game-redis:
+    image: redis
+    container_name: game-redis
+    ports:
+      - '6379:6379'
