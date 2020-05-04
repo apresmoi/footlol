@@ -27,7 +27,8 @@ SECRET_KEY = 'xrb7t8m$fh-s@=ww#=c992jt!9f7&0h*d6$ogat(do9v0k(r4p'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost'
+    'localhost',
+    '178.128.147.207'
 ]
 
 redis_host = os.environ.get('REDIS_HOST', 'localhost')

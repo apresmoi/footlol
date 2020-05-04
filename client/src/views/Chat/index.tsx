@@ -7,7 +7,7 @@ const Chat = () => {
   const [error, setError] = useState("")
   const [chat, setSocket] = useState(null)
 
-  const sendMessage = () => chat ? chat.send(JSON.stringify({ 'message': message })) : null
+  const sendMessage = () => chat ? chat.send(JSON.stringify({ 'type': 'request_send_message', 'message': message })) : null
   const onMessage = (e) => {
     const data = JSON.parse(e.data);
     setMessages([...messages, data])
@@ -33,7 +33,7 @@ const Chat = () => {
     <div className="room">
       {error && <div>{error}</div>}
       <div className="messages">
-        {messages.map((row, i) => <div key={i}>{row.message}</div>)}
+        {messages.map((row, i) => <div key={i}>{row.name}:{row.message}</div>)}
       </div>
       <input onChange={(e) => setMessage(e.target.value)} />
       <button onClick={() => sendMessage()}>Send</button>

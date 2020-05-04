@@ -21,16 +21,19 @@ services:
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=5
       - WAIT_HOST_CONNECT_TIMEOUT=30
-  game-nginx:
+  game-client:
     build:
-      context: .
-      dockerfile: ./nginx/Dockerfile
-    image: game-nginx
-    container_name: game-nginx
-    ports:
-      - "80:80"
+      context: ./client
+      dockerfile: ./Dockerfile
+    image: game-client
+    container_name: game-client
+    command: >
+      bash -c "yarn start"
     volumes:
-      - ./nginx/nginx.pro.conf:/etc/nginx/nginx.conf
+      - ./client:/client
+      - /client/node_modules
+    ports:
+      - "8000:3000"
     depends_on:
       - game-api
     restart: always

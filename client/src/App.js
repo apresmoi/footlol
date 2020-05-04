@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { routes } from './settings'
-import { Chat } from './views'
+import { World } from './views'
 import { Header } from './layout'
 import store from './store'
 import { Provider } from 'react-redux'
@@ -15,7 +15,7 @@ function App() {
         <BrowserRouter basename="commandcenter">
           <div className="App">
             <Switch>
-              {routes.map((route, index) => <Route exact path={route.route} component={Chat} />)}
+              {routes.map((route, index) => <Route exact path={route.route} component={World} />)}
             </Switch>
           </div>
         </BrowserRouter>
