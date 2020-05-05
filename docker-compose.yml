@@ -8,8 +8,6 @@ services:
       bash -c "/wait && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8080"
     image: game-api
     container_name: game-api
-    volumes:
-      - ./api:/api
     ports:
       - "8080:8080"
     depends_on:
@@ -41,8 +39,6 @@ services:
       dockerfile: ./Dockerfile
     image: game-server
     container_name: game-server
-    volumes:
-      - ./server:/server
     ports:
       - "8081:3000"
     depends_on:
