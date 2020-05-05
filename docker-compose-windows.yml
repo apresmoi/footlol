@@ -40,7 +40,7 @@ services:
   game-server:
       build:
         context: ./server
-        dockerfile: ./Dockerfile
+        dockerfile: ./Dockerfile.dev
       image: game-server
       container_name: game-server
       volumes:
