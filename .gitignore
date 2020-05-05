@@ -14,8 +14,7 @@ mysql/game.sql
 mysql/db_dump.zip
 
 client/node_modules
-
-mapshaper-api/node_modules
+server/node_modules
 
 .vscode
 *.pyc

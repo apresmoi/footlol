@@ -1,5 +1,3 @@
-import { GeojsonFeatureCollection } from "../store/types"
-
 export function boundsToSquareFeature(bounds: [[number, number], [number, number]][]) {
     const globalBounds = bounds.reduce((result, bound) => {
         if (result.x_min === null || bound[0][0] < result.x_min) result.x_min = bound[0][0]
@@ -13,7 +11,7 @@ export function boundsToSquareFeature(bounds: [[number, number], [number, number
         return result
     }, { x_min: null, y_min: null, x_max: null, y_max: null })
 
-    const feature: GeojsonFeatureCollection = {
+    const feature: any = {
         type: "FeatureCollection",
         features: [
             {

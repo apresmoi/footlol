@@ -1,9 +1,8 @@
-import { FeatureCollection, Feature } from 'geojson'
 import { GeoPermissibleObjects, ExtendedFeature } from 'd3'
 
 //views
 export type IdDictionary<T> = { [id: string]: T }
-export type ViewFeaturesType = IdFetchState<GeojsonFeatureCollection>
+export type ViewFeaturesType = IdFetchState<any>
 
 export interface BuilderFilters {
   background: Color
@@ -115,7 +114,3 @@ export interface GeojsonFeatureProperties {
 
 export interface GeojsonFeature extends ExtendedFeature<any, GeojsonFeatureProperties> {
 }
-
-export interface GeojsonFeatureCollection extends FeatureCollection<any, GeojsonFeatureProperties> {
-}
-

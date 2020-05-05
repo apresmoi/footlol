@@ -1,8 +1,8 @@
 FROM node:10.19
 WORKDIR /client
 COPY package.json .
-RUN yarn config set strict-ssl false
-RUN yarn
+RUN npm set strict-ssl false
+RUN npm install
 RUN npm rebuild node-sass
 COPY . /client
-CMD ["yarn", "start"]
+CMD ["npm", "run", "start"]

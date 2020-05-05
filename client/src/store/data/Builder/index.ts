@@ -1,12 +1,12 @@
 import { api } from '../../../settings'
-import { Filters, FetchState, IdDictionary, GeojsonFeatureCollection, APIFeatureFilter } from '../../types'
+import { Filters, FetchState, IdDictionary, APIFeatureFilter } from '../../types'
 import { getData } from '../get'
 import isEqual from 'lodash.isequal'
 
 export async function getFeatures(
     id: string,
     filters: Filters,
-): Promise<IdDictionary<GeojsonFeatureCollection>> {
+): Promise<IdDictionary<any>> {
     return await new Promise((resolve, reject) => {
         const featureFilter = filters.builder.featureFilters[id]
 

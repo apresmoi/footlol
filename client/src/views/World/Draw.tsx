@@ -17,8 +17,8 @@ const Draw = (props: DrawProps) => {
       >
         <g transform="translate(250, 250)">
           {Object.keys(players)
-            .filter(name => self ? self.name !== name : true)
-            .map(name => <PlayerComponent key={name} player={players[name]} />)}
+            .filter(id => self ? self.id !== id : true)
+            .map(id => <PlayerComponent key={id} player={players[id]} />)}
           {self && <PlayerComponent isSelf player={self} />}
         </g>
       </svg>

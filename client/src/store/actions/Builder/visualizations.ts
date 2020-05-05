@@ -1,5 +1,5 @@
 import { createFetchVisualization, createFetchIdVisualization } from '../visualizations'
-import { Filters, FetchState, IdDictionary, GeojsonFeatureCollection } from '../../types'
+import { Filters, FetchState, IdDictionary } from '../../types'
 import { getFeatures } from '../../data/Builder'
 
 export const FETCH_FEATURES = 'FETCH_FEATURES'

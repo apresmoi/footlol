@@ -28,14 +28,28 @@ services:
     image: game-client
     container_name: game-client
     command: >
-      bash -c "yarn start"
+      bash -c "npm run start"
     volumes:
       - ./client:/client
     ports:
       - "8000:3000"
     depends_on:
       - game-api
+      - game-server
     restart: always
+  game-server:
+      build:
+        context: ./server
+        dockerfile: ./Dockerfile
+      image: game-server
+      container_name: game-server
+      volumes:
+        - ./server:/server
+      ports:
+        - "8081:3000"
+      depends_on:
+        - game-api
+      restart: always
   game-mysql:
     build:
       context: ./mysql

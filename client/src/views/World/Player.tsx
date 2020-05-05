@@ -4,7 +4,7 @@ import { Player } from './types'
 const PlayerComponent = (props: { player: Player, isSelf?: boolean }) => {
   const { player, isSelf } = props
   return <g
-    key={player.name}
+    key={player.id}
     transform={`translate(${player.position.x}, ${player.position.y})`}
   >
     <circle

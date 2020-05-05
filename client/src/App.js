@@ -5,7 +5,6 @@ import { World } from './views'
 import { Header } from './layout'
 import store from './store'
 import { Provider } from 'react-redux'
-import 'antd/dist/antd.css';
 import "./styles.scss"
 
 

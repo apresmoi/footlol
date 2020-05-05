@@ -1,7 +1,5 @@
-type SocketPayloadType = 'login_success' | 'player_join' | 'position_change' | 'send_message' | 'player_leave'
-
 export interface Player {
-    name: string
+    id: string
     position: {
         x: number
         y: number
@@ -9,13 +7,8 @@ export interface Player {
 }
 
 export interface PlayerMessage {
-    name: string
+    id: string
     message: string
-}
-
-export interface SocketPayload<T> {
-    type: SocketPayloadType
-    data: T
 }
 
 export type MessageSubscribers = {
@@ -24,4 +17,5 @@ export type MessageSubscribers = {
     player_leave?: (payload: Player) => void
     position_change?: (payload: Player) => void
     send_message?: (payload: PlayerMessage) => void
+    update?: (payload: { [x: string]: Player }) => void
 }

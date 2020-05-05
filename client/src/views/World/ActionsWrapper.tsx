@@ -9,7 +9,9 @@ import chatSocket, {
   subscribePlayerJoin,
   subscribePositionChange,
   subscribeSendMessage,
-  subscribePlayerLeave
+  subscribePlayerLeave,
+  subscribeUpdate
+
 } from './socket'
 
 interface ActionsWrapperProps {
@@ -39,21 +41,28 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
       this.setState({ ...this.state, self: player, players: player.players })
     })
     subscribePlayerJoin((player) => {
-      this.setState({ ...this.state, players: { ...this.state.players, [player.name]: player } })
+      this.setState({ ...this.state, players: { ...this.state.players, [player.id]: player } })
     })
     subscribePositionChange((player) => {
       this.setState({
         ...this.state,
-        players: { ...this.state.players, [player.name]: player }
+        players: { ...this.state.players, [player.id]: player }
       })
     })
     subscribePlayerLeave((player) => {
       this.setState({
         ...this.state,
-        players: Object.keys(this.state.players).reduce((players, name, index, arr) => {
-          if (name !== player.name) players[name] = arr[name]
+        players: Object.keys(this.state.players).reduce((players, id, index, arr) => {
+          if (id !== player.id && arr[id]) players[id] = arr[id]
           return players
         }, {})
+      })
+    })
+    subscribeUpdate((players) => {
+      this.setState({
+        ...this.state,
+        players,
+        self: players[this.state.self.id]
       })
     })
   }
@@ -89,6 +98,7 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
   }
 
   render() {
+    console.log(this.state.players)
     return <>
       {React.Children.map(this.props.children, (child, index) => {
         if (child)

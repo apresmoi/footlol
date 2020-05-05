@@ -1,5 +1,5 @@
 import { createIdFetchReducer } from "../visualizations"
 import { FETCH_FEATURES } from "../../actions/Builder/visualizations"
-import { GeojsonFeatureCollection, IdDictionary } from "../../types"
+import { IdDictionary } from "../../types"
 
-export const features = createIdFetchReducer<IdDictionary<GeojsonFeatureCollection>>(FETCH_FEATURES)
+export const features = createIdFetchReducer<IdDictionary<any>>(FETCH_FEATURES)
