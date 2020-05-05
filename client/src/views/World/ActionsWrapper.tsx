@@ -3,7 +3,7 @@ import { Player } from './types'
 import debounce from 'lodash/debounce'
 
 import chatSocket, {
-  requestPositionChange,
+  requestDirectionChange,
   requestSendMessage,
   subscribeLoginSuccess,
   subscribePlayerJoin,
@@ -37,6 +37,7 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
 
   componentDidMount() {
     subscribeLoginSuccess((player) => {
+      console.log("subscribeLoginSuccess", player)
       //@ts-ignore
       this.setState({ ...this.state, self: player, players: player.players })
     })
@@ -62,13 +63,13 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
       this.setState({
         ...this.state,
         players,
-        self: players[this.state.self.id]
+        self: { ...players[this.state.self.id], direction: this.state.self.direction }
       })
     })
   }
 
   onPositionChange = debounce(() => {
-    requestPositionChange(this.state.self.position.x, this.state.self.position.y)
+    requestDirectionChange(this.state.self.direction.dx, this.state.self.direction.dy)
   })
 
   componentDidUpdate(prevProps: ActionsWrapperProps, prevState: ActionsWrapperState) {
@@ -78,20 +79,22 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
       this.setState({
         ...this.state,
         updater: setInterval(() => {
-          if (keysPressed.length) {
-            const newSelf: Player = { ...this.state.self }
-            if (keysPressed.includes('ArrowLeft'))
-              newSelf.position.x -= 2
-            if (keysPressed.includes('ArrowRight'))
-              newSelf.position.x += 2
-            if (keysPressed.includes('ArrowUp'))
-              newSelf.position.y -= 2
-            if (keysPressed.includes('ArrowDown'))
-              newSelf.position.y += 2
+          const newSelf: Player = { ...this.state.self }
+          newSelf.direction = { dx: 0, dy: 0 }
+          if (keysPressed.includes('ArrowLeft'))
+            newSelf.direction.dx = -1
+          if (keysPressed.includes('ArrowRight'))
+            newSelf.direction.dx = 1
+          if (keysPressed.includes('ArrowUp'))
+            newSelf.direction.dy = -1
+          if (keysPressed.includes('ArrowDown'))
+            newSelf.direction.dy = 1
+
+          if (newSelf.direction.dx !== this.state.self.direction.dx ||
+            newSelf.direction.dy !== this.state.self.direction.dy)
             this.setState({ ...this.state, self: newSelf }, () => {
               this.onPositionChange()
             })
-          }
         }, 20)
       })
     }

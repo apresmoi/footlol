@@ -1,5 +1,9 @@
 export interface Player {
     id: string
+    direction: {
+        dx: number
+        dy: number
+    }
     position: {
         x: number
         y: number

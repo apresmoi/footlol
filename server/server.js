@@ -13,13 +13,20 @@ app.use(body_parser.json());
 
 let players = {}
 
+const ArePlayersMoving = () => {
+  return Object.keys(players).some(key => players[key].direction.dx || players[key].direction.dy)
+}
+
 const GetAllPlayers = () => {
   return Object.keys(players).reduce((r, key) => {
-    if (io.clients().connected[key])
+    if (io.clients().connected[key]) {
+      players[key].updatePosition(players[key].direction)
       r[key] = {
         id: players[key].id,
+        direction: players[key].direction,
         position: players[key].position
       }
+    }
     return r;
   }, {})
 }
@@ -38,15 +45,15 @@ io.on('connection', function (socket) {
   socket.emit('login_success', {
     id: socket.id,
     position: players[socket.id].position,
+    direction: players[socket.id].direction,
     players: GetAllPlayers()
   });
   socket.broadcast.emit('player_join', { id: socket.id, position: players[socket.id].position });
 
-  socket.on('request_position_change', function (payload) {
-    console.log('request_position_change', payload, socket.id, players)
+  socket.on('request_direction_change', function (payload) {
+    console.log('request_direction_change', payload, socket.id)
     if (players[socket.id]) {
-      players[socket.id].updatePosition(payload.position);
-      socket.broadcast.emit('position_change', { id: socket.id, position: players[socket.id].position })
+      players[socket.id].direction = payload.direction;
     }
   });
 });
@@ -56,6 +63,8 @@ http.listen(3000, function () {
 });
 
 setInterval(function () {
-  io.emit('update', GetAllPlayers());
+  if (ArePlayersMoving()) {
+    io.emit('update', GetAllPlayers());
+  }
   // io.emit('interval');
-}, 1000);
+}, 10);

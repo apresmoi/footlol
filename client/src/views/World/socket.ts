@@ -1,7 +1,7 @@
 import { Player, PlayerMessage, MessageSubscribers } from "./types"
 import io from 'socket.io-client';
 
-const REQUEST_POSITION_CHANGE = 'request_position_change'
+const REQUEST_DIRECTION_CHANGE = 'request_direction_change'
 const REQUEST_SEND_MESSAGE = 'request_send_message'
 
 const LOGIN_SUCCESS = 'login_success'
@@ -50,7 +50,7 @@ chatSocket.on('update', (payload: { [x: string]: Player }) => {
     if (onMessageSubscribers.update) onMessageSubscribers.update(payload)
 });
 
-const requestPositionChange = (x, y) => sendMessage(REQUEST_POSITION_CHANGE, { position: { x, y } })
+const requestDirectionChange = (dx, dy) => sendMessage(REQUEST_DIRECTION_CHANGE, { direction: { dx, dy } })
 const requestSendMessage = (message) => sendMessage(REQUEST_SEND_MESSAGE, { message })
 
 const subscribePlayerJoin = (callback: (payload: Player) => void) => {
@@ -75,7 +75,7 @@ const subscribeUpdate = (callback: (payload: { [x: string]: Player }) => void) =
 export default chatSocket
 
 export {
-    requestPositionChange,
+    requestDirectionChange,
     requestSendMessage,
     subscribePlayerJoin,
     subscribePlayerLeave,
