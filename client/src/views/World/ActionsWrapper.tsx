@@ -1,5 +1,5 @@
 import React from 'react';
-import { Player } from './types'
+import { Player, Ball } from './types'
 import debounce from 'lodash/debounce'
 
 import chatSocket, {
@@ -21,6 +21,7 @@ interface ActionsWrapperProps {
 
 interface ActionsWrapperState {
   self?: Player
+  ball?: Ball
   players: { [x: string]: Player }
   updater?: NodeJS.Timeout
 }
@@ -30,6 +31,7 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
     super(props)
     this.state = {
       self: null,
+      ball: null,
       players: {},
       updater: null
     }
@@ -37,9 +39,8 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
 
   componentDidMount() {
     subscribeLoginSuccess((player) => {
-      console.log("subscribeLoginSuccess", player)
       //@ts-ignore
-      this.setState({ ...this.state, self: player, players: player.players })
+      this.setState({ ...this.state, self: player, players: player.players, ball: player.ball })
     })
     subscribePlayerJoin((player) => {
       this.setState({ ...this.state, players: { ...this.state.players, [player.id]: player } })
@@ -53,16 +54,17 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
     subscribePlayerLeave((player) => {
       this.setState({
         ...this.state,
-        players: Object.keys(this.state.players).reduce((players, id, index, arr) => {
-          if (id !== player.id && arr[id]) players[id] = arr[id]
-          return players
+        players: Object.keys(this.state.players).reduce((result, id) => {
+          if (id !== player.id && this.state.players[id]) result[id] = this.state.players[id]
+          return result
         }, {})
       })
     })
-    subscribeUpdate((players) => {
+    subscribeUpdate(({ players, ball }) => {
       this.setState({
         ...this.state,
         players,
+        ball,
         self: { ...players[this.state.self.id], direction: this.state.self.direction }
       })
     })
@@ -101,14 +103,14 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
   }
 
   render() {
-    console.log(this.state.players)
     return <>
       {React.Children.map(this.props.children, (child, index) => {
         if (child)
           return React.cloneElement(child, {
             ...child.props,
             self: this.state.self,
-            players: this.state.players
+            players: this.state.players,
+            ball: this.state.ball,
           })
         return null
       })}

@@ -13,7 +13,6 @@ const Chat = () => {
     setMessages([...messages, data])
   }
   const onOpen = (e) => {
-    console.log(e)
   }
 
   const onError = (e) => setError('Chat socket closed unexpectedly')

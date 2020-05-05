@@ -1,5 +1,7 @@
 export interface Player {
     id: string
+    name: string
+    champion: string
     direction: {
         dx: number
         dy: number
@@ -10,9 +12,23 @@ export interface Player {
     }
 }
 
+export interface Ball {
+    position: {
+        x: number
+        y: number
+    }
+}
+
+
 export interface PlayerMessage {
     id: string
     message: string
+}
+
+
+export interface UpdatePayload {
+    players: { [id: string]: Player }
+    ball: Ball
 }
 
 export type MessageSubscribers = {
@@ -21,5 +37,5 @@ export type MessageSubscribers = {
     player_leave?: (payload: Player) => void
     position_change?: (payload: Player) => void
     send_message?: (payload: PlayerMessage) => void
-    update?: (payload: { [x: string]: Player }) => void
+    update?: (payload: UpdatePayload) => void
 }

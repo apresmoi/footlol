@@ -6,12 +6,10 @@ var io = require('socket.io')(http, {
   path: '/ws'
 });
 
-var player = require('./player.js')
+var { Player, Ball } = require('./models.js')
 
 app.use(body_parser.urlencoded({ extended: false }));
 app.use(body_parser.json());
-
-let players = {}
 
 const arePlayersMoving = () => {
   return Object.keys(players).some(key => players[key].direction.dx || players[key].direction.dy)
@@ -20,35 +18,56 @@ const arePlayersMoving = () => {
 const getAllPlayers = () => {
   return Object.keys(players).reduce((r, key) => {
     if (io.clients().connected[key]) {
-      players[key].updatePosition(players[key].direction)
-      r[key] = {
-        id: players[key].id,
-        direction: players[key].direction,
-        position: players[key].position
-      }
+      players[key].update(players[key].direction)
+      r[key] = players[key].serialize()
     }
     return r;
   }, {})
 }
 
+const removePlayer = (id) => {
+  players = Object.keys(players).reduce((result, key) => {
+    if (key !== id) result[key] = players[key]
+    return result
+  }, {})
+}
+
+const [width, height] = [900, 300]
+let players = {}
+let ball = new Ball(width / 2, height / 2)
+
+const positions = [
+  [[100, 150]],
+  [[800, 150]]
+]
+
+const addPlayer = (id, name, champion) => {
+  const side = Object.keys(players).length % 2 ? 0 : 1
+
+  const sideLength = Object.keys(players).filter(key => players[key].side === side).length
+  const [x, y] = positions[side][sideLength]
+  players[id] = new Player(id, name, champion, side, x, y)
+}
+
 io.on('connection', function (socket) {
+  const { name, champion } = socket.handshake.query
+
   console.log(socket.id + ' connected');
 
-  players[socket.id] = new player(socket.id, 0, 0)
+  addPlayer(socket.id, name, champion)
 
   socket.on('disconnect', function (ff) {
     socket.broadcast.emit('player_leave', { id: socket.id });
     console.log(socket.id + ' disconnected');
-    delete players[socket.id];
+    removePlayer(socket.id);
   });
 
   socket.emit('login_success', {
-    id: socket.id,
-    position: players[socket.id].position,
-    direction: players[socket.id].direction,
-    players: getAllPlayers()
+    ...players[socket.id].serialize(),
+    players: getAllPlayers(),
+    ball: ball
   });
-  socket.broadcast.emit('player_join', { id: socket.id, position: players[socket.id].position });
+  socket.broadcast.emit('player_join', players[socket.id].serialize());
 
   socket.on('request_direction_change', function (payload) {
     console.log('request_direction_change', payload, socket.id)
@@ -64,6 +83,23 @@ http.listen(3000, function () {
 
 setInterval(function () {
   if (arePlayersMoving()) {
-    io.emit('update', getAllPlayers());
+    handleCollisions()
+    io.emit('update', {
+      players: getAllPlayers(),
+      ball: ball
+    });
   }
 }, 20);
+
+const handleCollisions = () => {
+  ball.update({ dx: 0, dy: 0 })
+  Object.keys(players).forEach(id => {
+    if (
+      players[id].isTouchingBall(ball.position)
+    ) {
+      console.log('moving ball')
+      ball.shootBall(players[id])
+      // ball.update({ ...players[id].direction })
+    }
+  })
+}
