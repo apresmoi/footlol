@@ -3,7 +3,7 @@ var body_parser = require('body-parser');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http, {
-  path: '/'
+  path: '/ws'
 });
 
 var player = require('./player.js')
@@ -13,11 +13,11 @@ app.use(body_parser.json());
 
 let players = {}
 
-const ArePlayersMoving = () => {
+const arePlayersMoving = () => {
   return Object.keys(players).some(key => players[key].direction.dx || players[key].direction.dy)
 }
 
-const GetAllPlayers = () => {
+const getAllPlayers = () => {
   return Object.keys(players).reduce((r, key) => {
     if (io.clients().connected[key]) {
       players[key].updatePosition(players[key].direction)
@@ -46,7 +46,7 @@ io.on('connection', function (socket) {
     id: socket.id,
     position: players[socket.id].position,
     direction: players[socket.id].direction,
-    players: GetAllPlayers()
+    players: getAllPlayers()
   });
   socket.broadcast.emit('player_join', { id: socket.id, position: players[socket.id].position });
 
@@ -63,8 +63,7 @@ http.listen(3000, function () {
 });
 
 setInterval(function () {
-  if (ArePlayersMoving()) {
-    io.emit('update', GetAllPlayers());
+  if (arePlayersMoving()) {
+    io.emit('update', getAllPlayers());
   }
-  // io.emit('interval');
-}, 10);
+}, 20);

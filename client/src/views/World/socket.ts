@@ -12,7 +12,7 @@ const SEND_MESSAGE = 'send_message'
 const UPDATE = 'update'
 
 const chatSocket = io(window.location.host.replace('8000', '8081'), {
-    path: '/'
+    path: '/ws'
 });
 // const chatSocket = new WebSocket('ws://' + window.location.host.replace('8000', '8080') + '/ws/chat/game/');
 

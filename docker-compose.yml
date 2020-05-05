@@ -33,6 +33,20 @@ services:
       - ./nginx/nginx.pro.conf:/etc/nginx/nginx.conf
     depends_on:
       - game-api
+      - game-server
+    restart: always
+  game-server:
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+    image: game-server
+    container_name: game-server
+    volumes:
+      - ./server:/server
+    ports:
+      - "8081:3000"
+    depends_on:
+      - game-api
     restart: always
   game-mysql:
     build:
