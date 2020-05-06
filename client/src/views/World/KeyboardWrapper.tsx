@@ -1,37 +1,56 @@
 import React from 'react';
 
+import chatSocket, {
+  requestKeyPress
+} from './socket'
+
 interface KeyboardWrapperProps {
   children?: any
 }
 
 interface KeyboardWrapperState {
-  keysPressed: string[]
+  actionKeysPressed: string[]
+  directionKeysPressed: string[]
 }
 
-const allowedKeys = ['ArrowLeft', 'ArrowDown', 'ArrowUp', 'ArrowRight']
+const allowedDirectionKeys = ['ArrowLeft', 'ArrowDown', 'ArrowUp', 'ArrowRight']
+const allowedActionKeys = ['Space']
 
 class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrapperState> {
   constructor(props) {
     super(props)
     this.state = {
-      keysPressed: []
+      actionKeysPressed: [],
+      directionKeysPressed: []
     }
   }
 
   handleKeyUp = (e) => {
-    if (allowedKeys.includes(e.key)) {
+    const { code } = e
+    if (allowedDirectionKeys.includes(code) || allowedActionKeys.includes(code)) {
       this.setState(state => ({
-        keysPressed: state.keysPressed.filter(key => key !== e.key)
+        actionKeysPressed: state.actionKeysPressed.filter(key => key !== code),
+        directionKeysPressed: state.directionKeysPressed.filter(key => key !== code),
       }))
     }
   }
   handleKeyDown = (e) => {
-    if (allowedKeys.includes(e.key)) {
-      const { keysPressed } = this.state
-      if (!keysPressed.includes(e.key)) {
+    const { code } = e
+    if (allowedDirectionKeys.includes(code)) {
+      const { directionKeysPressed } = this.state
+      if (!directionKeysPressed.includes(code)) {
         this.setState(state => ({
-          keysPressed: [...state.keysPressed, e.key]
+          directionKeysPressed: [...state.directionKeysPressed, code]
         }))
+      }
+    } else if (allowedActionKeys.includes(code)) {
+      const { actionKeysPressed } = this.state
+      if (!actionKeysPressed.includes(code)) {
+        this.setState(state => ({
+          actionKeysPressed: [...state.actionKeysPressed, code]
+        }), () => {
+          requestKeyPress(code)
+        })
       }
     }
   }
@@ -52,7 +71,8 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
         if (child)
           return React.cloneElement(child, {
             ...child.props,
-            keysPressed: this.state.keysPressed,
+            actionKeysPressed: this.state.actionKeysPressed,
+            directionKeysPressed: this.state.directionKeysPressed,
           })
         return null
       })}

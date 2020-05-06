@@ -2,6 +2,7 @@ import { Player, PlayerMessage, MessageSubscribers, UpdatePayload } from "./type
 import io from 'socket.io-client';
 
 const REQUEST_DIRECTION_CHANGE = 'request_direction_change'
+const REQUEST_KEY_PRESS = 'request_key_press'
 const REQUEST_SEND_MESSAGE = 'request_send_message'
 
 const LOGIN_SUCCESS = 'login_success'
@@ -52,6 +53,7 @@ chatSocket.on('update', (payload: UpdatePayload) => {
 });
 
 const requestDirectionChange = (dx, dy) => sendMessage(REQUEST_DIRECTION_CHANGE, { direction: { dx, dy } })
+const requestKeyPress = (code) => sendMessage(REQUEST_KEY_PRESS, { code })
 const requestSendMessage = (message) => sendMessage(REQUEST_SEND_MESSAGE, { message })
 
 const subscribePlayerJoin = (callback: (payload: Player) => void) => {
@@ -77,6 +79,7 @@ export default chatSocket
 
 export {
     requestDirectionChange,
+    requestKeyPress,
     requestSendMessage,
     subscribePlayerJoin,
     subscribePlayerLeave,

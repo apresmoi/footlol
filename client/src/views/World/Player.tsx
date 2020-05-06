@@ -17,13 +17,13 @@ const PlayerComponent = (props: { player: Player, isSelf?: boolean }) => {
     <circle
       cx={0}
       cy={0}
-      r={30}
+      r={25}
       // fill={`white`}
     />
     <circle
       cx={0}
       cy={0}
-      r={25}
+      r={23}
       fill={`url(#${player.id}_image)`}
     />
     <text
@@ -31,11 +31,11 @@ const PlayerComponent = (props: { player: Player, isSelf?: boolean }) => {
       textAnchor="middle"
       fill='white'
     >{player.name} </text>
-    <text
+    {/* <text
       transform={`translate(0, 30)`}
       textAnchor="middle"
       fill='white'
-    >{player.position.x},{player.position.y} </text>
+    >{player.position.x},{player.position.y} </text> */}
   </g >
 }
 

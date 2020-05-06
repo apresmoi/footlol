@@ -16,14 +16,14 @@ const pallete = {
   'lighter': '#7D9EC7'
 }
 
-const [width, height] = [900, 300]
+const [width, height] = [1900, 830]
 
 const goalArea1 = [
-  [40, 50], [0, 50], [0, 250], [40, 250]
+  [40, height / 2 - 200], [0, height / 2 - 200], [0, height / 2 + 200], [40, height / 2 + 200]
 ]
 
 const goalArea2 = [
-  [860, 50], [900, 50], [900, 250], [860, 250]
+  [width - 40, height / 2 - 200], [width, height / 2 - 200], [width, height / 2 + 200], [width - 40, height / 2 + 200]
 ]
 
 

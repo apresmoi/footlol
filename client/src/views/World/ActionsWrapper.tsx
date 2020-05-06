@@ -10,12 +10,12 @@ import chatSocket, {
   subscribePositionChange,
   subscribeSendMessage,
   subscribePlayerLeave,
-  subscribeUpdate
-
+  subscribeUpdate,
+  requestKeyPress
 } from './socket'
 
 interface ActionsWrapperProps {
-  keysPressed?: string[]
+  directionKeysPressed?: string[]
   children?: any
 }
 
@@ -23,7 +23,7 @@ interface ActionsWrapperState {
   self?: Player
   ball?: Ball
   players: { [x: string]: Player }
-  updater?: NodeJS.Timeout
+  directionUpdater?: NodeJS.Timeout
 }
 
 class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapperState> {
@@ -33,7 +33,7 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
       self: null,
       ball: null,
       players: {},
-      updater: null
+      directionUpdater: null,
     }
   }
 
@@ -70,33 +70,34 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
     })
   }
 
-  onPositionChange = debounce(() => {
+  onDirectionChange = debounce(() => {
     requestDirectionChange(this.state.self.direction.dx, this.state.self.direction.dy)
   })
 
+  onKeyPress = debounce(() => {
+    requestKeyPress(this.props.directionKeysPressed)
+  })
+
   componentDidUpdate(prevProps: ActionsWrapperProps, prevState: ActionsWrapperState) {
-    const { keysPressed } = this.props
-    if (prevProps.keysPressed !== keysPressed) {
-      clearInterval(this.state.updater);
+    const { directionKeysPressed } = this.props
+    if (prevProps.directionKeysPressed !== directionKeysPressed) {
+      clearInterval(this.state.directionUpdater);
       this.setState({
         ...this.state,
-        updater: setInterval(() => {
+        directionUpdater: setInterval(() => {
           const newSelf: Player = { ...this.state.self }
           newSelf.direction = { dx: 0, dy: 0 }
-          if (keysPressed.includes('ArrowLeft'))
+          if (directionKeysPressed.includes('ArrowLeft'))
             newSelf.direction.dx = -1
-          if (keysPressed.includes('ArrowRight'))
+          if (directionKeysPressed.includes('ArrowRight'))
             newSelf.direction.dx = 1
-          if (keysPressed.includes('ArrowUp'))
+          if (directionKeysPressed.includes('ArrowUp'))
             newSelf.direction.dy = -1
-          if (keysPressed.includes('ArrowDown'))
+          if (directionKeysPressed.includes('ArrowDown'))
             newSelf.direction.dy = 1
 
-          if (newSelf.direction.dx !== this.state.self.direction.dx ||
-            newSelf.direction.dy !== this.state.self.direction.dy)
-            this.setState({ ...this.state, self: newSelf }, () => {
-              this.onPositionChange()
-            })
+          if (newSelf.direction.dx !== this.state.self.direction.dx || newSelf.direction.dy !== this.state.self.direction.dy)
+            this.setState({ ...this.state, self: newSelf }, () => { this.onDirectionChange() })
         }, 20)
       })
     }

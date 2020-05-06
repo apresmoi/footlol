@@ -2,6 +2,7 @@ export interface Player {
     id: string
     name: string
     champion: string
+    shooting: boolean
     direction: {
         dx: number
         dy: number

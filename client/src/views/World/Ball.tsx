@@ -17,20 +17,20 @@ const BallComponent = (props: { ball: Ball }) => {
     <circle
       cx={0}
       cy={0}
-      r={15}
+      r={12}
       fill={"white"}
     />
     <circle
       cx={0}
       cy={0}
-      r={15}
+      r={12}
       fill={`url(#ball_image)`}
     />
-    <text
+    {/* <text
       transform={`translate(0, 30)`}
       textAnchor="middle"
       fill='white'
-    >{ball.position.x},{ball.position.y} </text>
+    >{ball.position.x},{ball.position.y} </text> */}
   </g >
 }
 
