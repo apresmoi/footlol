@@ -1,15 +1,15 @@
-var express = require('express');
-var body_parser = require('body-parser');
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http, {
-  path: '/ws'
-});
+import * as express from 'express';
+import * as body_parser from 'body-parser';
+import * as socketio from 'socket.io'
+import { Match } from './models'
 
-var { Match } = require('./models.js')
-
+const app = express();
 app.use(body_parser.urlencoded({ extended: false }));
 app.use(body_parser.json());
+
+const http = require('http').Server(app);
+const io = socketio(http, { path: '/ws' });
+
 
 const room = "main"
 let matches = {
@@ -41,3 +41,4 @@ http.listen(3000, function () {
   console.log('started on port 3000');
 });
 
+export default app

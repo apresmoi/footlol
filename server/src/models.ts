@@ -1,3 +1,5 @@
+import { Collideable } from './classes'
+
 const champions = ['Lux', 'Garen', 'Yasuo', 'Darius']
 const [width, height] = [1900, 830]
 
@@ -75,90 +77,11 @@ function Match(_id, _socket) {
     }
   }
 
-  this._handlePlayersMoving = () => {
-    let moving = false
-    Object.keys(this.players).forEach(key => {
-      if (this.players[key].isMoving()) {
-        this.players[key].update(timeResolution)
-        moving = true;
-      }
-    })
-    return moving
-  }
-
-  this._handleCollideable = (collideable, collideables) => {
-    if (collideable.position.x < 0) {
-      if (collideable.willBounce) collideable.direction.dx = -1 * collideable.direction.dx
-      collideable.position.x = 0
-    }
-    if (collideable.position.x > width) {
-      if (collideable.willBounce) collideable.direction.dx = -1 * collideable.direction.dx
-      collideable.position.x = width
-    }
-
-    if (collideable.position.y < 0) {
-      if (collideable.willBounce) collideable.direction.dy = -1 * collideable.direction.dy
-      collideable.position.y = 0
-    }
-    if (collideable.position.y > height) {
-      if (collideable.willBounce) collideable.direction.dy = -1 * collideable.direction.dy
-      collideable.position.y = height
-    }
-
-    const isCollisioning = (a, b) => {
-      return round(Math.sqrt(Math.pow(a.position.x - b.position.x, 2) + Math.pow(a.position.y - b.position.y, 2))) - (a.radius + b.radius) < 0
-    }
-
-    const distance = (a, b) => {
-      return round(Math.sqrt(Math.pow(a.position.x - b.position.x, 2) + Math.pow(a.position.y - b.position.y, 2)))
-    }
-
-    const fixCollision = (a, b) => {
-      const x = a.position.x - b.position.x
-      const y = a.position.y - b.position.y
-      const angle = Math.atan(y / x)
-
-      if (a.speed && b.speed) {
-        //todo
-      }
-      else if(a.speed) {
-        const overlap = a.radius - (distance(a, b) - b.radius)
-        a.position.x -= overlap * Math.sign(x) * Math.cos(angle)
-        a.position.y -= overlap * Math.sign(x) * Math.sin(angle)
-      } else {
-        const overlap = b.radius - (distance(a, b) - a.radius)
-        b.position.x -= overlap * Math.sign(x) * Math.cos(angle)
-        b.position.y -= overlap * Math.sign(x) * Math.sin(angle)
-      }
-    }
-
-    collideables.forEach(x => {
-      if (collideable.id !== x.id && isCollisioning(collideable, x)) {
-        console.log("fixing collision")
-        fixCollision(collideable, x)
-      }
-    })
-  }
-
-  this._handleCollisions = () => {
-    let change = this.ball.update(timeResolution);
-    this._handleCollideable(this.ball, [this.ball, ...this.getPlayerList()]);
-    Object.keys(this.players).forEach(id => {
-      // if (this.players[id].isTouchingBall(this.ball.position)) {
-      //   this.ball.shootBall(this.players[id])
-      //   change = true
-      // }
-      this._handleCollideable(this.players[id], [this.ball, ...this.getPlayerList()]);
-    })
-    return change
-  }
-
   this._update = () => {
-    const playersMoving = this._handlePlayersMoving()
-    const collisionsChanged = this._handleCollisions()
-    if (playersMoving || collisionsChanged) {
-      this.socket.emit('update', this.serialize());
-    }
+    //update players and collisions
+    // if (playersMoving || collisionsChanged) {
+    //   this.socket.emit('update', this.serialize());
+    // }
   }
 
   this.interval = setInterval(() => {
@@ -247,8 +170,8 @@ function Ball() {
       const angle = Math.atan(y / x)
       this.speed = 0.07 * player.weight * player.speed / this.weight
       this.direction = {
-        dx: round(Math.sign(x) * Math.cos(angle)),
-        dy: round(Math.sign(x) * Math.sin(angle)),
+        dx: -round(Math.sign(x) * Math.cos(angle)),
+        dy: -round(Math.sign(x) * Math.sin(angle)),
       }
     }
   }
@@ -258,8 +181,8 @@ function Ball() {
     this.speed = this.speed * dt < 1 || Math.abs(damp) > this.speed ? 0 : this.speed + damp
   }
   this._updatePosition = (dt) => {
-    this.position.x -= round(this.direction.dx * this.speed * dt)
-    this.position.y -= round(this.direction.dy * this.speed * dt)
+    this.position.x += round(this.direction.dx * this.speed * dt)
+    this.position.y += round(this.direction.dy * this.speed * dt)
   }
   this.update = (dt) => {
     if (this.speed) {
@@ -271,7 +194,7 @@ function Ball() {
   };
 };
 
-module.exports = {
+export {
   Match,
   Player,
   Ball,
