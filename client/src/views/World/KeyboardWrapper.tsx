@@ -1,8 +1,9 @@
 import React from 'react';
 
 import chatSocket, {
-  requestKeyPress
+  requestKeyPress, requestDirectionChange
 } from './socket'
+import { Vector } from './types';
 
 interface KeyboardWrapperProps {
   children?: any
@@ -25,13 +26,26 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
     }
   }
 
+  handleDirectionChanged = () => {
+    const direction: Vector = { x: 0, y: 0 }
+    if (this.state.directionKeysPressed.includes('ArrowLeft'))
+      direction.x = -1
+    if (this.state.directionKeysPressed.includes('ArrowRight'))
+      direction.x = 1
+    if (this.state.directionKeysPressed.includes('ArrowUp'))
+      direction.y = -1
+    if (this.state.directionKeysPressed.includes('ArrowDown'))
+      direction.y = 1
+    requestDirectionChange(direction)
+  }
+
   handleKeyUp = (e) => {
     const { code } = e
     if (allowedDirectionKeys.includes(code) || allowedActionKeys.includes(code)) {
       this.setState(state => ({
         actionKeysPressed: state.actionKeysPressed.filter(key => key !== code),
         directionKeysPressed: state.directionKeysPressed.filter(key => key !== code),
-      }))
+      }), this.handleDirectionChanged)
     }
   }
   handleKeyDown = (e) => {
@@ -41,7 +55,7 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
       if (!directionKeysPressed.includes(code)) {
         this.setState(state => ({
           directionKeysPressed: [...state.directionKeysPressed, code]
-        }))
+        }), this.handleDirectionChanged)
       }
     } else if (allowedActionKeys.includes(code)) {
       const { actionKeysPressed } = this.state

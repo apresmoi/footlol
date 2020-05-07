@@ -1,4 +1,4 @@
-import { Player, PlayerMessage, MessageSubscribers, UpdatePayload } from "./types"
+import { Player, PlayerMessage, MessageSubscribers, UpdatePayload, Vector } from "./types"
 import io from 'socket.io-client';
 
 const REQUEST_DIRECTION_CHANGE = 'request_direction_change'
@@ -52,8 +52,8 @@ chatSocket.on('update', (payload: UpdatePayload) => {
     if (onMessageSubscribers.update) onMessageSubscribers.update(payload)
 });
 
-const requestDirectionChange = (dx, dy) => sendMessage(REQUEST_DIRECTION_CHANGE, { direction: { dx, dy } })
-const requestKeyPress = (code) => sendMessage(REQUEST_KEY_PRESS, { code })
+const requestDirectionChange = (direction: Vector) => sendMessage(REQUEST_DIRECTION_CHANGE, { direction })
+const requestKeyPress = (code: string) => sendMessage(REQUEST_KEY_PRESS, { code })
 const requestSendMessage = (message) => sendMessage(REQUEST_SEND_MESSAGE, { message })
 
 const subscribePlayerJoin = (callback: (payload: Player) => void) => {

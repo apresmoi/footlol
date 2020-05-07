@@ -1,23 +1,19 @@
+export interface Vector {
+    x: number
+    y: number
+}
+
 export interface Player {
     id: string
     name: string
     champion: string
     shooting: boolean
-    direction: {
-        dx: number
-        dy: number
-    }
-    position: {
-        x: number
-        y: number
-    }
+    direction: Vector
+    position: Vector
 }
 
 export interface Ball {
-    position: {
-        x: number
-        y: number
-    }
+    position: Vector
 }
 
 
