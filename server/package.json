@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "description": "A Socket Server using Socket.io",
-  "main": "src/server.ts",
+  "main": "src/index.ts",
   "scripts": {
     "build": "webpack",
     "start-dev": "NODE_ENV=development webpack",
