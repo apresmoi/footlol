@@ -2,7 +2,9 @@ import Player from "./collideables/player"
 import Ball from "./collideables/ball"
 import { Vector } from "./math"
 import { Champion, ChampionName } from "../league/classes"
-import { timeResolution, mapSize } from "../globals"
+import { time, mapSize } from "../globals"
+import { Engine, World } from 'matter-js'
+import { RectCollideable, PolygonCollideable } from "./collideables/physics"
 
 
 const positions = [
@@ -16,18 +18,37 @@ export class Room {
     _ball: Ball
     _socket: SocketIO.Server
     _interval: NodeJS.Timeout
+    _engine: Engine
+    _world: World
 
     constructor(id: string, socket: SocketIO.Server) {
+        this._engine = Engine.create();
+        this._world = this._engine.world;
+        this._world.bounds = mapSize;
+        this._world.gravity.x = 0;
+        this._world.gravity.y = 0;
+
         this._id = id;
         this._socket = socket;
 
         this._players = {};
-        this._ball = new Ball(new Vector(mapSize._width / 2, mapSize._height / 2));
+        this._ball = new Ball(mapSize.center);
+
+        this._ball.materialize(this._world);
+
+        const ground0 = new RectCollideable(0, new Vector(mapSize.center.x, -50), mapSize.max.x, 100, null, { isStatic: true })
+        const ground1 = new RectCollideable(0, new Vector(mapSize.center.x, mapSize.max.y + 50), mapSize.max.x, 100, null, { isStatic: true })
+        const ground2 = new RectCollideable(0, new Vector(-50, mapSize.center.y), 100, mapSize.max.y, null, { isStatic: true })
+        const ground3 = new RectCollideable(0, new Vector(mapSize.max.x + 50, mapSize.center.y), 100, mapSize.max.y, null, { isStatic: true })
+        ground0.materialize(this._world);
+        ground1.materialize(this._world);
+        ground2.materialize(this._world);
+        ground3.materialize(this._world);
+
         this._interval = setInterval(() => {
-            if (this._evolve(timeResolution)) {
+            if (this.update())
                 this._socket.emit('update', this.serialize());
-            }
-        }, timeResolution * 1000)
+        }, time)
     }
 
     addPlayer(client: SocketIO.Socket, name: string, champion: ChampionName) {
@@ -37,6 +58,7 @@ export class Room {
         const [x, y] = positions[side][0]
         this._players[id] = new Player(id, name, champion, new Vector(x, y));
 
+        this._players[id].materialize(this._world);
 
         client.emit('login_success', {
             ...this._players[id].serialize(),
@@ -47,6 +69,7 @@ export class Room {
 
     removePlayer(client: SocketIO.Socket) {
         const { id } = client
+        this._players[id].dematerialize(this._world);
         this._players = Object.keys(this._players).reduce((result, key) => {
             if (key !== id) result[key] = this._players[key]
             return result
@@ -57,7 +80,7 @@ export class Room {
     playerDirectionChanged(client: SocketIO.Socket, { x, y }: { x: number, y: number }) {
         const { id } = client
         if (this._players[id]) {
-            this._players[id].applyImpulse(new Vector(x, y), timeResolution);
+            this._players[id].changeDirection(new Vector(x, y));
         }
     }
 
@@ -83,12 +106,13 @@ export class Room {
         }, [])
     }
 
-    _evolve(dt: number) {
-        let changed = false;
-        this._connectedPlayers().forEach(player => {
-            changed = changed || player.evolve(dt);
-        })
-        return changed
+    update(): boolean {
+        Engine.update(this._engine);
+
+        this._connectedPlayers().forEach(player => player.update());
+        this._ball.update();
+        
+        return this._world.bodies.some(x => x.speed > 0)
     }
 
     serialize() {

@@ -1,33 +1,78 @@
 import { round } from "../utilities/numbers";
+import { Vector as MatterVector, Bounds as MatterBounds } from 'matter-js'
 
 export class Size {
-    _width: number
-    _height: number
+    min: Vector
+    max: Vector
+    center: Vector
+    width: number
+    height: number
 
-    constructor(width: number, height: number) {
-        this._width = width;
-        this._height = height;
+    constructor(xMin: number, yMin: number, xMax: number, yMax: number) {
+        this.min = new Vector(xMin, yMin);
+        this.max = new Vector(xMax, yMax);
+        this.center = this._getCenter()
+        this.width = this._getWidth()
+        this.height = this._getHeight()
     }
+
+    static fromMatter(v: MatterBounds): Size {
+        return new Size(v.min.x, v.min.y, v.max.x, v.max.y);
+    }
+
+    _getCenter(): Vector {
+        return new Vector(
+            (this.max.x - this.min.x) / 2 + this.min.x,
+            (this.max.y - this.min.y) / 2 + this.min.y
+        )
+    }
+
+    _getWidth(): number {
+        return (this.max.x - this.min.x)
+    }
+    _getHeight(): number {
+        return (this.max.y - this.min.y)
+    }
+
+    multiply(n: number): Size {
+        return new Size(this.min.x * n, this.min.y * n, this.max.x * n, this.max.y * n);
+    }
+
 }
 
 export class Vector {
-    _x: number
-    _y: number
-
+    x: number
+    y: number
     constructor(x: number, y: number) {
-        this._x = x;
-        this._y = y;
+        this.x = x;
+        this.y = y;
+    }
+
+    static fromMatter(v: MatterVector): Vector {
+        return new Vector(v.x, v.y);
     }
 
     module(): number {
-        return Math.sqrt(Math.pow(this._x, 2) + Math.pow(this._y, 2))
+        return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2))
     }
 
     normalize(): Vector {
         const module = this.module();
         if (module > 0)
-            return new Vector(this._x / module, this._y / module);
+            return new Vector(this.x / module, this.y / module);
         return this
+    }
+
+    copy(): Vector {
+        return new Vector(this.x, this.y)
+    }
+
+    setX(x: number): Vector {
+        return new Vector(x, this.y)
+    }
+
+    setY(y: number): Vector {
+        return new Vector(this.x, y)
     }
 
     invert(): Vector {
@@ -35,19 +80,19 @@ export class Vector {
     }
 
     multiply(n: number): Vector {
-        return new Vector(this._x * n, this._y * n)
+        return new Vector(this.x * n, this.y * n)
     }
 
     add(v: Vector): Vector {
-        return new Vector(this._x + v._x, this._y + v._y);
+        return new Vector(this.x + v.x, this.y + v.y);
     }
 
     substract(v: Vector): Vector {
-        return new Vector(this._x - v._x, this._y - v._y);
+        return new Vector(this.x - v.x, this.y - v.y);
     }
 
     dot(v: Vector): number {
-        return this._x * v._x + this._y * v._y
+        return this.x * v.x + this.y * v.y
     }
 
     angle(v: Vector): number {
@@ -55,21 +100,21 @@ export class Vector {
     }
 
     toArray(): [number, number] {
-        return [this._x, this._y]
+        return [this.x, this.y]
     }
 
     round(): Vector {
-        return new Vector(round(this._x), round(this._y))
+        return new Vector(round(this.x), round(this.y))
     }
 
     isEqual(v: Vector) {
-        return this._x === v._x && this._y === v._y
+        return this.x === v.x && this.y === v.y
     }
 
     serialize() {
         return {
-            x: this._x,
-            y: this._y
+            x: this.x,
+            y: this.y
         }
     }
 }

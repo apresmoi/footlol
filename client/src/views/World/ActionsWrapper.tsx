@@ -76,6 +76,9 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
             self: this.state.self,
             players: this.state.players,
             ball: this.state.ball,
+
+            width: this.props['width'],
+            height: this.props['height'],
           })
         return null
       })}

@@ -87,6 +87,9 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
             ...child.props,
             actionKeysPressed: this.state.actionKeysPressed,
             directionKeysPressed: this.state.directionKeysPressed,
+
+            width: this.props['width'],
+            height: this.props['height'],
           })
         return null
       })}

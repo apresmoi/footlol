@@ -1,7 +1,6 @@
 import * as express from 'express';
 import * as body_parser from 'body-parser';
 import * as socketio from 'socket.io'
-import { Match } from './models'
 import { Room } from './classes/room';
 
 const app = express();

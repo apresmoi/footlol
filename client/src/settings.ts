@@ -8,3 +8,5 @@ export const api = {
     features: prefix + "/features",
     featuresMeta: prefix + "/features/meta"
 }
+
+export const mapSize = { width: 1900, height: 830 }

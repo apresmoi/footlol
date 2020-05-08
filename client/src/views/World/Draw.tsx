@@ -2,6 +2,7 @@ import React from 'react';
 import PlayerComponent from './Player'
 import BallComponent from './Ball'
 import { Player, Ball } from './types';
+import { mapSize } from '../../settings'
 
 interface DrawProps {
   players?: { [x: string]: Player }
@@ -16,41 +17,21 @@ const pallete = {
   'lighter': '#7D9EC7'
 }
 
-const [width, height] = [1900, 830]
-
-const goalArea1 = [
-  [40, height / 2 - 200], [0, height / 2 - 200], [0, height / 2 + 200], [40, height / 2 + 200]
-]
-
-const goalArea2 = [
-  [width - 40, height / 2 - 200], [width, height / 2 - 200], [width, height / 2 + 200], [width - 40, height / 2 + 200]
-]
-
-
 const Draw = (props: DrawProps) => {
   const { players, self, ball } = props
   return (
-    <div className="world"
-    >
-      <svg
-        viewBox={`0 0 ${(width + 50)} ${(height + 50)}`}
-      >
-        <rect width={width + 50} height={height + 50} fill={pallete.dark} />
-        <g transform="translate(25, 25)">
-          <g>
-            <path d={goalArea1.reduce((r, p, i) => r + (i !== 0 ? ' L' : '') + p.join(' '), 'M')} fill='none' stroke={pallete.darker} strokeWidth={10} />
-            <path d={goalArea2.reduce((r, p, i) => r + (i !== 0 ? ' L' : '') + p.join(' '), 'M')} fill='none' stroke={pallete.darker} strokeWidth={10} />
-          </g>
-          <g>
-            {ball && <BallComponent ball={ball} />}
-            {Object.keys(players)
-              .filter(id => self ? self.id !== id : true)
-              .map(id => <PlayerComponent key={id} player={players[id]} />)}
-            {self && <PlayerComponent isSelf player={self} />}
-          </g>
+    <>
+      <rect {...mapSize} fill={pallete.dark} stroke={pallete.darker} strokeWidth={10} />
+      <g transform="translate(0, 0)">
+        <g>
+          {ball && <BallComponent ball={ball} />}
+          {Object.keys(players)
+            .filter(id => self ? self.id !== id : true)
+            .map(id => <PlayerComponent key={id} player={players[id]} />)}
+          {self && <PlayerComponent isSelf player={self} />}
         </g>
-      </svg>
-    </div>
+      </g>
+    </>
   );
 }
 

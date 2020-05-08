@@ -14,6 +14,7 @@ export interface Player {
 
 export interface Ball {
     position: Vector
+    angle: number
 }
 
 
