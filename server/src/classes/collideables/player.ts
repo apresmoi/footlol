@@ -1,22 +1,44 @@
-import { CircleCollideable } from "./physics";
-import { playerRadius } from "../../globals";
+import { CircleCollideable, CompoundCollideable } from "./physics";
+import { playerRadius, playerActionRadius } from "../../globals";
 import { Vector } from "../math";
 import { Champion, ChampionName } from "../../league/classes";
 import { champions } from "../../league/champions";
-import { Body } from "matter-js";
+import { Body, World, Constraint } from "matter-js";
 import { RoomSide } from "../room";
-import { BallCategory } from "./ball";
+import Ball, { BallCategory } from "./ball";
 import { WallCategory } from "./wall";
 
 export const PlayerCategory = 0x0004
-export default class Player extends CircleCollideable {
+export const PlayerActionCategory = 0x0016
+export default class Player extends CompoundCollideable {
     _id: string
     _name: string
     _champion: Champion
     _side: RoomSide
 
+    _kickTimeout: NodeJS.Timeout
+    _kicking: boolean = false
+    _canKick: boolean = false
+
+    _physicalBody: CircleCollideable
+    _sensorBody: CircleCollideable
+
+
+
     constructor(id: string, name: string, championName: ChampionName, position: Vector, side: RoomSide) {
-        super(champions[championName].mass, position, playerRadius, {
+        super()
+        this._id = id;
+        this._name = name;
+        this._champion = champions[championName]
+        this._acceleration = 0.06
+        this._physicalBody = new CircleCollideable(champions[championName].mass, position, playerRadius, {
+        });
+        this._sensorBody = new CircleCollideable(0, position, playerActionRadius, {
+            isSensor: true
+        })
+
+        this._body = CompoundCollideable.fromCollideables([this._physicalBody, this._sensorBody], {
+            mass: champions[championName].mass,
             restitution: 0.2,
             frictionStatic: 0,
             friction: 0.5,
@@ -24,11 +46,26 @@ export default class Player extends CircleCollideable {
             collisionFilter: {
                 category: PlayerCategory,
             }
-        });
-        this._id = id;
-        this._name = name;
-        this._champion = champions[championName]
-        this._acceleration = 0.06
+        })._body
+    }
+
+    checkSensor(body: Body): boolean {
+        return body.id === this._sensorBody._body.id
+    }
+
+    canKick(canKick: boolean): boolean {
+        return this._canKick = canKick
+    }
+
+    kick(ball: Ball): void {
+        clearTimeout(this._kickTimeout)
+        this._kicking = true;
+        if (this._canKick) {
+            Body.applyForce(ball._body, this._sensorBody.getPosition(), this.getPosition().substract(ball.getPosition()).normalize().multiply(this._acceleration))
+        }
+        this._kickTimeout = setTimeout(() => {
+            this._kicking = false;
+        }, 100);
     }
 
     update() {
@@ -44,7 +81,8 @@ export default class Player extends CircleCollideable {
             name: this._name,
             champion: this._champion.name,
             position: this.getPosition().serialize(),
-            side: this._side
+            side: this._side,
+            kicking: this._kicking
         }
     }
 }

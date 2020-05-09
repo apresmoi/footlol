@@ -99,3 +99,18 @@ export class PolygonCollideable extends Collideable {
         })
     }
 }
+
+export class CompoundCollideable extends Collideable {
+    constructor() {
+        super();
+    }
+
+    static fromCollideables(collideables: Collideable[], options?: Matter.IBodyDefinition): CompoundCollideable {
+        const collideable = new CompoundCollideable();
+        collideable._body = Body.create({
+            ...(options ? options : {}),
+            parts: collideables.map(collideable => collideable._body),
+        });
+        return collideable
+    }
+}

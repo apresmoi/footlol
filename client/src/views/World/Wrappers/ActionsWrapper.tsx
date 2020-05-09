@@ -1,5 +1,5 @@
 import React from 'react';
-import { Player, Ball } from '../types'
+import { Player, Ball, Score } from '../types'
 import debounce from 'lodash/debounce'
 
 import chatSocket, {
@@ -21,6 +21,8 @@ interface ActionsWrapperProps {
 interface ActionsWrapperState {
   self?: Player
   ball?: Ball
+  score?: Score
+  time?: number
   players: { [x: string]: Player }
 }
 
@@ -30,6 +32,7 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
     this.state = {
       self: null,
       ball: null,
+      score: { left: 0, right: 0 },
       players: {},
     }
   }
@@ -57,11 +60,13 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
         }, {})
       })
     })
-    subscribeUpdate(({ players, ball }) => {
+    subscribeUpdate(({ players, ball, score, time }) => {
       this.setState({
         ...this.state,
         players,
         ball,
+        score,
+        time,
         self: { ...players[this.state.self.id], direction: this.state.self.direction }
       })
     })
@@ -76,6 +81,8 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
             self: this.state.self,
             players: this.state.players,
             ball: this.state.ball,
+            score: this.state.score,
+            time: this.state.time,
 
             width: this.props['width'],
             height: this.props['height'],

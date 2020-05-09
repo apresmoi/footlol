@@ -11,10 +11,10 @@ export const api = {
 
 
 export const mapSize = {
-    width: 2050, height: 950,
-    field: { x: (2050 - 1900) / 2, y: (950 - 830) / 2, width: 1900, height: 830 },
-    center: { x: 2050 / 2, y: 950 / 2, r: 140 },
-    goal: { width: 60, height: 950 / 3 }
+    width: 2050, height: 1000,
+    field: { x: (2050 - 1900) / 2, y: (1000 - 830) / 2, width: 1900, height: 830 },
+    center: { x: 2050 / 2, y: 1000 / 2, r: 140 },
+    goal: { width: 50, height: 1000 / 3 }
 }
 
 

@@ -13,29 +13,15 @@ const PlayerComponent = (props: { player: Player, isSelf?: boolean }) => {
         viewBox="0 0 120 120">
         <image x="0" y="0" width="120" height="120" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${player.champion}.png`}></image>
       </pattern>
+      <filter x="-5%" y="0%" width="110%" height="120%" id={`${player.id}_name_background`}>
+        <feFlood flood-color="black" />
+        <feComposite in="SourceGraphic" operator="and" />
+      </filter>
     </defs>
-    <circle
-      cx={0}
-      cy={0}
-      r={25}
-      // fill={`white`}
-    />
-    <circle
-      cx={0}
-      cy={0}
-      r={23}
-      fill={`url(#${player.id}_image)`}
-    />
-    <text
-      transform={`translate(0, -20)`}
-      textAnchor="middle"
-      fill='white'
-    >{player.name} </text>
-    {/* <text
-      transform={`translate(0, 30)`}
-      textAnchor="middle"
-      fill='white'
-    >{player.position.x},{player.position.y} </text> */}
+    <circle cx={0} cy={0} r={40} fill={'white'} fillOpacity={0.1} stroke={'white'} strokeDasharray={"4 2"} strokeOpacity={player.kicking ? 1 : 0.3} />
+    <circle cx={0} cy={0} r={25} />
+    <circle cx={0} cy={0} r={23} fill={`url(#${player.id}_image)`} />
+    <text fontSize={15} y={-35} filter={`url(#${player.id}_name_background)`} textAnchor="middle" fill='white' >{player.name} </text>
   </g >
 }
 

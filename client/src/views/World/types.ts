@@ -7,7 +7,7 @@ export interface Player {
     id: string
     name: string
     champion: string
-    shooting: boolean
+    kicking: boolean
     direction: Vector
     position: Vector
     side: 'LEFT' | 'RIGHT'
@@ -18,6 +18,10 @@ export interface Ball {
     angle: number
 }
 
+export interface Score {
+    left: number
+    right: number
+}
 
 export interface PlayerMessage {
     id: string
@@ -28,6 +32,8 @@ export interface PlayerMessage {
 export interface UpdatePayload {
     players: { [id: string]: Player }
     ball: Ball
+    score: Score
+    time: number
 }
 
 export type MessageSubscribers = {

@@ -15,7 +15,7 @@ interface KeyboardWrapperState {
 }
 
 const allowedDirectionKeys = ['ArrowLeft', 'ArrowDown', 'ArrowUp', 'ArrowRight']
-const allowedActionKeys = ['Space']
+const allowedActionKeys = ['Space', 'KeyQ', 'KeyW']
 
 class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrapperState> {
   constructor(props) {
@@ -84,6 +84,7 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
       {React.Children.map(this.props.children, (child, index) => {
         if (child)
           return React.cloneElement(child, {
+            ...this.props,
             ...child.props,
             actionKeysPressed: this.state.actionKeysPressed,
             directionKeysPressed: this.state.directionKeysPressed,

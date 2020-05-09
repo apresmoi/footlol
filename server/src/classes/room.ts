@@ -28,6 +28,8 @@ export class Room {
     _engine: Engine
     _world: World
     _score: RoomScore = { left: 0, right: 0 }
+    _startTime: Date
+
 
     _walls: RectCollideable[] = [
         new Wall(new Vector(0, -100), mapSize.width, 100),
@@ -72,9 +74,18 @@ export class Room {
         this._mountWalls()
         this._mountSensors()
 
+
+        this._start()
+    }
+
+    __seconds = 0
+    _start = () => {
+        this._startTime = new Date();
         this._interval = setInterval(() => {
-            if (this.update())
+            if (this.update() || this.__seconds !== this.getSeconds()) {
+                this.__seconds = this.getSeconds()
                 this._socket.emit('update', this.serialize());
+            }
         }, time)
     }
 
@@ -120,16 +131,13 @@ export class Room {
 
     playerKeyPress(client: SocketIO.Socket, code: string) {
         const { id } = client
-        // switch (code) {
-        //     case 'Space':
-        //         if (this.players[id].isTouchingBall(this.ball.position)) {
-        //             this.ball.shootBall(this.players[id])
-        //         }
-        //         break;
-        //     default:
-        //         this.players[id].keyPress(code)
-        //         break;
-        // }
+        switch (code) {
+            case 'Space':
+                this._players[id].kick(this._ball)
+                break;
+            default:
+                break;
+        }
     }
 
     _connectedPlayers(): Player[] {
@@ -140,8 +148,7 @@ export class Room {
         }, [])
     }
 
-
-    _updateScore(sensor: Body): void {
+    _handleScore(sensor: Body): void {
         if (this._sensors.LEFT_GOAL.checkSensor(sensor)) {
             this._score = {
                 left: this._score.left + 1,
@@ -161,6 +168,14 @@ export class Room {
         }
     }
 
+    _handleProximity(sensor: Body, closeToBall: boolean): void {
+        this._connectedPlayers().forEach(player => {
+            if (player.checkSensor(sensor)) {
+                player.canKick(closeToBall)
+            }
+        })
+    }
+
     _handleCollisionsStart = (e: Matter.IEventCollision<Engine>): void => {
         let pairs = e.pairs;
 
@@ -168,19 +183,29 @@ export class Room {
             const pair = pairs[i];
 
             if (pair.bodyA.isSensor && pair.bodyB === this._ball._body) {
-                this._updateScore(pair.bodyA)
+                this._handleScore(pair.bodyA)
+                this._handleProximity(pair.bodyA, true)
             }
             else if (pair.bodyA === this._ball._body && pair.bodyB.isSensor) {
-                this._updateScore(pair.bodyB)
+                this._handleScore(pair.bodyB)
+                this._handleProximity(pair.bodyB, true)
             }
         }
     }
 
     _handleCollisionsEnd = (e: Matter.IEventCollision<Engine>): void => {
         const pairs = e.pairs;
-        // for (let i = 0, j = pairs.length; i != j; ++i) {
-        //     const pair = pairs[i];
-        // }
+
+        for (let i = 0, j = pairs.length; i != j; ++i) {
+            const pair = pairs[i];
+
+            if (pair.bodyA.isSensor && pair.bodyB === this._ball._body) {
+                this._handleProximity(pair.bodyA, false)
+            }
+            else if (pair.bodyA === this._ball._body && pair.bodyB.isSensor) {
+                this._handleProximity(pair.bodyB, false)
+            }
+        }
     }
 
     update(): boolean {
@@ -192,6 +217,10 @@ export class Room {
         return this._world.bodies.some(x => x.speed > 0)
     }
 
+    getSeconds(): number {
+        return Math.trunc((new Date().getTime() - this._startTime.getTime()) / 1000)
+    }
+
     serialize() {
         return {
             players: Object.keys(this._players).reduce((r, key) => {
@@ -200,7 +229,8 @@ export class Room {
                 return r;
             }, {}),
             ball: this._ball.serialize(),
-            score: this._score
+            score: this._score,
+            time: this.getSeconds()
         }
     }
 }

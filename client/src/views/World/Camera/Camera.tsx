@@ -33,10 +33,7 @@ const Camera = (props: CameraProps) => {
   })
 
   return (
-    <div
-      className="world"
-      ref={container}
-    >
+    <div className="world" ref={container}>
       <svg
         width={size.width}
         height={size.height}
@@ -64,25 +61,27 @@ interface CameraChildProps {
 }
 
 const CameraPosition = (props: CameraChildProps) => {
-  const [position, setPosition] = useState({ x: 0, y: 0, x0: 0, y0: 0, dragging: false })
+  const [position, setPosition] = useState({ x: 0, y: 0 })
 
   const { self } = props;
 
-  useEffect(() => {
+  const updatePosition = () => {
     if (self) {
-      const x = props.width * (self.side === 'LEFT' ? 3 : 1) / 2 - self.position.x
+      const x = props.width * (self.side === 'LEFT' ? 1 : 3) / 4 - self.position.x
       const y = props.height / 2 - self.position.y
 
       const edgeX = self.position.x < mapSize.width - self.position.x ? 0 : props.width - mapSize.width
       const edgeY = self.position.y < mapSize.height - self.position.y ? 0 : props.height - mapSize.height
 
-      setPosition({
-        ...position,
-        x: x <= 0 && x >= props.width - mapSize.width ? x : edgeX,
-        y: y <= 0 && y >= props.height - mapSize.height ? y : edgeY,
-      })
+      const newX = x <= 0 && x >= props.width - mapSize.width ? x : edgeX
+      const newY = y <= 0 && y >= props.height - mapSize.height ? y : edgeY
+
+      if (newX !== position.x || newY !== position.y)
+        setPosition({ ...position, x: newX, y: newY })
     }
-  }, [self ? self.position : null, props.width, props.height])
+  }
+
+  useEffect(updatePosition, [self ? self.position : null, props.width, props.height])
 
   if (!self) return null
   return (

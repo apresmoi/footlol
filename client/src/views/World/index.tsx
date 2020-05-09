@@ -3,18 +3,29 @@ import KeyboardWrapper from './Wrappers/KeyboardWrapper'
 import Draw from './Draw'
 import ActionsWrapper from './Wrappers/ActionsWrapper';
 import Camera, { CameraPosition } from './Camera/Camera';
+import Score from './UI/Score';
+import { Container, Header, Wrapper } from '../../layout';
+import ActionBar from './UI/ActionBar';
 
 const World = () => {
   return (
-    <Camera>
-      <KeyboardWrapper>
-        <ActionsWrapper>
-          <CameraPosition>
-            <Draw />
-          </CameraPosition>
-        </ActionsWrapper>
-      </KeyboardWrapper>
-    </Camera>
+    <Wrapper>
+      <Header>
+      </Header>
+      <Container>
+        <Camera>
+          <ActionsWrapper>
+            <CameraPosition>
+              <Draw />
+            </CameraPosition>
+            <Score />
+            <KeyboardWrapper>
+              <ActionBar />
+            </KeyboardWrapper>
+          </ActionsWrapper>
+        </Camera>
+      </Container>
+    </Wrapper>
   );
 }
 

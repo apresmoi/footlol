@@ -77,7 +77,7 @@ export default class Goal extends PolygonCollideable {
                 }
             })
 
-        this._sensor = new PolygonCollideable(0, position.setX(position.x + goalSize.width / 2 + 10), [points], {
+        this._sensor = new PolygonCollideable(0, position.setX(position.x + goalSize.width / 2 + 10), [points.slice(0, 4)], {
             isStatic: true,
             isSensor: true,
             ...(options ? options : {}),
