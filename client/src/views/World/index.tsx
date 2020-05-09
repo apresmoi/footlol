@@ -1,8 +1,8 @@
 import React from 'react';
-import KeyboardWrapper from './KeyboardWrapper'
+import KeyboardWrapper from './Wrappers/KeyboardWrapper'
 import Draw from './Draw'
-import ActionsWrapper from './ActionsWrapper';
-import Camera, { CameraPosition } from './Camera';
+import ActionsWrapper from './Wrappers/ActionsWrapper';
+import Camera, { CameraPosition } from './Camera/Camera';
 
 const World = () => {
   return (

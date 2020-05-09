@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Player } from './types'
+import { Player } from '../types'
 
 
 const PlayerComponent = (props: { player: Player, isSelf?: boolean }) => {

@@ -1,19 +1,25 @@
 import { CircleCollideable } from "./physics";
 import { ballRadius, ballMass } from "../../globals";
 import { Vector } from "../math";
+import { Body } from "matter-js";
 
+export const BallCategory = 0x0002
 export default class Ball extends CircleCollideable {
+    _startPosition: Vector
+
     constructor(position: Vector) {
         super(ballMass, position, ballRadius, {
-            restitution: 0.9
+            restitution: 0.9,
+            collisionFilter: {
+                category: BallCategory
+            }
         });
+
+        this._startPosition = position
     }
 
-    update() {
-        // if (this._body.speed < 0.1) {
-        //     this.setVelocity(new Vector(0, 0));
-        // }
-        // super.update();
-        console.log(this._body.speed)
+    reset(): void {
+        this.setVelocity(new Vector(0, 0));
+        this.setPosition(this._startPosition);
     }
 }

@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
 import debounce from 'lodash/debounce'
-import { Player, Ball } from './types';
-import { mapSize } from '../../settings'
+import { Player, Ball } from '../types';
+import { mapSize } from '../../../settings'
 
 interface CameraProps {
   children: any
@@ -66,50 +66,27 @@ interface CameraChildProps {
 const CameraPosition = (props: CameraChildProps) => {
   const [position, setPosition] = useState({ x: 0, y: 0, x0: 0, y0: 0, dragging: false })
 
-  // const handleMouseDown = (e) => {
-  //   setPosition({ ...position, x0: e.pageX, y0: e.pageY, dragging: true })
-  // }
-
-  // const handleMouseUp = (e) => {
-  //   setPosition({ ...position, dragging: false })
-  // }
-
-  // const handleMouseMove = (e) => {
-  //   if (position.dragging) {
-  //     const { pageX, pageY } = e
-  //     const x = position.x + (pageX - position.x0)
-  //     const y = position.y + (pageY - position.y0)
-  //     setPosition({
-  //       ...position,
-  //       x: x <= 0 && x >= props.width - mapSize.width ? x : position.x,
-  //       y: y >= props.height - mapSize.height && y <= 0 ? y : position.y,
-  //       x0: pageX, y0: pageY
-  //     })
-  //   }
-  // }
-
   const { self } = props;
 
   useEffect(() => {
     if (self) {
-      const x = props.width * 3 / 4 - self.position.x
+      const x = props.width * (self.side === 'LEFT' ? 3 : 1) / 2 - self.position.x
       const y = props.height / 2 - self.position.y
+
+      const edgeX = self.position.x < mapSize.width - self.position.x ? 0 : props.width - mapSize.width
+      const edgeY = self.position.y < mapSize.height - self.position.y ? 0 : props.height - mapSize.height
+
       setPosition({
         ...position,
-        x: x <= 0 && x >= props.width - mapSize.width ? x : position.x,
-        y: y >= props.height - mapSize.height && y <= 0 ? y : position.y,
+        x: x <= 0 && x >= props.width - mapSize.width ? x : edgeX,
+        y: y <= 0 && y >= props.height - mapSize.height ? y : edgeY,
       })
     }
-  }, [self ? self.position : null])
+  }, [self ? self.position : null, props.width, props.height])
 
   if (!self) return null
   return (
-    <g
-      // onMouseDown={handleMouseDown}
-      // onMouseUp={handleMouseUp}
-      // onMouseMove={handleMouseMove}
-      transform={`translate(${position.x}, ${position.y})`}
-    >
+    <g transform={`translate(${position.x}, ${position.y})`}>
       {
         React.Children.map(
           props.children, child => React.cloneElement(child, {

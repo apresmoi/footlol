@@ -1,8 +1,5 @@
-import { Bodies, Body, World } from 'matter-js'
+import { Bodies, Body, World, Vertices } from 'matter-js'
 import { Vector } from '../math'
-
-export type Origin = 'TOP_LEFT' | 'CENTER_OF_MASS'
-
 
 //sources
 //https://www.wired.com/2012/08/maximum-acceleration-in-the-100-m-dash/
@@ -48,7 +45,7 @@ export class Collideable {
     }
 
     update() {
-        if (this._body.speed < 0.01) {
+        if (this._body.speed > 0 && this._body.speed < 0.01) {
             this.setVelocity(new Vector(0, 0));
         }
     }
@@ -78,26 +75,10 @@ export class RectCollideable extends Collideable {
         width: number,
         height: number,
         angle: number = 0,
-        options?: Matter.IChamferableBodyDefinition,
-        origin?: Origin) {
+        options?: Matter.IChamferableBodyDefinition) {
         super();
 
-        let _position = position.copy();
-
-        if (origin) {
-            switch (origin) {
-                case 'TOP_LEFT':
-                    _position = _position.setX(_position.x + width / 2).setY(_position.y + height / 2)
-                    break;
-                case 'CENTER_OF_MASS':
-                default:
-                    break;
-            }
-        }
-
-        console.log(_position, width, height)
-
-        this._body = Bodies.rectangle(_position.x, _position.y, width, height, {
+        this._body = Bodies.rectangle(position.x, position.y, width, height, {
             mass,
             angle,
             ...(options ? options : {}),
@@ -111,6 +92,7 @@ export class PolygonCollideable extends Collideable {
         points: Vector[][],
         options?: Matter.IBodyDefinition) {
         super();
+
         this._body = Bodies.fromVertices(position.x, position.y, points, {
             mass,
             ...(options ? options : {}),

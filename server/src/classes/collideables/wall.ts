@@ -1,25 +1,21 @@
-// import { RectCollideable, Origin } from "./physics";
-// import { Vector, Size } from "../math";
+import { RectCollideable } from "./physics";
+import { ballRadius, ballMass } from "../../globals";
+import { Vector } from "../math";
+import { Constraint, IChamferableBodyDefinition } from "matter-js";
 
-// export default class Wall extends RectCollideable {
-//     _wallWidth = 10
-//     _wallHeight = 10
-
-//     constructor(position: Vector, width: number, height: number, angle: number = 0, origin?: Origin) {
-//         super(0, position, width, height, angle, { isStatic: true }, origin);
-//     }
-// }
-
-// export class WallBox {
-//     _walls: Wall[]
-
-//     constructor(size: Size, angle: number = 0) {
-
-//         const ground0 = new RectCollideable(0, new Vector(-100, 0), 100, mapSize.width, null, { isStatic: true }, 'TOP_LEFT')
-
-//         this._walls = [
-//             new Wall(size.min, 0, ),
-//         ]
-
-//     }
-// }
+export const WallCategory = 0x0001
+export default class Wall extends RectCollideable {
+    constructor(position: Vector, width: number, height: number, options?: IChamferableBodyDefinition) {
+        super(0, new Vector(position.x + width / 2, position.y + height / 2),
+            width, height, 0,
+            {
+                isStatic: true,
+                ...(options ? options : {}),
+                collisionFilter: {
+                    category: WallCategory,
+                    ...(options && options.collisionFilter ? options.collisionFilter : {})
+                }
+            }
+        );
+    }
+}

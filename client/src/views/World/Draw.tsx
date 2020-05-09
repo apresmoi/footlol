@@ -1,6 +1,8 @@
 import React from 'react';
-import PlayerComponent from './Player'
-import BallComponent from './Ball'
+import PlayerComponent from './Objects/Player'
+import BallComponent from './Objects/Ball'
+import GoalComponent from './Objects/Goal'
+import FieldComponent from './Objects/Field';
 import { Player, Ball } from './types';
 import { mapSize } from '../../settings'
 
@@ -10,26 +12,19 @@ interface DrawProps {
   ball?: Ball
 }
 
-const pallete = {
-  'light': '#4C6B8F',
-  'dark': '#2B3C4F',
-  'darker': '#0B151E',
-  'lighter': '#7D9EC7'
-}
-
 const Draw = (props: DrawProps) => {
   const { players, self, ball } = props
   return (
     <>
-      <rect {...mapSize} fill={pallete.dark} stroke={pallete.darker} strokeWidth={10} />
-      <g transform="translate(0, 0)">
-        <g>
-          {ball && <BallComponent ball={ball} />}
-          {Object.keys(players)
-            .filter(id => self ? self.id !== id : true)
-            .map(id => <PlayerComponent key={id} player={players[id]} />)}
-          {self && <PlayerComponent isSelf player={self} />}
-        </g>
+      <FieldComponent />
+      <GoalComponent side="LEFT" />
+      <GoalComponent side="RIGHT" />
+      <g>
+        {ball && <BallComponent ball={ball} />}
+        {Object.keys(players)
+          .filter(id => self ? self.id !== id : true)
+          .map(id => <PlayerComponent key={id} player={players[id]} />)}
+        {self && <PlayerComponent isSelf player={self} />}
       </g>
     </>
   );

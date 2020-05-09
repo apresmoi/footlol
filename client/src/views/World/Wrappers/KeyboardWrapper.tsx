@@ -2,8 +2,8 @@ import React from 'react';
 
 import chatSocket, {
   requestKeyPress, requestDirectionChange
-} from './socket'
-import { Vector } from './types';
+} from '../socket'
+import { Vector } from '../types';
 
 interface KeyboardWrapperProps {
   children?: any

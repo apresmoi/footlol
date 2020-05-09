@@ -1,5 +1,5 @@
 import React from 'react';
-import { Player, Ball } from './types'
+import { Player, Ball } from '../types'
 import debounce from 'lodash/debounce'
 
 import chatSocket, {
@@ -12,7 +12,7 @@ import chatSocket, {
   subscribePlayerLeave,
   subscribeUpdate,
   requestKeyPress
-} from './socket'
+} from '../socket'
 
 interface ActionsWrapperProps {
   children?: any

@@ -1,16 +1,23 @@
 import Player from "./collideables/player"
-import Ball from "./collideables/ball"
+import Ball, { BallCategory } from "./collideables/ball"
 import { Vector } from "./math"
-import { Champion, ChampionName } from "../league/classes"
-import { time, mapSize } from "../globals"
-import { Engine, World } from 'matter-js'
-import { RectCollideable, PolygonCollideable } from "./collideables/physics"
+import { ChampionName } from "../league/classes"
+import { time, mapSize, mapInnerSize, goalSize } from "../globals"
+import { Engine, World, Events, Body } from 'matter-js'
+import { RectCollideable } from "./collideables/physics"
+import Wall, { WallCategory } from "./collideables/wall"
+import Goal from "./collideables/goal"
+
+export type RoomSide = 'LEFT' | 'RIGHT'
+type RoomSensors = 'LEFT_GOAL' | 'RIGHT_GOAL'
+type RoomScore = { left: number, right: number }
+
+const positions: { [side in RoomSide]: Vector[] } = {
+    'LEFT': [new Vector(mapSize.center.x - 300, mapSize.center.y)],
+    'RIGHT': [new Vector(mapSize.center.x + 300, mapSize.center.y)]
+}
 
 
-const positions = [
-    [[200, 415]],
-    [[1700, 415]]
-]
 
 export class Room {
     _id: string
@@ -20,9 +27,37 @@ export class Room {
     _interval: NodeJS.Timeout
     _engine: Engine
     _world: World
+    _score: RoomScore = { left: 0, right: 0 }
+
+    _walls: RectCollideable[] = [
+        new Wall(new Vector(0, -100), mapSize.width, 100),
+        new Wall(new Vector(0, mapSize.max.y), mapSize.width, 100),
+        new Wall(new Vector(-100, 0), 100, mapSize.max.y),
+        new Wall(new Vector(mapSize.max.x, 0), 100, mapSize.max.y),
+
+
+        new Wall(new Vector(0, -100 + (mapSize.height - mapInnerSize.height) / 2), mapSize.width, 100, { collisionFilter: { mask: BallCategory } }),
+        new Wall(new Vector(0, mapSize.max.y - (mapSize.height - mapInnerSize.height) / 2), mapSize.width, 100, { collisionFilter: { mask: BallCategory } }),
+
+        new Wall(new Vector(-100 + (mapSize.width - mapInnerSize.width) / 2, 0), 100, (mapSize.height - goalSize.height) / 2, { collisionFilter: { mask: BallCategory } }),
+        new Wall(new Vector(-100 + (mapSize.width - mapInnerSize.width) / 2, (mapSize.height + goalSize.height) / 2), 100, (mapSize.height - goalSize.height) / 2, { collisionFilter: { mask: BallCategory } }),
+
+        new Wall(new Vector(mapSize.max.x - (mapSize.width - mapInnerSize.width) / 2, 0), 100, (mapSize.height - goalSize.height) / 2, { collisionFilter: { mask: BallCategory } }),
+        new Wall(new Vector(mapSize.max.x - (mapSize.width - mapInnerSize.width) / 2, (mapSize.height + goalSize.height) / 2), 100, (mapSize.height - goalSize.height) / 2, { collisionFilter: { mask: BallCategory } }),
+    ]
+
+    _sensors: { [key in RoomSensors]: Goal } = {
+        LEFT_GOAL: new Goal(mapSize.center.setX(0), 'LEFT'),
+        RIGHT_GOAL: new Goal(new Vector(mapSize.max.x - (mapSize.width - mapInnerSize.width) / 2, mapSize.center.y), 'RIGHT')
+    }
 
     constructor(id: string, socket: SocketIO.Server) {
         this._engine = Engine.create();
+
+        Events.on(this._engine, 'collisionStart', this._handleCollisionsStart);
+
+        Events.on(this._engine, 'collisionEnd', this._handleCollisionsEnd);
+
         this._world = this._engine.world;
         this._world.bounds = mapSize;
         this._world.gravity.x = 0;
@@ -33,17 +68,9 @@ export class Room {
 
         this._players = {};
         this._ball = new Ball(mapSize.center);
-
         this._ball.materialize(this._world);
-
-        const ground0 = new RectCollideable(0, new Vector(mapSize.center.x, -50), mapSize.max.x, 100, null, { isStatic: true })
-        const ground1 = new RectCollideable(0, new Vector(mapSize.center.x, mapSize.max.y + 50), mapSize.max.x, 100, null, { isStatic: true })
-        const ground2 = new RectCollideable(0, new Vector(-50, mapSize.center.y), 100, mapSize.max.y, null, { isStatic: true })
-        const ground3 = new RectCollideable(0, new Vector(mapSize.max.x + 50, mapSize.center.y), 100, mapSize.max.y, null, { isStatic: true })
-        ground0.materialize(this._world);
-        ground1.materialize(this._world);
-        ground2.materialize(this._world);
-        ground3.materialize(this._world);
+        this._mountWalls()
+        this._mountSensors()
 
         this._interval = setInterval(() => {
             if (this.update())
@@ -51,12 +78,19 @@ export class Room {
         }, time)
     }
 
+    _mountWalls = () => {
+        this._walls.forEach(wall => wall.materialize(this._world))
+    }
+
+    _mountSensors = () => {
+        Object.keys(this._sensors).forEach(key => this._sensors[key] ? this._sensors[key].materialize(this._world) : null)
+    }
+
     addPlayer(client: SocketIO.Socket, name: string, champion: ChampionName) {
         const { id } = client
         const players = this._connectedPlayers()
-        const side = players.length % 2 ? 0 : 1
-        const [x, y] = positions[side][0]
-        this._players[id] = new Player(id, name, champion, new Vector(x, y));
+        const side: RoomSide = players.length % 2 ? 'LEFT' : 'RIGHT'
+        this._players[id] = new Player(id, name, champion, positions[side][0], side);
 
         this._players[id].materialize(this._world);
 
@@ -106,12 +140,55 @@ export class Room {
         }, [])
     }
 
+
+    _updateScore(sensor: Body): void {
+        if (this._sensors.LEFT_GOAL.checkSensor(sensor)) {
+            this._score = {
+                left: this._score.left + 1,
+                right: this._score.right,
+            }
+            setTimeout(() => {
+                this._ball.reset();
+            }, 1000);
+        } else if (this._sensors.RIGHT_GOAL.checkSensor(sensor)) {
+            this._score = {
+                left: this._score.left,
+                right: this._score.right + 1,
+            }
+            setTimeout(() => {
+                this._ball.reset();
+            }, 1000);
+        }
+    }
+
+    _handleCollisionsStart = (e: Matter.IEventCollision<Engine>): void => {
+        let pairs = e.pairs;
+
+        for (let i = 0, j = pairs.length; i != j; ++i) {
+            const pair = pairs[i];
+
+            if (pair.bodyA.isSensor && pair.bodyB === this._ball._body) {
+                this._updateScore(pair.bodyA)
+            }
+            else if (pair.bodyA === this._ball._body && pair.bodyB.isSensor) {
+                this._updateScore(pair.bodyB)
+            }
+        }
+    }
+
+    _handleCollisionsEnd = (e: Matter.IEventCollision<Engine>): void => {
+        const pairs = e.pairs;
+        // for (let i = 0, j = pairs.length; i != j; ++i) {
+        //     const pair = pairs[i];
+        // }
+    }
+
     update(): boolean {
         Engine.update(this._engine);
 
         this._connectedPlayers().forEach(player => player.update());
         this._ball.update();
-        
+
         return this._world.bodies.some(x => x.speed > 0)
     }
 
@@ -123,6 +200,7 @@ export class Room {
                 return r;
             }, {}),
             ball: this._ball.serialize(),
+            score: this._score
         }
     }
 }

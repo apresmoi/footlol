@@ -10,6 +10,7 @@ export interface Player {
     shooting: boolean
     direction: Vector
     position: Vector
+    side: 'LEFT' | 'RIGHT'
 }
 
 export interface Ball {
