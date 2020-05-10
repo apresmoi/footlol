@@ -77,7 +77,7 @@ export class Room {
         this._start()
     }
 
-    __seconds_limit = 10
+    __seconds_limit = 600
     __seconds = 0
 
     _emit = () => {
@@ -113,7 +113,14 @@ export class Room {
         } else if (type === 'RESET') {
             this.__seconds = 0;
             this._startTime = new Date();
-
+            this._goal = false;
+            this._sideTurn = 'LEFT'
+            this._ball.dematerialize(this._world)
+            this._score.reset()
+            this._mountBall()
+            this._mountStartWalls()
+            this._connectedPlayers().forEach(player => player.resetPosition(this._world))
+            this._emit()
         }
     }
 
@@ -137,13 +144,12 @@ export class Room {
             default:
                 break;
         }
-        console.log(this._score.lastGoalSide())
-        console.log(this._score)
         this._startWalls[this._sideTurn].materialize(this._world)
     }
 
     _unmountStartWalls = () => {
-        this._startWalls[this._sideTurn].dematerialize(this._world)
+        this._startWalls['LEFT'].dematerialize(this._world)
+        this._startWalls['RIGHT'].dematerialize(this._world)
     }
 
     _mountSensors = () => {
