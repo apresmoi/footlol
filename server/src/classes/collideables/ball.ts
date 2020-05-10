@@ -4,10 +4,10 @@ import { Vector } from "../math";
 import { Body } from "matter-js";
 import Player from "./player";
 
-export type Kicker = { playerId: string, seconds: number }
+export type BallKicker = { player: Player, seconds: number }
 export const BallCategory = 0x0002
 export default class Ball extends CircleCollideable {
-    _kickers: Kicker[] = []
+    _kickers: BallKicker[] = []
 
     constructor(position: Vector) {
         super(ballMass, position, ballRadius, {
@@ -20,12 +20,12 @@ export default class Ball extends CircleCollideable {
 
     addKicker(seconds: number, player: Player): void {
         this._kickers.push({
-            playerId: player._id,
+            player,
             seconds
         })
     }
 
-    getLastKicker(): Kicker | null {
+    getLastKicker(): BallKicker | null {
         if (this._kickers.length) {
             return this._kickers[this._kickers.length - 1]
         }

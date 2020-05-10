@@ -5,7 +5,7 @@ import { Champion, ChampionName } from "../../league/classes";
 import { champions } from "../../league/champions";
 import { Body } from "matter-js";
 import Ball from "./ball";
-import { RoomSide } from "../../types";
+import { TeamSide } from "../../types";
 
 export const PlayerCategory = 0x0004
 export const PlayerActionCategory = 0x0016
@@ -13,7 +13,7 @@ export default class Player extends CompoundCollideable {
     _id: string
     _name: string
     _champion: Champion
-    _side: RoomSide
+    _side: TeamSide
 
     _kickTimeout: NodeJS.Timeout
     _kicking: boolean = false
@@ -22,17 +22,20 @@ export default class Player extends CompoundCollideable {
     _physicalBody: CircleCollideable
     _sensorBody: CircleCollideable
 
-    constructor(id: string, name: string, championName: ChampionName, position: Vector, side: RoomSide) {
+    constructor(id: string, name: string, championName: ChampionName, position: Vector, side: TeamSide) {
         super(position)
         this._id = id;
         this._name = name;
         this._champion = champions[championName]
         this._side = side
         this._acceleration = 0.06
+
         this._physicalBody = new CircleCollideable(champions[championName].mass, position, playerRadius, {
+            plugin: this
         });
         this._sensorBody = new CircleCollideable(0, position, playerActionRadius, {
-            isSensor: true
+            isSensor: true,
+            plugin: this
         })
 
         this._body = CompoundCollideable.fromCollideables(position, [this._physicalBody, this._sensorBody], {
@@ -43,15 +46,17 @@ export default class Player extends CompoundCollideable {
             frictionAir: 0.07,
             collisionFilter: {
                 category: PlayerCategory,
-            }
+            },
+            plugin: this
         })._body
+
     }
 
     checkSensor(body: Body): boolean {
         return body.id === this._sensorBody._body.id
     }
 
-    canKick(canKick: boolean): boolean {
+    allowPlayerToKick(canKick: boolean): boolean {
         return this._canKick = canKick
     }
 

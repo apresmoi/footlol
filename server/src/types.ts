@@ -1,5 +1,19 @@
-export type RoomSide = 'LEFT' | 'RIGHT'
+import { IEventCollision, Engine, IPair, Body } from "matter-js"
+import { Collideable } from "./classes/collideables/physics"
+
+export type TeamSide = 'LEFT' | 'RIGHT'
 export type RoomSensors = 'LEFT_GOAL' | 'RIGHT_GOAL'
-export type ConvertedGoal = { side: RoomSide, playerId: string, seconds: number }
-export type RoomScore = { left: number, right: number, goals: ConvertedGoal[] }
 export type ResetType = 'GOAL' | 'RESET'
+
+export interface ICollideableBody extends Body {
+    plugin: Collideable
+}
+
+export interface ICollideablePair extends IPair {
+    bodyA: ICollideableBody;
+    bodyB: ICollideableBody;
+}
+
+export interface ICollideableEventCollision extends IEventCollision<Engine> {
+    pairs: Array<ICollideablePair>;
+}

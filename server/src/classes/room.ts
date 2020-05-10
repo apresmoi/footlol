@@ -7,8 +7,9 @@ import { Engine, World, Events, Body } from 'matter-js'
 import { RectCollideable, Collideable, CircleCollideable } from "./collideables/physics"
 import Wall from "./collideables/wall"
 import Goal from "./collideables/goal"
-import { RoomSide, RoomSensors, RoomScore, ResetType } from "../types"
+import { TeamSide, RoomSensors, ResetType, ICollideableEventCollision } from "../types"
 import TurnWall from "./collideables/turnwall"
+import { Score } from "./score"
 
 export class Room {
     _id: string
@@ -18,12 +19,12 @@ export class Room {
     _interval: NodeJS.Timeout
     _engine: Engine
     _world: World
-    _score: RoomScore = { left: 0, right: 0, goals: [] }
+    _score: Score
     _startTime: Date
 
 
     _goal: boolean = false
-    _sideTurn: RoomSide = 'RIGHT'
+    _sideTurn: TeamSide = 'LEFT' // this is the side that will start with control of the ball
 
 
     _walls: RectCollideable[] = [
@@ -43,7 +44,7 @@ export class Room {
         new Wall(new Vector(mapSize.max.x - (mapSize.width - mapInnerSize.width) / 2, (mapSize.height + goalSize.height) / 2), 100, (mapSize.height - goalSize.height) / 2, { collisionFilter: { mask: BallCategory } }),
     ]
 
-    _startWalls: { [side in RoomSide]: Collideable } = {
+    _startWalls: { [side in TeamSide]: Collideable } = {
         'LEFT': new TurnWall('LEFT'),
         'RIGHT': new TurnWall('RIGHT')
     }
@@ -67,6 +68,7 @@ export class Room {
 
         this._id = id;
         this._socket = socket;
+        this._score = new Score()
 
         this._players = {};
         this._mountWalls()
@@ -125,17 +127,18 @@ export class Room {
     }
 
     _mountStartWalls = () => {
-        if (this._score.goals.length)
-            switch (this._score.goals[this._score.goals.length - 1].side) {
-                case 'LEFT':
-                    this._sideTurn = 'RIGHT'
-                    break;
-                case 'RIGHT':
-                    this._sideTurn = 'LEFT'
-                    break;
-                default:
-                    break;
-            }
+        switch (this._score.lastGoalSide()) {
+            case 'LEFT':
+                this._sideTurn = 'RIGHT'
+                break;
+            case 'RIGHT':
+                this._sideTurn = 'LEFT'
+                break;
+            default:
+                break;
+        }
+        console.log(this._score.lastGoalSide())
+        console.log(this._score)
         this._startWalls[this._sideTurn].materialize(this._world)
     }
 
@@ -150,7 +153,7 @@ export class Room {
     addPlayer(client: SocketIO.Socket, name: string, champion: ChampionName) {
         const { id } = client
         const players = this._connectedPlayers()
-        const side: RoomSide = players.length % 2 ? 'LEFT' : 'RIGHT'
+        const side: TeamSide = players.length % 2 ? 'LEFT' : 'RIGHT'
 
         if (players.length < 10) {
             this._players[id] = new Player(id, name, champion, playerPositions[side][players.filter(x => x._side === side).length], side);
@@ -209,90 +212,90 @@ export class Room {
         }, [])
     }
 
-    _handleScore(sensor: Body, kicker: Kicker): void {
-        if (this._sensors.LEFT_GOAL.checkSensor(sensor) && !this._goal) {
-            this._score = {
-                left: this._score.left + 1,
-                right: this._score.right,
-                goals: [
-                    ...this._score.goals,
-                    {
-                        playerId: kicker.playerId,
-                        seconds: this.__seconds,
-                        side: 'RIGHT'
-                    }
-                ]
-            }
+    _handleBallInsideGoal(sensor: Goal): void {
+        if (this._goal) return // this avoids double goal in one turn
+
+        const lastKicker = this._ball.getLastKicker()
+        if (this._sensors.LEFT_GOAL === sensor) {
+            //if the ball gets inside the Left side, the goal is for the right team
             this._goal = true
+            this._score.addGoal('RIGHT', lastKicker.player, this.__seconds)
             this._reset('GOAL')
-        } else if (this._sensors.RIGHT_GOAL.checkSensor(sensor) && !this._goal) {
-            this._score = {
-                left: this._score.left,
-                right: this._score.right + 1,
-                goals: [
-                    ...this._score.goals,
-                    {
-                        playerId: kicker.playerId,
-                        seconds: this.__seconds,
-                        side: 'LEFT'
-                    }
-                ]
-            }
+        } else if (this._sensors.RIGHT_GOAL === sensor) {
+            //if the ball gets inside the right side,  the goal is for the left team
             this._goal = true
+            this._score.addGoal('LEFT', lastKicker.player, this.__seconds)
             this._reset('GOAL')
         }
     }
 
-    _handleProximity(sensor: Body, closeToBall: boolean): void {
-        this._connectedPlayers().forEach(player => {
-            if (player.checkSensor(sensor)) {
-                player.canKick(closeToBall)
-            }
-        })
+    _handlePlayerBallProximity(player: Player, closeToBall: boolean): void {
+        player.allowPlayerToKick(closeToBall)
     }
 
-    _handleCollisionsStart = (e: Matter.IEventCollision<Engine>): void => {
+    _handleCollisionsStart = (e: ICollideableEventCollision): void => {
         let pairs = e.pairs;
 
         for (let i = 0, j = pairs.length; i != j; ++i) {
             const pair = pairs[i];
 
-            if (!pair.bodyA.isSensor && pair.bodyB === this._ball._body) {
-                this._connectedPlayers().forEach(player => {
-                    if (player._body.id === pair.bodyA.id || player._body.id === pair.bodyA?.parent.id) {
-                        this._ball.addKicker(this.__seconds, player)
-                    }
-                })
-            } else if (!pair.bodyB.isSensor && pair.bodyA === this._ball._body) {
-                this._connectedPlayers().forEach(player => {
-                    if (player._body.id === pair.bodyB.id || player._body.id === pair.bodyB?.parent.id) {
-                        this._ball.addKicker(this.__seconds, player)
-                    }
-                })
+            //Ball collides with Goals
+            // A | B is ball
+            // A | B is Goal SENSOR
+            if (pair.bodyA.isSensor && pair.bodyA.plugin instanceof Goal && pair.bodyB === this._ball._body) {
+                this._handleBallInsideGoal(pair.bodyA.plugin)
+                continue;
+            }
+            else if (pair.bodyB.isSensor && pair.bodyB.plugin instanceof Goal && pair.bodyA === this._ball._body) {
+                this._handleBallInsideGoal(pair.bodyB.plugin)
+                continue;
             }
 
-            if (pair.bodyA.isSensor && pair.bodyB === this._ball._body) {
-                this._handleScore(pair.bodyA, this._ball.getLastKicker())
-                this._handleProximity(pair.bodyA, true)
+            //Player physical body collides with Ball
+            // A | B is ball
+            // A | B is physical part of player
+            if (!pair.bodyA.isSensor && pair.bodyA.plugin instanceof Player && pair.bodyB.plugin === this._ball) {
+                this._ball.addKicker(this.__seconds, pair.bodyA.plugin)
+                continue;
             }
-            else if (pair.bodyA === this._ball._body && pair.bodyB.isSensor) {
-                this._handleScore(pair.bodyB, this._ball.getLastKicker())
-                this._handleProximity(pair.bodyB, true)
+            else if (!pair.bodyB.isSensor && pair.bodyB.plugin instanceof Player && pair.bodyA.plugin === this._ball) {
+                this._ball.addKicker(this.__seconds, pair.bodyB.plugin)
+                continue;
             }
+
+            //Player sensor portion is overlaping with Ball
+            // A | B is ball
+            // A | B is SENSOR part of player
+            if (pair.bodyA.isSensor && pair.bodyA.plugin instanceof Player && pair.bodyB.plugin === this._ball) {
+                // this._handleScore(pair.bodyA, this._ball.getLastKicker())
+                this._handlePlayerBallProximity(pair.bodyA.plugin, true)
+                continue;
+            }
+            else if (pair.bodyB.isSensor && pair.bodyB.plugin instanceof Player && pair.bodyA.plugin === this._ball) {
+                // this._handleScore(pair.bodyB, this._ball.getLastKicker())
+                this._handlePlayerBallProximity(pair.bodyB.plugin, true)
+                continue;
+            }
+
         }
     }
 
-    _handleCollisionsEnd = (e: Matter.IEventCollision<Engine>): void => {
+    _handleCollisionsEnd = (e: ICollideableEventCollision): void => {
         const pairs = e.pairs;
 
         for (let i = 0, j = pairs.length; i != j; ++i) {
             const pair = pairs[i];
 
-            if (pair.bodyA.isSensor && pair.bodyB === this._ball._body) {
-                this._handleProximity(pair.bodyA, false)
+            //Player sensor portion is overlaping with Ball
+            // A | B is ball
+            // A | B is SENSOR part of player
+            if (pair.bodyA.isSensor && pair.bodyA.plugin instanceof Player && pair.bodyB.plugin === this._ball) {
+                this._handlePlayerBallProximity(pair.bodyA.plugin, false)
+                continue;
             }
-            else if (pair.bodyA === this._ball._body && pair.bodyB.isSensor) {
-                this._handleProximity(pair.bodyB, false)
+            else if (pair.bodyB.isSensor && pair.bodyB.plugin instanceof Player && pair.bodyA.plugin === this._ball) {
+                this._handlePlayerBallProximity(pair.bodyB.plugin, false)
+                continue;
             }
         }
     }
@@ -319,7 +322,7 @@ export class Room {
                 return r;
             }, {}),
             ball: this._ball.serialize(),
-            score: this._score,
+            score: this._score.serialize(),
             time: this.__seconds_limit - this.getSeconds()
         }
     }

@@ -79,6 +79,7 @@ export class CircleCollideable extends Collideable {
         options?: Matter.IBodyDefinition) {
         super(position);
         this._body = Bodies.circle(position.x, position.y, radius, {
+            plugin: this,
             mass,
             ...(options ? options : {}),
         })
@@ -95,6 +96,7 @@ export class RectCollideable extends Collideable {
         super(position);
 
         this._body = Bodies.rectangle(position.x, position.y, width, height, {
+            plugin: this,
             mass,
             angle,
             ...(options ? options : {}),
@@ -110,6 +112,7 @@ export class PolygonCollideable extends Collideable {
         super(position);
 
         this._body = Bodies.fromVertices(position.x, position.y, points, {
+            plugin: this,
             mass,
             ...(options ? options : {}),
         })
@@ -124,6 +127,7 @@ export class CompoundCollideable extends Collideable {
     static fromCollideables(position: Vector, collideables: Collideable[], options?: Matter.IBodyDefinition): CompoundCollideable {
         const collideable = new CompoundCollideable(position);
         collideable._body = Body.create({
+            plugin: this,
             ...(options ? options : {}),
             parts: collideables.map(collideable => collideable._body),
         });

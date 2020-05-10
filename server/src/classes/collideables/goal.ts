@@ -5,8 +5,7 @@ import { PolygonCollideable, CircleCollideable } from "./physics";
 import { goalSize, mapSize } from "../../globals";
 import { Vector } from "../math";
 import { IChamferableBodyDefinition, World, Body } from "matter-js";
-import { WallCategory } from "./wall";
-import { RoomSide } from "../room";
+import { TeamSide } from "../../types";
 
 export const GoalCategory = 0x0008
 export default class Goal extends PolygonCollideable {
@@ -14,7 +13,7 @@ export default class Goal extends PolygonCollideable {
     _bodyGoalStickRight: CircleCollideable
     _sensor: PolygonCollideable
 
-    constructor(position: Vector, side: RoomSide, options?: IChamferableBodyDefinition) {
+    constructor(position: Vector, side: TeamSide, options?: IChamferableBodyDefinition) {
         const top = mapSize.center.y - goalSize.height / 2
         const bottom = mapSize.center.y + goalSize.height / 2
         const points = side === 'RIGHT' ? [
@@ -60,7 +59,8 @@ export default class Goal extends PolygonCollideable {
                 collisionFilter: {
                     category: GoalCategory,
                     ...(options && options.collisionFilter ? options.collisionFilter : {}),
-                }
+                },
+                plugin: this,
             })
 
         this._bodyGoalStickRight = new CircleCollideable(0, position
@@ -74,7 +74,8 @@ export default class Goal extends PolygonCollideable {
                 collisionFilter: {
                     category: GoalCategory,
                     ...(options && options.collisionFilter ? options.collisionFilter : {}),
-                }
+                },
+                plugin: this
             })
 
         this._sensor = new PolygonCollideable(0, position.setX(position.x + goalSize.width / 2 + 10), [points.slice(0, 4)], {
@@ -84,7 +85,8 @@ export default class Goal extends PolygonCollideable {
             collisionFilter: {
                 category: GoalCategory,
                 ...(options && options.collisionFilter ? options.collisionFilter : {}),
-            }
+            },
+            plugin: this
         })
     }
 

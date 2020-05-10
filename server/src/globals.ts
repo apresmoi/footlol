@@ -1,5 +1,5 @@
 import { Vector, Size } from "./classes/math"
-import { RoomSide } from "./types";
+import { TeamSide } from "./types";
 
 export const time: number = 20;
 export const ballRadius: number = 12;
@@ -25,7 +25,7 @@ const RIGHT_KEEPER = new Vector(mapSize.center.x + 850, mapSize.center.y)
 const RIGHT_BACK_TOP = new Vector(mapSize.center.x + 550, mapSize.center.y - 350)
 const RIGHT_BACK_MIDDLE = new Vector(mapSize.center.x + 550, mapSize.center.y + 350)
 
-export const playerPositions: { [side in RoomSide]: Vector[] } = {
+export const playerPositions: { [side in TeamSide]: Vector[] } = {
     'LEFT': [
         LEFT_FRONT_BOT,
         LEFT_FRONT_TOP,
