@@ -67,7 +67,7 @@ class ActionsWrapper extends React.Component<ActionsWrapperProps, ActionsWrapper
         ball,
         score,
         time,
-        self: { ...players[this.state.self.id], direction: this.state.self.direction }
+        self: this.state.self ? { ...players[this.state.self.id], direction: this.state.self.direction } : null
       })
     })
   }

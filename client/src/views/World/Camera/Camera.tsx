@@ -63,7 +63,7 @@ interface CameraChildProps {
 const CameraPosition = (props: CameraChildProps) => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
 
-  const { self } = props;
+  const { self, ball } = props;
 
   const updatePosition = () => {
     if (self) {
@@ -78,12 +78,24 @@ const CameraPosition = (props: CameraChildProps) => {
 
       if (newX !== position.x || newY !== position.y)
         setPosition({ ...position, x: newX, y: newY })
+    } else if (ball) {
+      //spectator mode
+      const x = props.width / 2 - ball.position.x
+      const y = props.height / 2 - ball.position.y
+
+      const edgeX = ball.position.x < mapSize.width - ball.position.x ? 0 : props.width - mapSize.width
+      const edgeY = ball.position.y < mapSize.height - ball.position.y ? 0 : props.height - mapSize.height
+
+      const newX = x <= 0 && x >= props.width - mapSize.width ? x : edgeX
+      const newY = y <= 0 && y >= props.height - mapSize.height ? y : edgeY
+
+      if (newX !== position.x || newY !== position.y)
+        setPosition({ ...position, x: newX, y: newY })
     }
   }
 
-  useEffect(updatePosition, [self ? self.position : null, props.width, props.height])
+  useEffect(updatePosition, [self ? self.position : (ball ? ball.position : null), props.width, props.height])
 
-  if (!self) return null
   return (
     <g transform={`translate(${position.x}, ${position.y})`}>
       {

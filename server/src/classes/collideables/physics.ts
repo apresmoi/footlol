@@ -10,18 +10,34 @@ export class Collideable {
     _body: Body
     _direction: Vector
     _acceleration: number
+    _startPosition: Vector
 
-    constructor() {
+    _mounted: boolean
+
+    constructor(position: Vector) {
         this._direction = new Vector(0, 0);
         this._acceleration = 0;
+        this._startPosition = position
     }
 
     materialize(world: World) {
-        World.add(world, this._body);
+        if (!this._mounted) {
+            this._mounted = true;
+            World.add(world, this._body);
+        }
     }
 
     dematerialize(world: World) {
-        World.remove(world, this._body);
+        if (this._mounted) {
+            this._mounted = false;
+            World.remove(world, this._body);
+        }
+    }
+
+    resetPosition(world: World): void {
+        this.dematerialize(world)
+        Body.setPosition(this._body, this._startPosition);
+        this.materialize(world)
     }
 
     getPosition(): Vector {
@@ -61,7 +77,7 @@ export class Collideable {
 export class CircleCollideable extends Collideable {
     constructor(mass: number, position: Vector, radius: number,
         options?: Matter.IBodyDefinition) {
-        super();
+        super(position);
         this._body = Bodies.circle(position.x, position.y, radius, {
             mass,
             ...(options ? options : {}),
@@ -76,7 +92,7 @@ export class RectCollideable extends Collideable {
         height: number,
         angle: number = 0,
         options?: Matter.IChamferableBodyDefinition) {
-        super();
+        super(position);
 
         this._body = Bodies.rectangle(position.x, position.y, width, height, {
             mass,
@@ -91,7 +107,7 @@ export class PolygonCollideable extends Collideable {
         position: Vector,
         points: Vector[][],
         options?: Matter.IBodyDefinition) {
-        super();
+        super(position);
 
         this._body = Bodies.fromVertices(position.x, position.y, points, {
             mass,
@@ -101,12 +117,12 @@ export class PolygonCollideable extends Collideable {
 }
 
 export class CompoundCollideable extends Collideable {
-    constructor() {
-        super();
+    constructor(position: Vector) {
+        super(position);
     }
 
-    static fromCollideables(collideables: Collideable[], options?: Matter.IBodyDefinition): CompoundCollideable {
-        const collideable = new CompoundCollideable();
+    static fromCollideables(position: Vector, collideables: Collideable[], options?: Matter.IBodyDefinition): CompoundCollideable {
+        const collideable = new CompoundCollideable(position);
         collideable._body = Body.create({
             ...(options ? options : {}),
             parts: collideables.map(collideable => collideable._body),

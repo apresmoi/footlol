@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Player } from '../types'
+import { pallete } from '../../../settings';
 
 
 const PlayerComponent = (props: { player: Player, isSelf?: boolean }) => {
@@ -18,7 +19,7 @@ const PlayerComponent = (props: { player: Player, isSelf?: boolean }) => {
         <feComposite in="SourceGraphic" operator="and" />
       </filter>
     </defs>
-    <circle cx={0} cy={0} r={40} fill={'white'} fillOpacity={0.1} stroke={'white'} strokeDasharray={"4 2"} strokeOpacity={player.kicking ? 1 : 0.3} />
+    <circle cx={0} cy={0} r={40} fill={isSelf ? 'yellow' : 'white'} fillOpacity={0.1} stroke={'white'} strokeDasharray={"4 2"} strokeOpacity={player.kicking ? 1 : 0.3} />
     <circle cx={0} cy={0} r={25} />
     <circle cx={0} cy={0} r={23} fill={`url(#${player.id}_image)`} />
     <text fontSize={15} y={-35} filter={`url(#${player.id}_name_background)`} textAnchor="middle" fill='white' >{player.name} </text>
