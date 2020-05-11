@@ -93,7 +93,7 @@ export class Field {
                 else
                     this._emit()
             }
-        }, timeConstant)
+        }, timeConstant * 2)
     }
 
     _reset = (type: ResetType) => {
