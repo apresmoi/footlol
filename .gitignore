@@ -16,7 +16,6 @@ mysql/db_dump.zip
 client/node_modules
 client/build
 server/node_modules
-server/build
 
 .vscode
 *.pyc

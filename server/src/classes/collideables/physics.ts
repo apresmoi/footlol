@@ -66,7 +66,7 @@ export class Collideable {
         }
     }
 
-    serialize() {
+    serialize(): any {
         return {
             position: this.getPosition().serialize(),
             angle: this.getAngle()

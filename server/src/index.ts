@@ -36,11 +36,11 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   next();
 });
 
-app.get('/rooms', function (req, res) {
+app.get('/api/rooms', function (req, res) {
   res.status(200)
     .send(Object
       .keys(io.nsps)
@@ -54,8 +54,9 @@ app.get('/rooms', function (req, res) {
       }));
 });
 
-app.post('/rooms', (req, res) => {
-  const { name } = req.query
+app.post('/api/rooms', (req, res) => {
+  const name: string = req.query.name as string
+
   const id = newID()
   matches[newID()] = new Room(id, name, io.of('/' + id))
   res.status(201).send({
@@ -64,7 +65,7 @@ app.post('/rooms', (req, res) => {
   })
 })
 
-app.get('/champions', (req, res) => {
+app.get('/api/champions', (req, res) => {
   res.status(200).send(Object.keys(champions))
 })
 

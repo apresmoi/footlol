@@ -19,6 +19,4 @@ services:
       dockerfile: ./Dockerfile
     image: game-server
     container_name: game-server
-    ports:
-      - "8081:3000"
     restart: always

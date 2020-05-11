@@ -21,7 +21,7 @@ module.exports = {
   },
   plugins: [
     new WebpackShellPlugin({
-      onBuildEnd: ['npm run run-dev']
+      onBuildEnd: NODE_ENV === 'development' ? ['npm run run-dev'] : []
     })
   ],
   module: {
