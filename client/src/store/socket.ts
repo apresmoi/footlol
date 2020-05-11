@@ -21,7 +21,7 @@ class RoomSocket {
     _onMessageSubscribers: MessageSubscribers = {}
 
     constructor(roomId, name) {
-        this._chatSocket = io(window.location.host.replace('8000', '8081') + `${roomId}?name=${name}`, {
+        this._chatSocket = io(window.location.host.replace(':8000', '') + ':8081' + `${roomId}?name=${name}`, {
             path: `/ws`,
             autoConnect: false
         });
