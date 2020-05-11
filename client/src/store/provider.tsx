@@ -101,7 +101,7 @@ export const ApplicationContextProvider = ({ children }) => {
   }
 
   const updateRooms = () => {
-    fetch('http://' + window.location.host.replace('8000', '8081') + '/api/rooms')
+    fetch('http://' + window.location.host.replace(':8000', '') + ':8081' + '/api/rooms')
       .then(response => response.json())
       .then(rooms => {
         console.log(rooms)
@@ -110,7 +110,7 @@ export const ApplicationContextProvider = ({ children }) => {
   }
 
   const updateChampionPool = () => {
-    fetch('http://' + window.location.host.replace('8000', '8081') + '/api/champions')
+    fetch('http://' + window.location.host.replace(':8000', '') + ':8081' + '/api/champions')
       .then(response => response.json())
       .then(champions => {
         console.log(champions)
