@@ -4,7 +4,7 @@ services:
     build:
       context: ./client
       dockerfile: ./Dockerfile
-    image: game-client
+    image: game-client:windows
     container_name: game-client
     command: >
       bash -c "npm run start"
@@ -19,7 +19,7 @@ services:
     build:
       context: ./server
       dockerfile: ./Dockerfile.dev
-    image: game-server
+    image: game-server:windows
     container_name: game-server
     volumes:
       - ./server:/server

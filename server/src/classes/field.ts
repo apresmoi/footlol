@@ -85,6 +85,7 @@ export class Field {
         }, 10000);
 
         this._startTime = new Date();
+        clearInterval(this._interval)
         this._interval = setInterval(() => {
             if (this.update() || this.__seconds !== this.getSeconds()) {
                 this.__seconds = this.getSeconds()

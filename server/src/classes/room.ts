@@ -66,6 +66,7 @@ export class Room extends Field {
 
     _resetStage = () => {
         this._stage = 'TEAM_SELECT'
+        clearInterval(this._interval)
     }
 
     _tryStageChange = () => {
