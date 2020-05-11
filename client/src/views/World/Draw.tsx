@@ -3,7 +3,7 @@ import PlayerComponent from './Objects/Player'
 import BallComponent from './Objects/Ball'
 import GoalComponent from './Objects/Goal'
 import FieldComponent from './Objects/Field';
-import { Player, Ball } from './types';
+import { Player, Ball } from '../../store/types';
 import { mapSize } from '../../settings'
 
 interface DrawProps {

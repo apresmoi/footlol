@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Player } from '../types'
+import { Player } from '../../../store/types'
 import { pallete } from '../../../settings';
 
 

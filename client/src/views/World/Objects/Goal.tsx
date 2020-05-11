@@ -1,5 +1,5 @@
 import React from 'react';
-import { Ball } from '../types'
+import { Ball } from '../../../store/types'
 import { mapSize } from '../../../settings';
 
 interface GoalComponentProps {

@@ -1,4 +1,4 @@
-export type ChampionName = 'Lux' | 'Nami' | 'Garen'
+export type ChampionName = 'Lux' | 'Nami' | 'Garen' | 'Veigar' | 'Shaco' | 'Darius' | 'Yasuo'
 
 export class Champion {
     name: ChampionName

@@ -19,8 +19,10 @@ export const mapSize = {
 
 
 export const pallete = {
-    'light': '#4C6B8F',
-    'dark': '#2B3C4F',
-    'darker': '#0B151E',
-    'lighter': '#7D9EC7'
+    'darkest': '#081017',
+    'darker': '#172432',
+    'dark': '#283C50',
+    'medium': '#435870',
+    'light': '#4C6F97',
+    'lighter': '#8DAFD6'
 }

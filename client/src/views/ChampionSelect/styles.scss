@@ -1,0 +1,118 @@
+.champion-select {
+
+    display: flex;
+    height: 80%;
+    width: 80%;
+    margin: auto;
+
+    flex-wrap: wrap;
+
+    .champion-pool {
+        flex: 2;
+        width: 432px;
+        background: #283C50;
+        display: flex;
+        flex-wrap: wrap;
+        margin: auto;
+        margin-top: 0px;
+        padding: 10px;
+
+
+        .champion {
+            cursor: pointer;
+            padding: 2px;
+            flex: 70px;
+            max-height: 70px;
+            max-width: 70px;
+
+            img {
+                width: 70px;
+            }
+
+            border: 1px solid transparent;
+
+            &:hover {
+                border: 1px solid yellow;
+            }
+
+            &.disabled {
+                opacity: 0.2;
+            }
+        }
+    }
+
+    .team {
+        flex: 2;
+        max-width: 300px;
+
+        .team-title {
+            font-size: 20px;
+            padding: 10;
+            text-align: center;
+            background: #4C6F97;
+            color: white;
+        }
+
+        .player {
+            width: 90%;
+            margin: auto;
+            margin-top: 5px;
+            display: flex;
+            font-size: 20px;
+
+            background: #172432;
+
+            box-shadow: 1px 1px 1px 1px #000;
+
+            border: 1px solid transparent;
+
+            &.ready {
+                border: 1px solid #424C27;
+            }
+
+            &.self {
+                border: 1px solid yellow;
+            }
+
+            &>div {
+                flex: 1;
+                padding: 10px;
+                margin: auto;
+            }
+
+            &>div:first-child {
+                max-width: 50px;
+                width: 50px;
+                height: 50px;
+
+                img {
+                    max-width: 100%;
+                }
+            }
+        }
+    }
+}
+
+.team-select-ready {
+    width: 80%;
+    margin: auto;
+    margin-top: 50px;
+    text-align: center;
+
+    button {
+        border: none;
+        width: 300px;
+        padding: 20px 20px;
+        font-size: 30px;
+        background: #4C6F97;
+        cursor: pointer;
+
+        &:hover {
+            background: #8DAFD6;
+        }
+
+        &.ready {
+            background: #384522;
+        }
+    }
+}

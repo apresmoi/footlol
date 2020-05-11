@@ -15,6 +15,8 @@ export default class Player extends CompoundCollideable {
     _champion: Champion
     _side: TeamSide
 
+    _ready: boolean = false
+
     _kickTimeout: NodeJS.Timeout
     _kicking: boolean = false
     _canKick: boolean = false
@@ -26,11 +28,14 @@ export default class Player extends CompoundCollideable {
         super(position)
         this._id = id;
         this._name = name;
-        this._champion = champions[championName]
+        if (championName) this._champion = champions[championName]
         this._side = side
         this._acceleration = 0.06
+        this._ready = false
 
-        this._physicalBody = new CircleCollideable(champions[championName].mass, position, playerRadius, {
+        const mass = this._champion?.mass || 50
+
+        this._physicalBody = new CircleCollideable(mass, position, playerRadius, {
             plugin: this
         });
         this._sensorBody = new CircleCollideable(0, position, playerActionRadius, {
@@ -39,7 +44,7 @@ export default class Player extends CompoundCollideable {
         })
 
         this._body = CompoundCollideable.fromCollideables(position, [this._physicalBody, this._sensorBody], {
-            mass: champions[championName].mass,
+            mass: mass,
             restitution: 0.2,
             frictionStatic: 0,
             friction: 0.5,
@@ -49,7 +54,6 @@ export default class Player extends CompoundCollideable {
             },
             plugin: this
         })._body
-
     }
 
     checkSensor(body: Body): boolean {
@@ -86,14 +90,28 @@ export default class Player extends CompoundCollideable {
         super.update();
     }
 
+    setReady(ready: boolean) {
+        this._ready = ready
+    }
+
+    setChampion(championName: ChampionName) {
+        this._champion = champions[championName]
+        Body.setMass(this._body, this._champion.mass)
+    }
+
+    isReady() {
+        return this._ready
+    }
+
     serialize() {
         return {
             id: this._id,
             name: this._name,
-            champion: this._champion.name,
+            champion: this._champion ? this._champion.name : null,
             position: this.getPosition().serialize(),
             side: this._side,
-            kicking: this._kicking
+            kicking: this._kicking,
+            ready: this._ready
         }
     }
 }

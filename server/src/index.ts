@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as body_parser from 'body-parser';
 import * as socketio from 'socket.io'
 import { Room } from './classes/room';
+import { champions } from './league/champions';
 
 const app = express();
 app.use(body_parser.urlencoded({ extended: false }));
@@ -10,35 +11,71 @@ app.use(body_parser.json());
 const http = require('http').Server(app);
 const io = socketio(http, { path: '/ws' });
 
-
-const room = "main"
+let roomId = '/gg'
 let matches = {
-  [room]: new Room("room", io)
+  [roomId]: new Room(roomId, "First room", io.of(roomId))
 }
 
-io.on('connection', function (socket) {
-  console.log(socket.id + ' connected');
+const newID = (): string => {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnoprqstuvwxyz012345789"
+  let id = ""
 
-  const { name, champion } = socket.handshake.query
+  while (id === "" || Object.keys(matches).includes(id)) {
+    id = ""
+    for (let i = 0; i < 20; i++) {
+      id += letters[Math.trunc(Math.random() * letters.length)]
+    }
+  }
 
-  matches[room].addPlayer(socket, name, champion)
+  return id
+}
 
-  socket.on('disconnect', function (ff) {
-    console.log(socket.id + ' disconnected');
 
-    matches[room].removePlayer(socket);
-  });
-
-  socket.on('request_direction_change', function (payload) {
-    matches[room].playerDirectionChanged(socket, payload.direction)
-  });
-  socket.on('request_key_press', function (payload) {
-    matches[room].playerKeyPress(socket, payload.code)
-  });
+//routes
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
 });
+
+app.get('/rooms', function (req, res) {
+  res.status(200)
+    .send(Object
+      .keys(io.nsps)
+      .filter(id => matches[id])
+      .map(id => {
+        return {
+          id,
+          name: matches[id]._name,
+          players: Object.keys(io.nsps[id].connected).length
+        }
+      }));
+});
+
+app.post('/rooms', (req, res) => {
+  const { name } = req.query
+  const id = newID()
+  matches[newID()] = new Room(id, name, io.of('/' + id))
+  res.status(201).send({
+    id,
+    name
+  })
+})
+
+app.get('/champions', (req, res) => {
+  res.status(200).send(Object.keys(champions))
+})
 
 http.listen(3000, function () {
   console.log('started on port 3000');
+  process.on("SIGINT", closeApp);
+  process.on("SIGTERM", closeApp);
 });
+
+function closeApp() {
+  process.exit(0)
+}
 
 export default app

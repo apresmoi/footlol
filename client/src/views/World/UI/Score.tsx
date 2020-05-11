@@ -1,6 +1,6 @@
 import React from 'react'
 import { mapSize, pallete } from "../../../settings"
-import { Player, Ball, Score as MatchScore } from '../types'
+import { Player, Ball, Score as MatchScore } from '../../../store/types'
 
 interface ScoreProps {
   players?: { [x: string]: Player }

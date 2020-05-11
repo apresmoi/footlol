@@ -1,5 +1,5 @@
 import React from 'react';
-import { Ball } from '../types'
+import { Ball } from '../../../store/types'
 
 
 const BallComponent = (props: { ball: Ball }) => {

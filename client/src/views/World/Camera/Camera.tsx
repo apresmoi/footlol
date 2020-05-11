@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
 import debounce from 'lodash/debounce'
-import { Player, Ball } from '../types';
+import { Player, Ball } from '../../../store/types';
 import { mapSize } from '../../../settings'
 
 interface CameraProps {

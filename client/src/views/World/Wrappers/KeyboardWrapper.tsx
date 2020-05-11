@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-import chatSocket, {
-  requestKeyPress, requestDirectionChange
-} from '../socket'
-import { Vector } from '../types';
+import { Vector, Player } from '../../../store/types';
+import { ApplicationContext } from '../../../store';
 
 interface KeyboardWrapperProps {
   children?: any
+  width?: number
+  height?: number
+  self?: Player
+  requestDirectionChange?: (direction: Vector) => void
+  requestKeyPress?: (code: string) => void
 }
 
 interface KeyboardWrapperState {
@@ -36,7 +39,7 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
       direction.y = -1
     if (this.state.directionKeysPressed.includes('ArrowDown'))
       direction.y = 1
-    requestDirectionChange(direction)
+    this.props.requestDirectionChange(direction)
   }
 
   handleKeyUp = (e) => {
@@ -63,7 +66,7 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
         this.setState(state => ({
           actionKeysPressed: [...state.actionKeysPressed, code]
         }), () => {
-          requestKeyPress(code)
+          this.props.requestKeyPress(code)
         })
       }
     }
@@ -98,4 +101,27 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
   }
 }
 
-export default KeyboardWrapper;
+interface IWrappedProps {
+  width?: number
+  height?: number
+  children: any
+}
+
+const Wrapped = ({ width, height, children }: IWrappedProps) => {
+  return <ApplicationContext.Consumer>
+    {state => {
+      return <KeyboardWrapper
+        self={state.self}
+        width={width}
+        height={height}
+        requestDirectionChange={state.requestDirectionChange}
+        requestKeyPress={state.requestKeyPress}
+      >
+        {children}
+      </KeyboardWrapper>
+    }}
+  </ApplicationContext.Consumer>
+}
+
+
+export default Wrapped;
