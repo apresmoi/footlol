@@ -4,7 +4,66 @@
     width: 100vw;
     height: 100vh;
     color: #fff;
-    background: rgb(8,16,23);
-    background: radial-gradient(circle, rgba(8,16,23,1) 0%, rgba(40,60,80,1) 11%, rgba(8,16,23,1) 75%);
+    background: rgb(8, 16, 23);
+    background: radial-gradient(circle, rgba(8, 16, 23, 1) 0%, rgba(40, 60, 80, 1) 11%, rgba(8, 16, 23, 1) 75%);
     display: flex;
+}
+
+.defeat-logo,
+.victory-logo {
+    rect:nth-child(2) {
+        animation-name: fadeInLogoBG;
+        animation-duration: 1s;
+        animation-timing-function: ease-out;
+        animation-delay: 0;
+        animation-direction: alternate;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+        animation-play-state: running;
+    }
+
+    rect:nth-child(3) {
+        animation-name: fadeInLogo;
+        opacity: 0;
+        animation-duration: 2s;
+        animation-timing-function: ease-out;
+        animation-delay: 1s;
+        animation-direction: alternate;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+        animation-play-state: running;
+    }
+
+    .leave-button {
+        animation-name: fadeInLogo;
+        opacity: 0;
+        animation-duration: 0.5s;
+        animation-timing-function: ease-out;
+        animation-delay: 3s;
+        animation-direction: alternate;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+        animation-play-state: running;
+        cursor: pointer;
+    }
+}
+
+@keyframes fadeInLogoBG {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes fadeInLogo {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }

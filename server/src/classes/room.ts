@@ -40,7 +40,7 @@ export class Room extends Field {
                 self.removePlayer(playerId);
                 socket.broadcast.emit('player_leave', { id: playerId })
                 if (self._connectedPlayers().length === 0) {
-                    self._resetStage()
+                    self._endGame()
                 }
             });
             socket.on('request_send_message', function (payload) {
@@ -57,25 +57,24 @@ export class Room extends Field {
         });
     }
 
-    __seconds_limit = 600
-    __seconds = 0
-
     _emit = () => {
         this._socket.emit('update', this.serialize());
     }
 
-    _resetStage = () => {
-        this._stage = 'TEAM_SELECT'
-        clearInterval(this._interval)
+    _endGame() {
+        super._endGame()
+        setTimeout(() => {
+            this._tryStageChange()
+        }, this.__leave_countdown * 1000);
     }
 
     _tryStageChange = () => {
-        console.log('_tryStageChange')
+        console.log('_tryStageChange', this._gameEnded)
         if (this._stage === 'TEAM_SELECT') {
             const players = this._connectedPlayers()
             if (players.length && !players.some(x => !x.isReady())) {
+                this._resetPlayers()
                 this._stage = 'CHAMPION_SELECT'
-                // this._socket.emit('stage_change', { stage: this._stage })
                 players.forEach(x => x.setReady(false))
                 this._emit()
             }
@@ -85,10 +84,15 @@ export class Room extends Field {
             if (!players.some(x => !x.isReady())) {
                 this._stage = 'FIELD'
                 this._socket.emit('stage_change', { stage: this._stage })
+                players.forEach(x => x.setReady(false))
                 this._startGame()
             }
         }
-        else if (this._stage === 'FIELD') {
+        else if (this._stage === 'FIELD' && this._gameEnded) {
+            const players = this._connectedPlayers()
+            this._stage = 'TEAM_SELECT'
+            this._socket.emit('stage_change', { stage: this._stage })
+            players.forEach(x => x.setReady(false))
         }
     }
 
@@ -132,6 +136,7 @@ export class Room extends Field {
 
 
     serialize() {
+        const seconds = this.getSeconds()
         return {
             stage: this._stage,
             players: Object.keys(this._players).reduce((r, key) => {
@@ -142,7 +147,9 @@ export class Room extends Field {
             }, {}),
             ball: this._ball ? this._ball.serialize() : null,
             score: this._score ? this._score.serialize() : null,
-            time: this._startTime ? this.__seconds_limit - this.getSeconds() : 0
+            time: this.__seconds_limit - seconds,
+            countdown: this.__countdown > seconds ? this.__countdown - seconds : 0,
+            victory: this._gameEnded === true ? this._victorySide : null
         }
     }
 }

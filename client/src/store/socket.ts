@@ -73,6 +73,11 @@ class RoomSocket {
         this._chatSocket.connect()
     }
 
+    disconnect = () => {
+        this._chatSocket.disconnect()
+        delete this._chatSocket
+    }
+
     _sendMessage = (type, payload) => this._chatSocket.emit(type, payload)
 
     requestDirectionChange = (direction: Vector) => this._sendMessage(REQUEST_DIRECTION_CHANGE, { direction })

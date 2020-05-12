@@ -42,6 +42,13 @@ export class Score {
         return null
     }
 
+    getWinner(): TeamSide {
+        if (this._goals.length) {
+            return this._left > this._right ? 'LEFT' : 'RIGHT'
+        }
+        return 'LEFT'
+    }
+
     serialize() {
         return {
             left: this._left,

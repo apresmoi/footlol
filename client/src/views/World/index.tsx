@@ -6,6 +6,8 @@ import Camera, { CameraPosition } from './Camera/Camera';
 import Score from './UI/Score';
 import { Container, Header, Wrapper } from '../../layout';
 import ActionBar from './UI/ActionBar';
+import Victory from './UI/Victory';
+import Defeat from './UI/Defeat';
 
 const World = () => {
   return (
@@ -21,6 +23,8 @@ const World = () => {
             <Score />
             <KeyboardWrapper>
               <ActionBar />
+              <Defeat />
+              <Victory />
             </KeyboardWrapper>
           </ActionsWrapper>
         </Camera>

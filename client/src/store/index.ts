@@ -1,28 +1,9 @@
-import React, { useState } from 'react'
-import RoomSocket from './socket';
-import { RoomStage, Player, Ball, Score, Vector } from './types';
+import React from 'react'
+import { Champion, Vector, ApplicationContextProviderState } from './types';
 
-export type Champion = 'Lux' | 'Nami';
-export type Room = {
-    id: string
-    name: string
-    players: number
-}
 
-interface IApplicationContext {
-    name: string
-    champion?: Champion
-    roomId?: string
-    rooms: Room[]
-    stage: RoomStage
-    champions: Champion[]
 
-    self?: Player
-    ball?: Ball
-    score?: Score
-    time?: number
-    players: { [x: string]: Player }
-
+interface IApplicationContext extends ApplicationContextProviderState {
     changeName: (name: string) => void,
     changeChampion: (champion: Champion) => void,
     connectSocket: (roomId: string) => void,
@@ -47,8 +28,10 @@ export const ApplicationContext = React.createContext<IApplicationContext>(
         ball: null,
         score: null,
         time: null,
+        countdown: null,
         players: {},
         champions: [],
+        victory: null,
         changeName: (name: string) => { },
         changeChampion: (champion: Champion) => { },
         connectSocket: (roomId: string) => { },

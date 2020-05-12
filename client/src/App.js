@@ -32,7 +32,7 @@ const Game = () => {
   return <ApplicationContext.Consumer>
     {(state) => {
       if (!state.name) return <Redirect to={'/'} />
-      else if (!state.roomId) return <Redirect to={'/room-select'} />
+      else if (!state.roomId || (state.stage === 'TEAM_SELECT' && !state.self)) return <Redirect to={'/room-select'} />
 
       if (state.stage === 'TEAM_SELECT') return <TeamSelect />;
       else if (state.stage === 'CHAMPION_SELECT') return <ChampionSelect />;

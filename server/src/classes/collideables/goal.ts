@@ -6,8 +6,8 @@ import { goalSize, mapSize } from "../../globals";
 import { Vector } from "../math";
 import { IChamferableBodyDefinition, World, Body } from "matter-js";
 import { TeamSide } from "../../types";
+import { GoalCategory } from "./categories";
 
-export const GoalCategory = 0x0008
 export default class Goal extends PolygonCollideable {
     _bodyGoalStickLeft: CircleCollideable
     _bodyGoalStickRight: CircleCollideable
@@ -95,17 +95,21 @@ export default class Goal extends PolygonCollideable {
     }
 
     materialize(world: World) {
-        super.materialize(world);
-        World.add(world, this._bodyGoalStickLeft._body);
-        World.add(world, this._bodyGoalStickRight._body);
-        World.add(world, this._sensor._body);
+        if (!this._mounted) {
+            super.materialize(world);
+            World.add(world, this._bodyGoalStickLeft._body);
+            World.add(world, this._bodyGoalStickRight._body);
+            World.add(world, this._sensor._body);
+        }
     }
 
     dematerialize(world: World) {
-        super.materialize(world);
-        World.remove(world, this._bodyGoalStickLeft._body);
-        World.remove(world, this._bodyGoalStickRight._body);
-        World.remove(world, this._sensor._body);
+        if (this._mounted) {
+            super.dematerialize(world);
+            World.remove(world, this._bodyGoalStickLeft._body);
+            World.remove(world, this._bodyGoalStickRight._body);
+            World.remove(world, this._sensor._body);
+        }
     }
 
 }

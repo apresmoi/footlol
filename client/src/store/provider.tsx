@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from 'react'
-import { Champion, ApplicationContext } from '.'
+import React, { useState } from 'react'
+import { ApplicationContext } from '.'
 import RoomSocket from './socket'
-import { Vector, PlayerMessage } from './types';
+import { Vector, RoomStage, ApplicationContextProviderState, Champion } from './types';
+import { useHistory } from 'react-router-dom';
 
 const localStorageData: {
   name: string
@@ -9,14 +10,31 @@ const localStorageData: {
 
 let socket: RoomSocket = null;
 
+const defaultState = {
+  champion: null,
+  roomId: null,
+  rooms: [],
+  champions: [],
+  stage: null,
+  self: null,
+  ball: null,
+  score: null,
+  time: null,
+  players: {}
+}
+
 export const ApplicationContextProvider = ({ children }) => {
-  const [state, setState] = useState({
-    name: localStorageData && localStorageData.name ? localStorageData.name : "",
+  const stage: RoomStage = null
+  const roomID: string = null
+
+  const name: string = localStorageData && localStorageData.name ? localStorageData.name : ""
+  const [state, setState] = useState<ApplicationContextProviderState>({
+    name: name,
     champion: null,
-    roomId: null,
+    roomId: roomID,
     rooms: [],
     champions: [],
-    stage: null,
+    stage: stage,
     self: null,
     ball: null,
     score: null,
@@ -65,18 +83,32 @@ export const ApplicationContextProvider = ({ children }) => {
       })
     })
     socket.subscribeUpdate((payload) => {
-      setState({
-        ...state,
-        ...payload,
-        self: state.self ? { ...payload.players[state.self.id], direction: state.self.direction } : state.self
-      })
+      if (payload.stage === 'TEAM_SELECT' && !state.self) {
+        socket.disconnect()
+        socket = null
+        setState({ ...state, ...defaultState })
+      }
+      else {
+        setState({
+          ...state,
+          ...payload,
+          self: state.self ? { ...payload.players[state.self.id], direction: state.self.direction } : state.self
+        })
+      }
     })
 
     socket.subscribeStageChange((payload) => {
-      setState({
-        ...state,
-        stage: payload.stage
-      })
+      if (payload.stage === 'TEAM_SELECT' && !state.self) {
+        socket.disconnect()
+        socket = null
+        setState({ ...state, ...defaultState })
+      }
+      else {
+        setState({
+          ...state,
+          stage: payload.stage
+        })
+      }
     })
   }
 

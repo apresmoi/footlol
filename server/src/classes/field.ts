@@ -1,5 +1,5 @@
 import Player from "./collideables/player"
-import Ball, { BallCategory } from "./collideables/ball"
+import Ball from "./collideables/ball"
 import { Vector } from "./math"
 import { ChampionName } from "../league/classes"
 import { timeConstant, mapSize, mapInnerSize, goalSize, playerPositions } from "../globals"
@@ -10,17 +10,20 @@ import Goal from "./collideables/goal"
 import { TeamSide, RoomSensors, ResetType, ICollideableEventCollision } from "../types"
 import TurnWall from "./collideables/turnwall"
 import { Score } from "./score"
+import { BallCategory } from "./collideables/categories"
 
 export class Field {
     _id: string
     _name: string
     _players: { [x: string]: Player }
-    _ball: Ball
+    _ball: Ball = null;
     _interval: NodeJS.Timeout
     _engine: Engine
     _world: World
-    _score: Score
+    _score: Score = new Score()
     _startTime: Date
+    _victorySide: TeamSide = 'LEFT'
+    _gameEnded: boolean = false
 
     _goal: boolean = false
     _sideTurn: TeamSide = 'LEFT' // this is the side that will start with control of the ball
@@ -56,74 +59,79 @@ export class Field {
         this._id = id;
         this._name = name;
         this._players = {};
+
+        this._engine = Engine.create();
+        this._world = this._engine.world;
+        this._world.bounds = mapSize;
+        this._world.gravity.x = 0;
+        this._world.gravity.y = 0;
+        this._mountWalls()
     }
 
-    __seconds_limit = 600
-    __seconds = -10
+    __leave_countdown = 10
+    __countdown = 5
+    __seconds_limit = 600 + this.__countdown
+    __seconds = 0
 
     _emit = () => {
 
     }
 
     _startGame = () => {
-        this._engine = Engine.create();
-        this._world = this._engine.world;
-        this._world.bounds = mapSize;
-        this._world.gravity.x = 0;
-        this._world.gravity.y = 0;
+        console.log('_startGame')
 
         this._score = new Score()
-        this._mountWalls()
         this._connectedPlayers().forEach(player => player.materialize(this._world))
         this._mountStartWalls();
+        this._gameEnded = false
+        this._victorySide = 'LEFT'
 
         setTimeout(() => {
             this._mountSensors()
+            this._mountBall()
             Events.on(this._engine, 'collisionStart', this._handleCollisionsStart);
             Events.on(this._engine, 'collisionEnd', this._handleCollisionsEnd);
-            this._mountBall();
-        }, 10000);
+        }, this.__countdown * 1000);
 
         this._startTime = new Date();
         clearInterval(this._interval)
         this._interval = setInterval(() => {
             if (this.update() || this.__seconds !== this.getSeconds()) {
                 this.__seconds = this.getSeconds()
-                if (this.__seconds_limit - this.__seconds <= 0)
-                    this._reset('RESET')
+                if (this.__seconds_limit - this.__seconds <= 0) {
+                    this._endGame()
+                    this._emit()
+                }
                 else
                     this._emit()
             }
         }, timeConstant)
     }
 
+    _endGame() {
+        console.log('_endGame')
+        clearInterval(this._interval);
+        this._victorySide = this._score.getWinner()
+        this._gameEnded = true
+        this.__seconds = 0;
+        this._startTime = null;
+        this._goal = false;
+        this._sideTurn = 'LEFT'
+        this._score.reset()
+        this._unmountBall()
+        this._unmountStartWalls()
+    }
+
     _reset = (type: ResetType) => {
         if (type === 'GOAL') {
             setTimeout(() => {
                 this._goal = false
-                this._ball.dematerialize(this._world);
                 this._mountBall()
                 this._mountStartWalls()
                 this._connectedPlayers().forEach(player => player.resetPosition(this._world))
                 this._emit()
             }, 2900);
-        } else if (type === 'RESET') {
-            this.__seconds = 0;
-            this._startTime = new Date();
-            this._goal = false;
-            this._sideTurn = 'LEFT'
-            this._ball.dematerialize(this._world)
-            this._score.reset()
-            this._mountBall()
-            this._mountStartWalls()
-            this._connectedPlayers().forEach(player => player.resetPosition(this._world))
-            this._emit()
         }
-    }
-
-    _mountBall = () => {
-        this._ball = new Ball(mapSize.center);
-        this._ball.materialize(this._world);
     }
 
     _mountWalls = () => {
@@ -142,11 +150,24 @@ export class Field {
                 break;
         }
         this._startWalls[this._sideTurn].materialize(this._world)
+        this._startWalls[this._sideTurn === 'LEFT' ? 'RIGHT' : 'LEFT'].dematerialize(this._world)
     }
 
     _unmountStartWalls = () => {
         this._startWalls['LEFT'].dematerialize(this._world)
         this._startWalls['RIGHT'].dematerialize(this._world)
+    }
+
+    _mountBall = () => {
+        this._ball = new Ball(mapSize.center);
+        this._ball.materialize(this._world);
+    }
+
+    _unmountBall = () => {
+        if (this._ball) {
+            this._ball.dematerialize(this._world);
+            this._ball = null;
+        }
     }
 
     _mountSensors = () => {
@@ -182,10 +203,10 @@ export class Field {
                 this._players[id].kick(this._ball)
                 break;
             case 'KeyQ':
-                this._players[id].requestAbility('Q')
+                this._players[id].requestAbility('Q', this._world)
                 break
             case 'KeyW':
-                this._players[id].requestAbility('W')
+                this._players[id].requestAbility('W', this._world)
                 break
             default:
                 break;
@@ -197,6 +218,13 @@ export class Field {
             r.push(this._players[key])
             return r;
         }, [])
+    }
+
+    _resetPlayers() {
+        Object.keys(this._players).forEach(id => {
+            this._players[id].dematerialize(this._world)
+            this._players[id] = new Player(id, this._players[id]._name, null, this._players[id]._startPosition, this._players[id]._side)
+        })
     }
 
     _handleBallInsideGoal(sensor: Goal): void {
@@ -300,20 +328,23 @@ export class Field {
     }
 
     getSeconds(): number {
-        return Math.trunc((new Date().getTime() - this._startTime.getTime()) / 1000)
+        if (this._startTime)
+            return Math.trunc((new Date().getTime() - this._startTime.getTime()) / 1000)
+        return 0
     }
 
     serialize() {
+        const seconds = this.getSeconds()
         return {
             players: Object.keys(this._players).reduce((r, key) => {
-                //@ts-ignore
-                if (this._socket.clients().connected[key])
-                    r[key] = this._players[key].serialize()
+                r[key] = this._players[key].serialize()
                 return r;
             }, {}),
             ball: this._ball ? this._ball.serialize() : null,
             score: this._score ? this._score.serialize() : null,
-            time: this._startTime ? this.__seconds_limit - this.getSeconds() : 0
+            time: this.__seconds_limit - seconds,
+            countdown: this.__countdown > seconds ? this.__countdown - seconds : 0,
+            victory: this._gameEnded ? this._victorySide : null
         }
     }
 }

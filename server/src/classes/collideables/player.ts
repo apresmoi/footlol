@@ -3,12 +3,11 @@ import { playerRadius, playerActionRadius } from "../../globals";
 import { Vector } from "../math";
 import { Champion, ChampionName } from "../../league/classes";
 import { champions } from "../../league/champions";
-import { Body } from "matter-js";
+import { Body, World } from "matter-js";
 import Ball from "./ball";
 import { TeamSide } from "../../types";
+import { PlayerLeftSideCategory, PlayerRightSideCategory } from "./categories";
 
-export const PlayerCategory = 0x0004
-export const PlayerActionCategory = 0x0016
 export default class Player extends CompoundCollideable {
     _id: string
     _name: string
@@ -24,16 +23,20 @@ export default class Player extends CompoundCollideable {
     _physicalBody: CircleCollideable
     _sensorBody: CircleCollideable
 
+    _force: number
+
+    _facingVector: Vector
+
     constructor(id: string, name: string, championName: ChampionName, position: Vector, side: TeamSide) {
         super(position)
         this._id = id;
         this._name = name;
-        if (championName) this._champion = champions[championName]
+        if (championName) this._champion = champions[championName](side)
         this._side = side
-        this._acceleration = 0.06
+        this._acceleration = 0.07
         this._ready = false
 
-        const mass = this._champion?.mass || 50
+        const mass = this._champion?.hp / 10 || 50
 
         this._physicalBody = new CircleCollideable(mass, position, playerRadius, {
             plugin: this
@@ -50,7 +53,7 @@ export default class Player extends CompoundCollideable {
             friction: 0.5,
             frictionAir: 0.07,
             collisionFilter: {
-                category: PlayerCategory,
+                category: side === 'LEFT' ? PlayerLeftSideCategory : PlayerRightSideCategory,
             },
             plugin: this
         })._body
@@ -71,7 +74,7 @@ export default class Player extends CompoundCollideable {
             const point = this.getPosition().add(
                 this.getPosition().substract(ball.getPosition()).normalize().multiply(ball._body.circleRadius)//.rotate(Math.PI / 4)
             )
-            const force = this.getPosition().substract(ball.getPosition()).normalize().multiply(this._acceleration)
+            const force = this.getPosition().substract(ball.getPosition()).normalize().multiply(this._force)
             Body.applyForce(ball._body, point, force)
         }
         this._kickTimeout = setTimeout(() => {
@@ -79,8 +82,8 @@ export default class Player extends CompoundCollideable {
         }, 100);
     }
 
-    requestAbility(ability: 'Q' | 'W'): void {
-        console.log("Ability " + ability)
+    requestAbility(ability: 'Q' | 'W', world: World): void {
+        this._champion.tryExecute(ability, this, world)
     }
 
     update() {
@@ -95,8 +98,15 @@ export default class Player extends CompoundCollideable {
     }
 
     setChampion(championName: ChampionName) {
-        this._champion = champions[championName]
-        Body.setMass(this._body, this._champion.mass)
+        this._champion = champions[championName](this._side)
+        Body.setMass(this._body, this._champion.hp / 10)
+        this._acceleration = this._champion.movespeed / 5000
+        this._force = this._champion.attackdamage / 400
+    }
+
+    changeDirection(direction: Vector) {
+        super.changeDirection(direction)
+        if (direction.x !== 0 && direction.y !== 0) this._facingVector = direction
     }
 
     isReady() {

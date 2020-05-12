@@ -1,11 +1,10 @@
 import { CircleCollideable } from "./physics";
 import { ballRadius, ballMass } from "../../globals";
 import { Vector } from "../math";
-import { Body } from "matter-js";
 import Player from "./player";
+import { BallCategory } from "./categories";
 
 export type BallKicker = { player: Player, seconds: number }
-export const BallCategory = 0x0002
 export default class Ball extends CircleCollideable {
     _kickers: BallKicker[] = []
 

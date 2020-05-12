@@ -8,6 +8,7 @@ interface ScoreProps {
   ball?: Ball
   score?: MatchScore
   time?: number
+  countdown?: number
   width?: number
   height?: number
 }
@@ -15,8 +16,18 @@ interface ScoreProps {
 const Score = (props: ScoreProps) => {
   if (!props.score) return null
 
-  const minutes = Math.trunc(props.time / 60)
-  const seconds = Math.floor(props.time - minutes * 60)
+  let minutes = 0
+  let seconds = 0
+  if (props.countdown) {
+    minutes = Math.trunc(props.countdown / 60)
+    seconds = Math.floor(props.countdown - minutes * 60)
+  }
+  else {
+    minutes = Math.trunc(props.time / 60)
+    seconds = Math.floor(props.time - minutes * 60)
+  }
+
+
 
   return (
     <g transform={`translate(${props.width / 2}, ${0})`}>

@@ -61,6 +61,7 @@ const ActionsWrapper = (props: ActionsWrapperProps) => {
           ball: context.ball,
           score: context.score,
           time: context.time,
+          countdown: context.countdown,
 
           width: props['width'],
           height: props['height'],

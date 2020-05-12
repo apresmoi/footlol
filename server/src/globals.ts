@@ -1,9 +1,9 @@
 import { Vector, Size } from "./classes/math"
 import { TeamSide } from "./types";
 
-export const timeConstant: number = 20;
+export const timeConstant: number = 25;
 export const ballRadius: number = 12;
-export const ballMass: number = 1;
+export const ballMass: number = 2.5;
 export const playerRadius: number = 25;
 export const playerActionRadius: number = 40;
 export const fieldCircleRadius: number = 140;

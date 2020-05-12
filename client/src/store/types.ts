@@ -24,7 +24,7 @@ export interface Score {
     right: number
 }
 
-export type RoomStage = 'TEAM_SELECT' | 'CHAMPION_SELECT' | 'FIELD'
+export type RoomStage = 'TEAM_SELECT' | 'CHAMPION_SELECT' | 'FIELD' | 'END'
 
 export interface PlayerMessage {
     name: string
@@ -61,4 +61,26 @@ export type MessageSubscribers = {
     position_change?: (payload: Player) => void
     message_sent?: (payload: PlayerMessage) => void
     update?: (payload: UpdatePayload) => void
+}
+
+export type Champion = 'Lux' | 'Nami';
+export type Room = {
+    id: string
+    name: string
+    players: number
+}
+export interface ApplicationContextProviderState {
+    name: string
+    champion?: Champion
+    roomId?: string
+    rooms: Room[]
+    stage: RoomStage
+    champions: Champion[]
+    self?: Player
+    ball?: Ball
+    score?: Score
+    time?: number
+    players: { [x: string]: Player }
+    victory?: 'LEFT' | 'RIGHT'
+    countdown?: number
 }

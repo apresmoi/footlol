@@ -1,8 +1,8 @@
 import { PolygonCollideable } from "./physics";
 import { mapSize, fieldCircleRadius } from "../../globals";
 import { TeamSide } from "../../types";
-import { WallCategory } from "./wall";
 import { Vector } from "../math";
+import { WallCategory } from "./categories";
 
 export default class TurnWall extends PolygonCollideable {
     constructor(side: TeamSide) {

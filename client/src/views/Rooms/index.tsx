@@ -1,8 +1,9 @@
 import React, { useContext, useEffect } from 'react';
 import { Container, Header, Wrapper } from '../../layout';
 import "./styles.scss"
-import { ApplicationContext, Room } from '../../store';
+import { ApplicationContext } from '../../store';
 import { useLocation, useHistory } from 'react-router-dom';
+import { Room } from '../../store/types';
 
 const Rooms = () => {
   const context = useContext(ApplicationContext)
