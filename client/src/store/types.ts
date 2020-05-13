@@ -11,6 +11,10 @@ export interface Player {
     direction: Vector
     position: Vector
     ready: boolean
+    cooldown: {
+        Q: number
+        W: number
+    }
     side: 'LEFT' | 'RIGHT'
 }
 
@@ -40,12 +44,46 @@ export interface StageChangePayload {
     stage: RoomStage
 }
 
+export interface EffectImage {
+    src: string
+    x: number
+    y: number
+    w: number
+    h: number
+}
+
+export interface Effect {
+    id: string
+    type: 'circle' | 'rect' | 'compound' | 'ring'
+    position: Vector
+    image: EffectImage
+}
+export interface CircleEffect extends Effect {
+    type: 'circle'
+    radius: number
+}
+export interface RectEffect extends Effect {
+    type: 'rect'
+    width: number
+    height: number
+}
+export interface CompoundEffect extends Effect {
+    type: 'compound'
+}
+export interface RingEffect extends Effect {
+    type: 'ring'
+    radius: number
+    thickness: number
+}
+
+
 export interface UpdatePayload {
     players: { [id: string]: Player }
     ball: Ball
     score: Score
     time: number
     stage: RoomStage
+    effects: Array<CircleEffect | RectEffect | CompoundEffect>
 }
 
 export interface LoginSuccessPayload extends UpdatePayload {
@@ -63,7 +101,30 @@ export type MessageSubscribers = {
     update?: (payload: UpdatePayload) => void
 }
 
-export type Champion = 'Lux' | 'Nami';
+export type Champion = {
+    name: string,
+    spells: {
+        Q: {
+            id: string,
+            sprite: string,
+            x: number,
+            y: number,
+            w: number,
+            h: number,
+            cooldown: number,
+        },
+        W: {
+            id: string,
+            sprite: string,
+            x: number,
+            y: number,
+            w: number,
+            h: number,
+            cooldown: number,
+        }
+    }
+}
+
 export type Room = {
     id: string
     name: string
@@ -71,7 +132,7 @@ export type Room = {
 }
 export interface ApplicationContextProviderState {
     name: string
-    champion?: Champion
+    champion?: string
     roomId?: string
     rooms: Room[]
     stage: RoomStage
@@ -80,6 +141,7 @@ export interface ApplicationContextProviderState {
     ball?: Ball
     score?: Score
     time?: number
+    effects: Array<CircleEffect | RectEffect | CompoundEffect>
     players: { [x: string]: Player }
     victory?: 'LEFT' | 'RIGHT'
     countdown?: number

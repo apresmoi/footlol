@@ -1,7 +1,6 @@
 import React from 'react';
 import KeyboardWrapper from './Wrappers/KeyboardWrapper'
 import Draw from './Draw'
-import ActionsWrapper from './Wrappers/ActionsWrapper';
 import Camera, { CameraPosition } from './Camera/Camera';
 import Score from './UI/Score';
 import { Container, Header, Wrapper } from '../../layout';
@@ -16,17 +15,15 @@ const World = () => {
       </Header>
       <Container>
         <Camera>
-          <ActionsWrapper>
-            <CameraPosition>
-              <Draw />
-            </CameraPosition>
-            <Score />
-            <KeyboardWrapper>
-              <ActionBar />
-              <Defeat />
-              <Victory />
-            </KeyboardWrapper>
-          </ActionsWrapper>
+          <CameraPosition>
+            <Draw />
+          </CameraPosition>
+          <Score />
+          <KeyboardWrapper>
+            <ActionBar />
+            <Defeat />
+            <Victory />
+          </KeyboardWrapper>
         </Camera>
       </Container>
     </Wrapper>

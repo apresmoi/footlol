@@ -13,8 +13,9 @@ export default class Ball extends CircleCollideable {
             restitution: 0.9,
             collisionFilter: {
                 category: BallCategory
-            }
+            },
         });
+        this._body.plugin.owner = this
     }
 
     addKicker(seconds: number, player: Player): void {

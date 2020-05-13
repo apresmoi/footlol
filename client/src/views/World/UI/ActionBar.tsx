@@ -1,13 +1,10 @@
-import React from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { mapSize, pallete } from "../../../settings"
 import { Player, Ball, Score as MatchScore } from '../../../store/types'
+import { ApplicationContext } from '../../../store'
 
 interface ActionBarProps {
-  players?: { [x: string]: Player }
   self?: Player
-  ball?: Ball
-  score?: MatchScore
-  time?: number
   width?: number
   height?: number
 
@@ -16,12 +13,14 @@ interface ActionBarProps {
 }
 
 const ActionBar = (props: ActionBarProps) => {
-  if (!props.self) return null
+  const { champions, updateChampionPool } = useContext(ApplicationContext)
+  if (!champions || champions.length === 0) updateChampionPool()
+  const champion = champions.find(row => row.name === props.self.champion)
+  if (!props.self || !champion) return null
 
-  console.log(props.actionKeysPressed)
   return (
     <g transform={`translate(${props.width / 2}, ${props.height - 80})`}>
-      {/* <polygon transform={`translate(-140,0)`} points={'0,0 280,0 280,80 0,80'} fill={'white'} /> */}
+      {/* <polygon transform={`translate(-110,0)`} points={'0,0 220,0 220,80 0,80'} fill={'white'} /> */}
       <defs>
         <pattern id={`player_image`} x="-5%" y="-5%" height="105%" width="105%"
           viewBox="0 0 120 120">
@@ -29,43 +28,44 @@ const ActionBar = (props: ActionBarProps) => {
         </pattern>
 
 
-        <pattern id={`spell_pasive`} x="-5%" y="-5%" height="105%" width="105%"
+        {/* <pattern id={`spell_pasive`} x="-5%" y="-5%" height="105%" width="105%"
           viewBox="0 0 120 120">
           <image x="0" y="0" width="120" height="120" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${props.self.champion}.png`}></image>
-        </pattern>
+        </pattern> */}
         <pattern id={`sell_primary`} x="-5%" y="-5%" height="105%" width="105%"
-          viewBox="0 0 120 120">
-          <image x="0" y="0" width="120" height="120" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${props.self.champion}.png`}></image>
+          viewBox={`${champion.spells.Q.x} ${champion.spells.Q.y} ${champion.spells.Q.w} ${champion.spells.Q.h}`}>
+          <image x="0" y="0" width="480" height="192" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/sprite/${champion.spells.Q.sprite}`}></image>
         </pattern>
         <pattern id={`spell_secondary`} x="-5%" y="-5%" height="105%" width="105%"
-          viewBox="0 0 120 120">
-          <image x="0" y="0" width="120" height="120" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${props.self.champion}.png`}></image>
+          viewBox={`${champion.spells.W.x} ${champion.spells.W.y} ${champion.spells.W.w} ${champion.spells.W.h}`}>
+          <image x="0" y="0" width="480" height="192" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/sprite/${champion.spells.W.sprite}`}></image>
         </pattern>
+
       </defs>
       {/* background */}
-      <polygon transform={`translate(-100,20)`} points={'0,0 240,0 240,60 0,60'} fill={'black'} />
+      <polygon transform={`translate(-70,20)`} points={'0,0 175,0 175,60 0,60'} fill={'black'} />
       {/* character */}
       <circle
-        cx={-140 + 40}
+        cx={-110 + 40}
         cy={40}
         r={40}
         fill={`#000`}
       />
       <circle
-        cx={-140 + 40}
+        cx={-110 + 40}
         cy={40}
         r={35}
         fill={`url(#player_image)`}
       />
       {/* spells */}
-      <Spell x={-50} y={30} id={'spell_pasive'} pressed={false} />
-      <Spell x={35} y={30} id={'sell_primary'} pressed={props.actionKeysPressed && props.actionKeysPressed.includes('KeyQ')} />
-      <Spell x={90} y={30} id={'spell_secondary'} pressed={props.actionKeysPressed && props.actionKeysPressed.includes('KeyW')} />
+      {/* <Spell x={-50} y={30} id={'spell_pasive'} pressed={false} /> */}
+      <Spell x={0} y={30} id={'sell_primary'} cooldown={props.self.cooldown.Q} pressed={props.actionKeysPressed && props.actionKeysPressed.includes('KeyQ')} />
+      <Spell x={55} y={30} id={'spell_secondary'} cooldown={props.self.cooldown.W} pressed={props.actionKeysPressed && props.actionKeysPressed.includes('KeyW')} />
     </g>
   )
 }
 
-const Spell = ({ id, x, y, pressed }) => {
+const Spell = ({ id, x, y, pressed, cooldown }) => {
   return <g transform={`translate(${x}, ${y})`}>
     <defs>
       <pattern id={id} x="-5%" y="-5%" height="105%" width="105%"
@@ -73,9 +73,15 @@ const Spell = ({ id, x, y, pressed }) => {
         <image x="0" y="0" width="120" height="120" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/Nami.png`}></image>
       </pattern>
     </defs>
-    <rect x={-5} y={-5} width={50} height={50} fill={`#black`} />
-    <rect x={0} y={0} width={40} height={40} fill={`url(#${id})`} />
-    {pressed && <rect x={0} y={0} width={40} height={40} fill='transparent' stroke={`white`} strokeWidth={1} />}
+    <rect x={2} y={2} width={40} height={40} fill={`url(#${id})`} />
+    <rect x={0} y={0} width={44} height={44} fill='transparent' stroke={`yellow`} strokeWidth={1} />
+    {pressed && <rect x={0} y={0} width={44} height={44} fill='transparent' stroke={`white`} strokeWidth={1} />}
+    {cooldown && <g>
+      <rect x={2} y={2} width={40} height={40} fill={`#black`} opacity={0.8} />
+      <text transform={`translate(${22}, ${22})`} textAnchor="middle" alignmentBaseline="middle" fontWeight="bolder" fill="white">
+        {cooldown}
+      </text>
+    </g>}
   </g>
 }
 

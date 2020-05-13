@@ -26,8 +26,6 @@ const TeamSelect = () => {
     context.requestChampionSelect(champion)
   }
 
-  console.log(context)
-
   return (
     <Wrapper>
       <Header>

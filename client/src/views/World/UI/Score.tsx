@@ -1,33 +1,28 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { mapSize, pallete } from "../../../settings"
 import { Player, Ball, Score as MatchScore } from '../../../store/types'
+import { ApplicationContext } from '../../../store'
 
 interface ScoreProps {
-  players?: { [x: string]: Player }
-  self?: Player
-  ball?: Ball
-  score?: MatchScore
-  time?: number
-  countdown?: number
   width?: number
   height?: number
 }
 
 const Score = (props: ScoreProps) => {
-  if (!props.score) return null
+  const { score, countdown, time } = useContext(ApplicationContext)
+
+  if (!score) return null
 
   let minutes = 0
   let seconds = 0
-  if (props.countdown) {
-    minutes = Math.trunc(props.countdown / 60)
-    seconds = Math.floor(props.countdown - minutes * 60)
+  if (countdown) {
+    minutes = Math.trunc(countdown / 60)
+    seconds = Math.floor(countdown - minutes * 60)
   }
   else {
-    minutes = Math.trunc(props.time / 60)
-    seconds = Math.floor(props.time - minutes * 60)
+    minutes = Math.trunc(time / 60)
+    seconds = Math.floor(time - minutes * 60)
   }
-
-
 
   return (
     <g transform={`translate(${props.width / 2}, ${0})`}>
@@ -38,7 +33,7 @@ const Score = (props: ScoreProps) => {
         textAnchor={"middle"}
         fontSize={40}
         fill={'white'}
-      >{props.score.left}</text>
+      >{score.left}</text>
 
       <text
         x={50}
@@ -46,7 +41,7 @@ const Score = (props: ScoreProps) => {
         textAnchor={'middle'}
         fontSize={40}
         fill={'white'}
-      >{props.score.right}</text>
+      >{score.right}</text>
 
       <text
         x={0}

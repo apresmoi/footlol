@@ -11,7 +11,6 @@ const TeamSelect = () => {
     return result
   }, { LEFT: [], RIGHT: [] })
   const handleReadyClick = () => {
-    console.log(context)
     context.requestPlayerReady(!context.self.ready)
   }
 

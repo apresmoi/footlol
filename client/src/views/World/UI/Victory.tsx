@@ -13,7 +13,6 @@ const Victory = (props: VictoryProps) => {
   //   context.requestPlayerReady(true)
   // }
 
-  console.log(context.victory)
   if (!context.victory || !context.self) return null
   if (context.victory && context.self && context.self.side !== context.victory) return null
   return (

@@ -3,6 +3,7 @@ import * as body_parser from 'body-parser';
 import * as socketio from 'socket.io'
 import { Room } from './classes/room';
 import { champions } from './league/champions';
+import { Champion } from './league/classes';
 
 const app = express();
 app.use(body_parser.urlencoded({ extended: false }));
@@ -66,7 +67,10 @@ app.post('/api/rooms', (req, res) => {
 })
 
 app.get('/api/champions', (req, res) => {
-  res.status(200).send(Object.keys(champions))
+  res.status(200).send(Object.keys(champions).map(name => {
+    const champion: Champion = champions[name]('LEFT')
+    return champion.serialize()
+  }))
 })
 
 http.listen(3000, function () {

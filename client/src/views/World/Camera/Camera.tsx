@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
 import debounce from 'lodash/debounce'
 import { Player, Ball } from '../../../store/types';
 import { mapSize } from '../../../settings'
+import { ApplicationContext } from '../../../store';
 
 interface CameraProps {
   children: any
@@ -20,7 +21,6 @@ const Camera = (props: CameraProps) => {
         const width = parseInt(strWidth.replace('px', ''))
         const height = parseInt(strHeight.replace('px', ''))
         if (size.width !== width || size.height !== height) {
-          console.log('setSize')
           setSize({ width, height })
         }
       }
@@ -63,7 +63,7 @@ interface CameraChildProps {
 const CameraPosition = (props: CameraChildProps) => {
   const [position, setPosition] = useState({ x: 0, y: 0 })
 
-  const { self, ball } = props;
+  const { self, ball } = useContext(ApplicationContext)
 
   const updatePosition = () => {
     if (self) {
@@ -98,15 +98,7 @@ const CameraPosition = (props: CameraChildProps) => {
 
   return (
     <g transform={`translate(${position.x}, ${position.y})`}>
-      {
-        React.Children.map(
-          props.children, child => React.cloneElement(child, {
-            ...child.props,
-            players: props.players,
-            self: props.self,
-            ball: props.ball,
-          }))
-      }
+      {props.children}
     </g>
   );
 }

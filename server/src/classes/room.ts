@@ -1,5 +1,5 @@
 import Player from "./collideables/player"
-import { RoomStage, IChatMessage } from "../types"
+import { RoomStage, IChatMessage, ResetType } from "../types"
 import { Field } from "./field"
 import { ChampionName } from "../league/classes"
 
@@ -40,7 +40,7 @@ export class Room extends Field {
                 self.removePlayer(playerId);
                 socket.broadcast.emit('player_leave', { id: playerId })
                 if (self._connectedPlayers().length === 0) {
-                    self._endGame()
+                    self._reset('RESET')
                 }
             });
             socket.on('request_send_message', function (payload) {
@@ -68,8 +68,17 @@ export class Room extends Field {
         }, this.__leave_countdown * 1000);
     }
 
+    _reset(type: ResetType) {
+        super._reset(type)
+        if (type === 'RESET') {
+            const players = this._connectedPlayers()
+            this._stage = 'TEAM_SELECT'
+            this._socket.emit('stage_change', { stage: this._stage })
+            players.forEach(x => x.setReady(false))
+        }
+    }
+
     _tryStageChange = () => {
-        console.log('_tryStageChange', this._gameEnded)
         if (this._stage === 'TEAM_SELECT') {
             const players = this._connectedPlayers()
             if (players.length && !players.some(x => !x.isReady())) {
@@ -130,6 +139,8 @@ export class Room extends Field {
             //@ts-ignore
             if (this._socket.clients().connected[key])
                 r.push(this._players[key])
+            else
+                delete this._players[key]
             return r;
         }, [])
     }
@@ -149,7 +160,8 @@ export class Room extends Field {
             score: this._score ? this._score.serialize() : null,
             time: this.__seconds_limit - seconds,
             countdown: this.__countdown > seconds ? this.__countdown - seconds : 0,
-            victory: this._gameEnded === true ? this._victorySide : null
+            victory: this._gameEnded === true ? this._victorySide : null,
+            effects: this._serializeEffects()
         }
     }
 }

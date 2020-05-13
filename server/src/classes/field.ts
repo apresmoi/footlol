@@ -3,21 +3,24 @@ import Ball from "./collideables/ball"
 import { Vector } from "./math"
 import { ChampionName } from "../league/classes"
 import { timeConstant, mapSize, mapInnerSize, goalSize, playerPositions } from "../globals"
-import { Engine, World, Events } from 'matter-js'
-import { RectCollideable, Collideable } from "./collideables/physics"
+import { Engine, World, Events, Body } from 'matter-js'
+import { RectCollideable, Collideable, CircleCollideable, CompoundCollideable } from "./collideables/physics"
 import Wall from "./collideables/wall"
 import Goal from "./collideables/goal"
 import { TeamSide, RoomSensors, ResetType, ICollideableEventCollision } from "../types"
 import TurnWall from "./collideables/turnwall"
 import { Score } from "./score"
-import { BallCategory } from "./collideables/categories"
+import { BallCategory, AbilityStunCategory } from "./collideables/categories"
+import Ring from "./collideables/ring"
 
 export class Field {
     _id: string
     _name: string
     _players: { [x: string]: Player }
+    _effectCollideables: Collideable[] = []
     _ball: Ball = null;
     _interval: NodeJS.Timeout
+    _contdownTimeout: NodeJS.Timeout
     _engine: Engine
     _world: World
     _score: Score = new Score()
@@ -85,8 +88,9 @@ export class Field {
         this._mountStartWalls();
         this._gameEnded = false
         this._victorySide = 'LEFT'
+        this._effectCollideables = []
 
-        setTimeout(() => {
+        this._contdownTimeout = setTimeout(() => {
             this._mountSensors()
             this._mountBall()
             Events.on(this._engine, 'collisionStart', this._handleCollisionsStart);
@@ -122,7 +126,7 @@ export class Field {
         this._unmountStartWalls()
     }
 
-    _reset = (type: ResetType) => {
+    _reset(type: ResetType) {
         if (type === 'GOAL') {
             setTimeout(() => {
                 this._goal = false
@@ -131,6 +135,20 @@ export class Field {
                 this._connectedPlayers().forEach(player => player.resetPosition(this._world))
                 this._emit()
             }, 2900);
+        }
+        else if (type === 'RESET') {
+            clearInterval(this._interval);
+            clearTimeout(this._contdownTimeout);
+            console.log('reset game')
+            this._victorySide = 'LEFT'
+            this._sideTurn = 'LEFT'
+            this._gameEnded = false
+            this.__seconds = 0;
+            this._startTime = null;
+            this._goal = false;
+            this._score.reset()
+            this._unmountBall()
+            this._unmountStartWalls()
         }
     }
 
@@ -203,10 +221,12 @@ export class Field {
                 this._players[id].kick(this._ball)
                 break;
             case 'KeyQ':
-                this._players[id].requestAbility('Q', this._world)
+                const qResult = this._players[id].requestAbility('Q')
+                if (qResult) this._addEffect(qResult)
                 break
             case 'KeyW':
-                this._players[id].requestAbility('W', this._world)
+                const wResult = this._players[id].requestAbility('W')
+                if (wResult) this._addEffect(wResult)
                 break
             default:
                 break;
@@ -245,6 +265,7 @@ export class Field {
     }
 
     _handlePlayerBallProximity(player: Player, closeToBall: boolean): void {
+        console.log('_handlePlayerBallProximity', player._name, closeToBall)
         player.allowPlayerToKick(closeToBall)
     }
 
@@ -254,41 +275,56 @@ export class Field {
         for (let i = 0, j = pairs.length; i != j; ++i) {
             const pair = pairs[i];
 
+            //Anything collides with an AbilityStunCategory
+            // A | B is AbilityStunCategory
+            // A | B is anything
+            if (pair.bodyA.collisionFilter.category === AbilityStunCategory && pair.bodyA.plugin.owner._id !== pair.bodyB.plugin.owner._id) {
+                console.log("collision with stun", pair.bodyA.plugin.owner.serialize(), pair.bodyB.plugin.owner.serialize())
+                pair.bodyB.plugin.owner.setVelocity(new Vector(0, 0), 0)
+                pair.bodyB.plugin.owner.setStun(5000)
+                continue;
+            }
+            else if (pair.bodyB.collisionFilter.category === AbilityStunCategory && pair.bodyA.plugin.owner._id !== pair.bodyB.plugin.owner._id) {
+                console.log("collision with stun", pair.bodyA.plugin.owner.serialize(), pair.bodyB.plugin.owner.serialize())
+                pair.bodyA.plugin.owner.setVelocity(new Vector(0, 0), 0)
+                pair.bodyA.plugin.owner.setStun(5000)
+                continue;
+            }
+
             //Ball collides with Goals
             // A | B is ball
             // A | B is Goal SENSOR
-            if (pair.bodyA.isSensor && pair.bodyA.plugin instanceof Goal && pair.bodyB === this._ball._body) {
-                this._handleBallInsideGoal(pair.bodyA.plugin)
+            if (pair.bodyA.isSensor && pair.bodyA.plugin.owner instanceof Goal && pair.bodyB === this._ball._body) {
+                this._handleBallInsideGoal(pair.bodyA.plugin.owner)
                 continue;
             }
-            else if (pair.bodyB.isSensor && pair.bodyB.plugin instanceof Goal && pair.bodyA === this._ball._body) {
-                this._handleBallInsideGoal(pair.bodyB.plugin)
+            else if (pair.bodyB.isSensor && pair.bodyB.plugin.owner instanceof Goal && pair.bodyA === this._ball._body) {
+                this._handleBallInsideGoal(pair.bodyB.plugin.owner)
                 continue;
             }
 
             //Player physical body collides with Ball
+            //Player ability collides with Ball
             // A | B is ball
             // A | B is physical part of player
-            if (!pair.bodyA.isSensor && pair.bodyA.plugin instanceof Player && pair.bodyB.plugin === this._ball) {
-                this._ball.addKicker(this.__seconds, pair.bodyA.plugin)
+            if (!pair.bodyA.isSensor && pair.bodyA.plugin.owner instanceof Player && pair.bodyB.plugin.owner === this._ball) {
+                this._ball.addKicker(this.__seconds, pair.bodyA.plugin.owner)
                 continue;
             }
-            else if (!pair.bodyB.isSensor && pair.bodyB.plugin instanceof Player && pair.bodyA.plugin === this._ball) {
-                this._ball.addKicker(this.__seconds, pair.bodyB.plugin)
+            else if (!pair.bodyB.isSensor && pair.bodyB.plugin.owner instanceof Player && pair.bodyA.plugin.owner === this._ball) {
+                this._ball.addKicker(this.__seconds, pair.bodyB.plugin.owner)
                 continue;
             }
 
             //Player sensor portion is overlaping with Ball
             // A | B is ball
             // A | B is SENSOR part of player
-            if (pair.bodyA.isSensor && pair.bodyA.plugin instanceof Player && pair.bodyB.plugin === this._ball) {
-                // this._handleScore(pair.bodyA, this._ball.getLastKicker())
-                this._handlePlayerBallProximity(pair.bodyA.plugin, true)
+            if (pair.bodyA.isSensor && pair.bodyA.plugin.owner instanceof Player && pair.bodyB.plugin.owner === this._ball) {
+                this._handlePlayerBallProximity(pair.bodyA.plugin.owner, true)
                 continue;
             }
-            else if (pair.bodyB.isSensor && pair.bodyB.plugin instanceof Player && pair.bodyA.plugin === this._ball) {
-                // this._handleScore(pair.bodyB, this._ball.getLastKicker())
-                this._handlePlayerBallProximity(pair.bodyB.plugin, true)
+            else if (pair.bodyB.isSensor && pair.bodyB.plugin.owner instanceof Player && pair.bodyA.plugin.owner === this._ball) {
+                this._handlePlayerBallProximity(pair.bodyB.plugin.owner, true)
                 continue;
             }
 
@@ -304,20 +340,54 @@ export class Field {
             //Player sensor portion is overlaping with Ball
             // A | B is ball
             // A | B is SENSOR part of player
-            if (pair.bodyA.isSensor && pair.bodyA.plugin instanceof Player && pair.bodyB.plugin === this._ball) {
-                this._handlePlayerBallProximity(pair.bodyA.plugin, false)
+            if (pair.bodyA.isSensor && pair.bodyA.plugin.owner instanceof Player && pair.bodyB.plugin.owner === this._ball) {
+                this._handlePlayerBallProximity(pair.bodyA.plugin.owner, false)
                 continue;
             }
-            else if (pair.bodyB.isSensor && pair.bodyB.plugin instanceof Player && pair.bodyA.plugin === this._ball) {
-                this._handlePlayerBallProximity(pair.bodyB.plugin, false)
+            else if (pair.bodyB.isSensor && pair.bodyB.plugin.owner instanceof Player && pair.bodyA.plugin.owner === this._ball) {
+                this._handlePlayerBallProximity(pair.bodyB.plugin.owner, false)
                 continue;
             }
         }
     }
 
+    _addEffect(collideable: Collideable) {
+        this._effectCollideables.push(collideable)
+    }
+
+    _updateEffects() {
+        this._effectCollideables = this._effectCollideables.reduce((result, collideable) => {
+            if (collideable._mounted && collideable._body.plugin.duration <= collideable.getLife()) {
+                collideable.dematerialize(this._world)
+            } else {
+                if (!collideable._mounted) {
+                    collideable.setVelocity((collideable._body.plugin.owner as Player)
+                        ._facingVector
+                        .multiply(collideable._body.plugin.velocity + collideable._body.plugin.owner.getVelocity().module()))
+                    collideable.setPosition(collideable._body.plugin.owner.getPosition())
+                    collideable.materialize(this._world)
+                }
+                result.push(collideable)
+            }
+            return result
+        }, [])
+    }
+
+    _serializeEffects() {
+        return this._effectCollideables
+            .filter(row => row._mounted)
+            .map(effect => {
+                return {
+                    id: effect._body.plugin.id,
+                    ...effect.serialize(),
+                }
+            })
+    }
+
     update(): boolean {
         Engine.update(this._engine);
 
+        this._updateEffects()
         this._connectedPlayers().forEach(player => player.update());
         if (this._ball) {
             this._ball.update();
@@ -329,7 +399,7 @@ export class Field {
 
     getSeconds(): number {
         if (this._startTime)
-            return Math.trunc((new Date().getTime() - this._startTime.getTime()) / 1000)
+            return Math.trunc((new Date().getTime() - this._startTime.getTime()) / 100) / 10
         return 0
     }
 
@@ -344,7 +414,8 @@ export class Field {
             score: this._score ? this._score.serialize() : null,
             time: this.__seconds_limit - seconds,
             countdown: this.__countdown > seconds ? this.__countdown - seconds : 0,
-            victory: this._gameEnded ? this._victorySide : null
+            victory: this._gameEnded ? this._victorySide : null,
+            effects: this._serializeEffects()
         }
     }
 }

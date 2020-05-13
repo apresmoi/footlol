@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { ApplicationContext } from '.'
 import RoomSocket from './socket'
-import { Vector, RoomStage, ApplicationContextProviderState, Champion } from './types';
+import { Vector, RoomStage, ApplicationContextProviderState, Champion, Player } from './types';
 import { useHistory } from 'react-router-dom';
+import { mapSize } from '../settings';
 
 const localStorageData: {
   name: string
@@ -24,22 +25,31 @@ const defaultState = {
 }
 
 export const ApplicationContextProvider = ({ children }) => {
-  const stage: RoomStage = null
-  const roomID: string = null
+  const DEBUG = false
+
+  const stage: RoomStage = DEBUG ? 'FIELD' : null
+  const roomID: string = DEBUG ? '/gg' : null
+  const champion: string = DEBUG ? 'Veigar' : null
+  const defaultSelf: Player = DEBUG ? {
+    champion: 'Veigar', id: '', name: '',
+    ready: false, direction: { x: 0, y: 0 }, kicking: false,
+    position: { ...mapSize.center }, side: 'LEFT', cooldown: { Q: 10, W: 4 }
+  } : null
 
   const name: string = localStorageData && localStorageData.name ? localStorageData.name : ""
   const [state, setState] = useState<ApplicationContextProviderState>({
     name: name,
-    champion: null,
+    champion: champion,
     roomId: roomID,
     rooms: [],
     champions: [],
     stage: stage,
-    self: null,
+    self: defaultSelf,
     ball: null,
     score: null,
     time: null,
-    players: {}
+    players: {},
+    effects: []
   })
 
   const changeName = (name: string) => {
@@ -47,7 +57,7 @@ export const ApplicationContextProvider = ({ children }) => {
     setState({ ...state, name })
   }
 
-  const changeChampion = (champion: Champion) => {
+  const changeChampion = (champion: string) => {
     setState({ ...state, champion })
   }
 
@@ -136,7 +146,6 @@ export const ApplicationContextProvider = ({ children }) => {
     fetch('http://' + window.location.host.replace(':8000', '') + ':8081' + '/api/rooms')
       .then(response => response.json())
       .then(rooms => {
-        console.log(rooms)
         setState({ ...state, rooms })
       }).catch(err => { console.log(err) })
   }
@@ -145,7 +154,6 @@ export const ApplicationContextProvider = ({ children }) => {
     fetch('http://' + window.location.host.replace(':8000', '') + ':8081' + '/api/champions')
       .then(response => response.json())
       .then(champions => {
-        console.log(champions)
         setState({ ...state, champions })
       }).catch(err => { console.log(err) })
   }

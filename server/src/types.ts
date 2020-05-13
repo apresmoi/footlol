@@ -8,7 +8,13 @@ export type RoomSensors = 'LEFT_GOAL' | 'RIGHT_GOAL'
 export type ResetType = 'GOAL' | 'RESET'
 
 export interface ICollideableBody extends Body {
-    plugin: Collideable
+    plugin: {
+        owner: Collideable,
+        id?: string,
+        duration?: number,
+        velocity?: number,
+        cooldown?: number
+    }
 }
 
 export interface ICollideablePair extends IPair {

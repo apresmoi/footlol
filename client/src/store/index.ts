@@ -5,7 +5,7 @@ import { Champion, Vector, ApplicationContextProviderState } from './types';
 
 interface IApplicationContext extends ApplicationContextProviderState {
     changeName: (name: string) => void,
-    changeChampion: (champion: Champion) => void,
+    changeChampion: (champion: string) => void,
     connectSocket: (roomId: string) => void,
     updateRooms: () => void
     updateChampionPool: () => void
@@ -32,8 +32,9 @@ export const ApplicationContext = React.createContext<IApplicationContext>(
         players: {},
         champions: [],
         victory: null,
+        effects: [],
         changeName: (name: string) => { },
-        changeChampion: (champion: Champion) => { },
+        changeChampion: (champion: string) => { },
         connectSocket: (roomId: string) => { },
         updateRooms: () => { },
         updateChampionPool: () => { },

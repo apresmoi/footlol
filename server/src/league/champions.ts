@@ -7,50 +7,57 @@ import { CircleCollideable, Collideable } from '../classes/collideables/physics'
 import { Vector } from '../classes/math'
 import { playerRadius } from '../globals'
 import { TeamSide } from '../types'
-import { AbilityProjectileCategory, PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory } from '../classes/collideables/categories'
+import { AbilityProjectileCategory, PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityStunCategory } from '../classes/collideables/categories'
+import Ring from '../classes/collideables/ring'
 
 class Veigar extends Champion {
     _abilityQ: Collideable
     _abilityW: Collideable
 
-    constructor(side: TeamSide) {
+    constructor(side: TeamSide, owner: Player) {
         super('Veigar', source.Veigar);
+        this._spellQ = this.spells.Q
+        this._spellW = this.spells.E
 
         this._abilityQ = new CircleCollideable(20, new Vector(0, 0), 10, {
             collisionFilter: {
                 category: AbilityProjectileCategory,
                 mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+            },
+            plugin: {
+                owner: owner,
+                id: this._spellQ.id,
+                duration: 1000,
+                velocity: 10,
             }
         })
-        this._abilityW = new CircleCollideable(10, new Vector(0, 0), playerRadius * 4, {
+        this._abilityW = new Ring(5, new Vector(0, 0), playerRadius * 6, playerRadius, {
             isStatic: true,
+            restitution: 0,
             collisionFilter: {
-                category: AbilityProjectileCategory,
+                category: AbilityStunCategory,
                 mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
+            },
+            plugin: {
+                owner: owner,
+                id: this._spellW.id,
+                duration: 60000,
+                velocity: 0,
             }
         })
     }
 
-    tryExecute(ability: 'Q' | 'W', player: Player, world: World) {
-        switch (ability) {
-            case 'Q':
-                this._abilityQ.setPosition(player.getPosition())
-                this._abilityQ.setVelocity(player._facingVector.multiply(10))
-                this._abilityQ.materialize(world)
-                setTimeout(() => {
-                    this._abilityQ.dematerialize(world)
-                }, 10 * 1000);
-                break;
-            case 'W':
-                this._abilityW.setPosition(player.getPosition())
-                this._abilityW.materialize(world)
-                setTimeout(() => {
-                    this._abilityW.dematerialize(world)
-                }, 10 * 1000);
-                break;
-            default:
-                break;
-        }
+    getAbility(ability: 'Q' | 'W'): Collideable {
+        if (this._canUseAbility(ability))
+            switch (ability) {
+                case 'Q':
+                    return this._abilityQ
+                case 'W':
+                    return this._abilityW
+                default:
+                    break;
+            }
+        return null
     }
 }
 
@@ -59,45 +66,28 @@ class Lux extends Champion {
     _abilityQ: Collideable
     _abilityW: Collideable
 
-    constructor(side: TeamSide) {
+    constructor(side: TeamSide, owner: Player) {
         super('Lux', source.Lux);
 
         this._abilityQ = new CircleCollideable(10, new Vector(0, 0), 5, {
-
+            plugin: {
+                owner: owner,
+            }
         })
         this._abilityW = new CircleCollideable(10, new Vector(0, 0), playerRadius * 4, {
             isStatic: true,
             collisionFilter: {
 
+            },
+            plugin: {
+                owner: owner,
             }
         })
-    }
-
-    tryExecute(ability: 'Q' | 'W', player: Player, world: World) {
-        switch (ability) {
-            case 'Q':
-                this._abilityQ.setPosition(player.getPosition())
-                this._abilityQ.setVelocity(player._facingVector.multiply(10))
-                this._abilityQ.materialize(world)
-                setTimeout(() => {
-                    this._abilityQ.dematerialize(world)
-                }, 10 * 1000);
-                break;
-            case 'W':
-                this._abilityW.setPosition(player.getPosition())
-                this._abilityW.materialize(world)
-                setTimeout(() => {
-                    this._abilityW.dematerialize(world)
-                }, 10 * 1000);
-                break;
-            default:
-                break;
-        }
     }
 }
 
 
 export const champions: ChampionList = {
-    'Veigar': (side: TeamSide) => new Veigar(side),
-    'Lux': (side: TeamSide) => new Lux(side),
+    'Veigar': (side: TeamSide, owner: Player) => new Veigar(side, owner),
+    'Lux': (side: TeamSide, owner: Player) => new Lux(side, owner),
 }

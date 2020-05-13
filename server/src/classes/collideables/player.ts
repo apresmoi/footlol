@@ -1,4 +1,4 @@
-import { CircleCollideable, CompoundCollideable } from "./physics";
+import { CircleCollideable, CompoundCollideable, Collideable } from "./physics";
 import { playerRadius, playerActionRadius } from "../../globals";
 import { Vector } from "../math";
 import { Champion, ChampionName } from "../../league/classes";
@@ -31,19 +31,25 @@ export default class Player extends CompoundCollideable {
         super(position)
         this._id = id;
         this._name = name;
-        if (championName) this._champion = champions[championName](side)
+        if (championName) this._champion = champions[championName](side, this)
         this._side = side
         this._acceleration = 0.07
         this._ready = false
 
         const mass = this._champion?.hp / 10 || 50
 
+        this._facingVector = side === 'LEFT' ? new Vector(1, 0) : new Vector(-1, 0)
+
         this._physicalBody = new CircleCollideable(mass, position, playerRadius, {
-            plugin: this
+            plugin: {
+                owner: this,
+            }
         });
         this._sensorBody = new CircleCollideable(0, position, playerActionRadius, {
             isSensor: true,
-            plugin: this
+            plugin: {
+                owner: this,
+            }
         })
 
         this._body = CompoundCollideable.fromCollideables(position, [this._physicalBody, this._sensorBody], {
@@ -55,7 +61,9 @@ export default class Player extends CompoundCollideable {
             collisionFilter: {
                 category: side === 'LEFT' ? PlayerLeftSideCategory : PlayerRightSideCategory,
             },
-            plugin: this
+            plugin: {
+                owner: this,
+            }
         })._body
     }
 
@@ -82,8 +90,8 @@ export default class Player extends CompoundCollideable {
         }, 100);
     }
 
-    requestAbility(ability: 'Q' | 'W', world: World): void {
-        this._champion.tryExecute(ability, this, world)
+    requestAbility(ability: 'Q' | 'W'): Collideable {
+        return this._champion.getAbility(ability)
     }
 
     update() {
@@ -98,7 +106,7 @@ export default class Player extends CompoundCollideable {
     }
 
     setChampion(championName: ChampionName) {
-        this._champion = champions[championName](this._side)
+        this._champion = champions[championName](this._side, this)
         Body.setMass(this._body, this._champion.hp / 10)
         this._acceleration = this._champion.movespeed / 5000
         this._force = this._champion.attackdamage / 400
@@ -106,7 +114,7 @@ export default class Player extends CompoundCollideable {
 
     changeDirection(direction: Vector) {
         super.changeDirection(direction)
-        if (direction.x !== 0 && direction.y !== 0) this._facingVector = direction
+        if (direction.x !== 0 || direction.y !== 0) this._facingVector = direction
     }
 
     isReady() {
@@ -121,7 +129,8 @@ export default class Player extends CompoundCollideable {
             position: this.getPosition().serialize(),
             side: this._side,
             kicking: this._kicking,
-            ready: this._ready
+            ready: this._ready,
+            cooldown: this._champion ? this._champion.getCooldowns() : { W: 0, Q: 0 }
         }
     }
 }

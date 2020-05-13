@@ -1,19 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PlayerComponent from './Objects/Player'
+import EffectComponent from './Objects/Effect'
 import BallComponent from './Objects/Ball'
 import GoalComponent from './Objects/Goal'
 import FieldComponent from './Objects/Field';
-import { Player, Ball } from '../../store/types';
-import { mapSize } from '../../settings'
+import { ApplicationContext } from '../../store';
 
-interface DrawProps {
-  players?: { [x: string]: Player }
-  self?: Player
-  ball?: Ball
-}
 
-const Draw = (props: DrawProps) => {
-  const { players, self, ball } = props
+const Draw = () => {
+  const { players, self, ball, effects } = useContext(ApplicationContext)
   return (
     <>
       <FieldComponent />
@@ -25,6 +20,7 @@ const Draw = (props: DrawProps) => {
           .filter(id => self ? self.id !== id : true)
           .map(id => <PlayerComponent key={id} player={players[id]} />)}
         {self && <PlayerComponent isSelf player={self} />}
+        {effects.map((effect, i) => <EffectComponent key={i} effect={effect} />)}
       </g>
     </>
   );

@@ -60,7 +60,9 @@ export default class Goal extends PolygonCollideable {
                     category: GoalCategory,
                     ...(options && options.collisionFilter ? options.collisionFilter : {}),
                 },
-                plugin: this,
+                plugin: {
+                    owner: this,
+                }
             })
 
         this._bodyGoalStickRight = new CircleCollideable(0, position
@@ -75,7 +77,9 @@ export default class Goal extends PolygonCollideable {
                     category: GoalCategory,
                     ...(options && options.collisionFilter ? options.collisionFilter : {}),
                 },
-                plugin: this
+                plugin: {
+                    owner: this,
+                }
             })
 
         this._sensor = new PolygonCollideable(0, position.setX(position.x + goalSize.width / 2 + 10), [points.slice(0, 4)], {
@@ -86,7 +90,9 @@ export default class Goal extends PolygonCollideable {
                 category: GoalCategory,
                 ...(options && options.collisionFilter ? options.collisionFilter : {}),
             },
-            plugin: this
+            plugin: {
+                owner: this,
+            }
         })
     }
 
