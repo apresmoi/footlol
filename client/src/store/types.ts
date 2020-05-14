@@ -58,6 +58,7 @@ export interface Effect {
     position: Vector
     image: EffectImage
     direction: Vector
+    angle: number
 }
 export interface CircleEffect extends Effect {
     type: 'circle'

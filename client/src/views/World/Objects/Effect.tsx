@@ -3,6 +3,8 @@ import { Player, CircleEffect, RectEffect, CompoundEffect, Effect } from '../../
 import { pallete } from '../../../settings';
 import { VeigarW, VeigarQ } from './Skills/Veigar';
 import { AsheQ, AsheW } from './Skills/Ashe';
+import { AmumuQ, AmumuW } from './Skills/Amumu';
+import { LeeSinQ, LeeSinW } from './Skills/LeeSin';
 
 
 const EffectComponent = (props: { effect }) => {
@@ -12,6 +14,10 @@ const EffectComponent = (props: { effect }) => {
   else if (effect.id === "VeigarBalefulStrike") return <VeigarQ effect={effect} />
   else if (effect.id === "Volley") return <AsheQ effect={effect} />
   else if (effect.id === "EnchantedCrystalArrow") return <AsheW effect={effect} />
+  else if (effect.id === "BandageToss") return <AmumuQ effect={effect} />
+  else if (effect.id === "CurseoftheSadMummy") return <AmumuW effect={effect} />
+  else if (effect.id === "BlindMonkQOne") return <LeeSinQ effect={effect} />
+  else if (effect.id === "BlindMonkRKick") return <LeeSinW effect={effect} />
 
 
   return <g

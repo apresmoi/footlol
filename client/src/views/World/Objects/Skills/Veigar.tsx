@@ -5,6 +5,7 @@ import './styles.scss'
 const VeigarW = (props: { effect: RingEffect }) => {
   const { effect } = props
   const { position, thickness, radius } = effect
+  console.log(thickness, radius)
   return <g
     className="veigar-w"
     transform={`translate(${position.x}, ${position.y})`}
@@ -39,6 +40,7 @@ const VeigarQ = (props: { effect: CircleEffect }) => {
     transform={`translate(${position.x}, ${position.y})`}
   >
     <circle cx={0} cy={0} r={radius} fill='#1c0438' strokeWidth={1.5} stroke="#572c7f" />
+    <circle cx={0} cy={0} r={radius * 0.3} fill='#d757c4' />
   </g >
 }
 

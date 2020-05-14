@@ -120,6 +120,10 @@ export class Collideable {
         return this._body.vertices.map(x => [x.x, x.y])
     }
 
+    getBounds(): Vector {
+        return new Vector(this._body.bounds.max.x - this._body.bounds.min.x, this._body.bounds.max.y - this._body.bounds.min.y)
+    }
+
     serialize(): any {
         return {
             type: 'none',
@@ -166,6 +170,9 @@ export class RectCollideable extends Collideable {
         options?: Matter.IChamferableBodyDefinition) {
         super(position);
 
+        this._width = width
+        this._height = height
+
         this._body = Bodies.rectangle(position.x, position.y, width, height, {
             plugin: {
                 owner: this,
@@ -181,8 +188,8 @@ export class RectCollideable extends Collideable {
             type: 'rect',
             position: this.getPosition().serialize(),
             angle: this.getAngle(),
-            width: this._width,
-            height: this._height,
+            width: this._body.bounds.max.x - this._body.bounds.min.x,
+            height: this._body.bounds.max.y - this._body.bounds.min.y,
             direction: this.getVelocity().director()
         }
     }

@@ -15,13 +15,13 @@ const Draw = () => {
       <GoalComponent side="LEFT" />
       <GoalComponent side="RIGHT" />
       <g>
+        {debug.map((effect, i) => <EffectComponent key={i} effect={effect} />)}
+        {effects.map((effect, i) => <EffectComponent key={i} effect={effect} />)}
         {ball && <BallComponent ball={ball} />}
         {Object.keys(players)
           .filter(id => self ? self.id !== id : true)
           .map(id => <PlayerComponent key={id} player={players[id]} />)}
         {self && <PlayerComponent isSelf player={self} />}
-        {effects.map((effect, i) => <EffectComponent key={i} effect={effect} />)}
-        {/* {debug.map((effect, i) => <EffectComponent key={i} effect={effect} />)} */}
       </g>
     </>
   );

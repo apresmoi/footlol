@@ -3,14 +3,17 @@ import { Vector } from "../classes/math";
 import { TeamSide } from "../types";
 import Player from "../classes/collideables/player";
 import { ChampionSpell } from "./classes";
-import { AbilityProjectileCategory, PlayerRightSideCategory, PlayerLeftSideCategory, AbilityStunCategory } from "../classes/collideables/categories";
+import { AbilityProjectileCategory, PlayerRightSideCategory, PlayerLeftSideCategory, AbilityStunCategory, AbilityEffectCategory, BallCategory } from "../classes/collideables/categories";
 import { Body, World } from "matter-js";
-import { CircleCollideable } from "../classes/collideables/physics";
+import { CircleCollideable, Collideable } from "../classes/collideables/physics";
+import Ring from "../classes/collideables/ring";
+import { playerRadius } from "../globals";
+import VectorCollideable from "../classes/collideables/vector";
 
 
 export class AsheQ extends Cone {
     constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
-        super(20, new Vector(0, 0), 50, Math.PI * 3 / 4, {
+        super(20, new Vector(0, 0), 50, Math.PI, {
             collisionFilter: {
                 category: AbilityProjectileCategory,
                 mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
@@ -26,10 +29,6 @@ export class AsheQ extends Cone {
             }
         })
         this._body.plugin.drawer = this
-    }
-
-    setVelocity(velocity: Vector, angularVelocity: number = 0): void {
-        super.setVelocity(velocity, angularVelocity)
     }
 
     _scale = new Vector(1, 1)
@@ -60,13 +59,198 @@ export class AsheW extends CircleCollideable {
                 duration: 10000,
                 velocity: 10,
                 effectDuration: 2500,
-                handleCollision: () => {
+                handleCollision: (target) => {
                     this._expired = true
                     this.dematerialize()
                 }
             }
         })
 
+        this._body.plugin.drawer = this
+    }
+}
+
+export class VeigarQ extends CircleCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(20, new Vector(0, 0), 10, {
+            collisionFilter: {
+                category: AbilityProjectileCategory,
+                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 250,
+                velocity: 15,
+            }
+        })
+        this._body.plugin.drawer = this
+    }
+}
+
+export class VeigarW extends Ring {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(5, new Vector(0, 0), playerRadius * 6, playerRadius, {
+            isStatic: true,
+            restitution: 0,
+            collisionFilter: {
+                category: AbilityStunCategory,
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 3000,
+                effectDuration: 1500,
+                velocity: 0,
+            }
+        })
+        const self = this
+        this._body.plugin.drawer = self
+        this._body.parts.forEach(part => {
+            part.plugin.drawer = self
+        })
+    }
+}
+
+export class AmumuQ extends VectorCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(0, new Vector(0, 0), 10, {
+            restitution: 0,
+            isSensor: true,
+            collisionFilter: {
+                category: AbilityEffectCategory,
+                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 700,
+                velocity: 7,
+                handleCollision: (target: Collideable) => {
+                    if (!target._body.isSensor) {
+                        this._body.plugin.owner.setVelocity(new Vector(0, 0), 0)
+                        const current = this._body.plugin.owner.getPosition()
+                        const distance = target.getPosition().substract(current)
+                        this._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(target.getBounds().module() / 2))))
+                        this._expired = true
+                        this.dematerialize()
+                    }
+                }
+            }
+        })
+        this._body.plugin.drawer = this
+    }
+
+    materialize(world: World) {
+        this._body.plugin.owner.setVelocity(new Vector(0, 0), 0)
+        super.materialize(world)
+    }
+
+    setVelocity(velocity: Vector, angularVelocity: number = 0): void {
+        super.setVelocity(velocity, angularVelocity)
+    }
+
+    _scale = new Vector(1, 1)
+    update(dt: number) {
+        const f = dt / 2000
+        Body.scale(this._body, 1 / this._scale.x, 1 / this._scale.y)
+        this._scale = this._scale.add(new Vector(f, f))
+        Body.scale(this._body, this._scale.x, this._scale.y)
+        super.update(dt)
+    }
+}
+
+export class AmumuW extends CircleCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(999999999, new Vector(0, 0), playerRadius * 8, {
+            isStatic: true,
+            restitution: 0,
+            collisionFilter: {
+                category: AbilityStunCategory,
+                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 2000,
+                effectDuration: 2500,
+                velocity: 0,
+            }
+        })
+        this._body.plugin.drawer = this
+    }
+}
+
+
+export class LeeSinQ extends CircleCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(0, new Vector(0, 0), 10, {
+            restitution: 0,
+            isSensor: true,
+            collisionFilter: {
+                category: AbilityEffectCategory,
+                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 50,
+                velocity: 14,
+                handleCollision: (target: Collideable) => {
+                    if (!target._body.isSensor) {
+                        const current = this._body.plugin.owner.getPosition()
+                        const distance = target.getPosition().substract(current)
+                        this._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(target.getBounds().module() / 2))))
+                        this._expired = true
+                        this.dematerialize()
+                    }
+                }
+            }
+        })
+        this._body.plugin.drawer = this
+    }
+
+    materialize(world: World) {
+        super.materialize(world)
+    }
+
+    // _scale = new Vector(1, 1)
+    // update(dt: number) {
+    //     const f = dt / 2000
+    //     Body.scale(this._body, 1 / this._scale.x, 1 / this._scale.y)
+    //     this._scale = this._scale.add(new Vector(f, f))
+    //     Body.scale(this._body, this._scale.x, this._scale.y)
+    //     super.update(dt)
+    // }
+}
+
+export class LeeSinW extends CircleCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(999999, new Vector(0, 0), playerRadius * 2, {
+            restitution: 0,
+            collisionFilter: {
+                category: AbilityEffectCategory,
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
+            },
+            mass: 999999999,
+            inertia: 999999999,
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration:500,
+                velocity: 0,
+                handleCollision: (target: Collideable) => {
+                    if (!target._body.isSensor) {
+                        const velocity = target.getPosition().substract(this._body.plugin.owner.getPosition()).normalize().multiply(20)
+                        console.log(velocity)
+                        target._body.plugin.owner.setVelocity(velocity, 5)
+                        this._expired = true
+                        this.dematerialize()
+                    }
+                }
+            }
+        })
         this._body.plugin.drawer = this
     }
 }

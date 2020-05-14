@@ -10,7 +10,7 @@ import Goal from "./collideables/goal"
 import { TeamSide, RoomSensors, ResetType, ICollideableEventCollision } from "../types"
 import TurnWall from "./collideables/turnwall"
 import { Score } from "./score"
-import { BallCategory, AbilityStunCategory } from "./collideables/categories"
+import { BallCategory, AbilityStunCategory, AbilityEffectCategory } from "./collideables/categories"
 import Ring from "./collideables/ring"
 
 export class Field {
@@ -278,6 +278,23 @@ export class Field {
         for (let i = 0, j = pairs.length; i != j; ++i) {
             const pair = pairs[i];
 
+
+            //Anything collides with an AbilityEffectCategory
+            if (pair.bodyA.collisionFilter.category === AbilityEffectCategory
+                && pair.bodyA.plugin.owner._id !== pair.bodyB.plugin.owner._id
+            ) {
+                console.log("collision with effect", pair.bodyA.plugin.owner._id, pair.bodyB.plugin.owner._id)
+                if (pair.bodyA.plugin.handleCollision) pair.bodyA.plugin.handleCollision(pair.bodyB.plugin.owner)
+                continue;
+            }
+            else if (pair.bodyB.collisionFilter.category === AbilityEffectCategory
+                && pair.bodyA.plugin.owner._id !== pair.bodyB.plugin.owner._id
+            ) {
+                console.log("collision with effect", pair.bodyA.plugin.owner._id, pair.bodyB.plugin.owner._id)
+                if (pair.bodyB.plugin.handleCollision) pair.bodyB.plugin.handleCollision(pair.bodyA.plugin.owner)
+                continue;
+            }
+
             //Anything collides with an AbilityStunCategory
             // A | B is AbilityStunCategory
             // A | B is anything
@@ -350,6 +367,13 @@ export class Field {
         for (let i = 0, j = pairs.length; i != j; ++i) {
             const pair = pairs[i];
 
+            if (pair.bodyA.collisionFilter.category === AbilityEffectCategory || pair.bodyB.collisionFilter.category === AbilityEffectCategory) {
+                continue;
+            }
+            if (pair.bodyA.collisionFilter.category === AbilityStunCategory || pair.bodyB.collisionFilter.category === AbilityStunCategory) {
+                continue;
+            }
+
             //Player sensor portion is overlaping with Ball
             // A | B is ball
             // A | B is SENSOR part of player
@@ -376,9 +400,10 @@ export class Field {
                 collideable.dematerialize()
             } else {
                 if (!collideable._mounted) {
-                    collideable.setVelocity((collideable._body.plugin.owner as Player)
-                        ._facingVector
-                        .multiply(collideable._body.plugin.velocity + collideable._body.plugin.owner.getVelocity().module()))
+                    if (collideable._body.plugin.velocity)
+                        collideable.setVelocity((collideable._body.plugin.owner as Player)
+                            ._facingVector.normalize()
+                            .multiply(collideable._body.plugin.velocity + collideable._body.plugin.owner.getVelocity().module()))
                     collideable.setPosition(collideable._body.plugin.owner.getPosition())
                     collideable.materialize(this._world)
                 }

@@ -106,7 +106,12 @@ export class Vector {
         return this.x * v.x + this.y * v.y
     }
 
-    angle(v: Vector): number {
+    angle(v: Vector = null): number {
+        if (!v) {
+            if (this.x === 0 && this.y > 0) return Math.PI / 2
+            if (this.x === 0 && this.y < 0) return -Math.PI / 2
+            return Math.atan(this.y / this.x) - (this.x < 0 ? Math.PI : 0)
+        }
         return Math.acos(this.dot(v) / (this.module() * v.module()))
     }
 

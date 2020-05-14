@@ -16,7 +16,7 @@ export interface ICollideableBody extends Body {
         effectDuration?: number,
         velocity?: number,
         cooldown?: number,
-        handleCollision?: () => void
+        handleCollision?: (target?: Collideable) => void
     }
 }
 

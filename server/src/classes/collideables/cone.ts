@@ -5,6 +5,7 @@ import { Body, Vertices } from "matter-js";
 export default class Cone extends PolygonCollideable {
     _radius: number
     _direction: Vector
+    _sourcePosition: Vector
 
     constructor(mass: number, position: Vector, radius: number, aperture: number, options?: Matter.IBodyDefinition) {
         const InnerLeft = new Array(10).fill(0).map((_x, i, arr) => new Vector(
@@ -49,14 +50,16 @@ export default class Cone extends PolygonCollideable {
         super.setVelocity(velocity, angularVelocity)
     }
 
+
     setPosition(position: Vector): void {
-        Body.setPosition(this._body, position.substract(new Vector(this._direction.x * this._body.bounds.min.x, this._direction.y * this._body.bounds.min.y)));
+        this._sourcePosition = position.substract(new Vector(this._direction.x * this._body.bounds.min.x, this._direction.y * this._body.bounds.min.y))
+        Body.setPosition(this._body, this._sourcePosition);
     }
 
     serialize(): any {
         return {
             type: 'polygon',
-            position: this._body.plugin.owner.getPosition(),// this.getPosition().serialize(),
+            position: this._sourcePosition.serialize(),
             angle: this.getAngle(),
             points: this.getPoints()
         }

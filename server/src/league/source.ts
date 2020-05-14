@@ -778,5 +778,83 @@ export const source = {
         "h": 48
       }
     }]
+  },
+  "LeeSin": {
+    "name": "LeeSin",
+    "stats": {
+      "hp": 575,
+      "hpperlevel": 85,
+      "mp": 200,
+      "mpperlevel": 0,
+      "movespeed": 345,
+      "armor": 33,
+      "armorperlevel": 3.7,
+      "spellblock": 32.1,
+      "spellblockperlevel": 1.25,
+      "attackrange": 125,
+      "hpregen": 7.5,
+      "hpregenperlevel": 0.7,
+      "mpregen": 50,
+      "mpregenperlevel": 0,
+      "crit": 0,
+      "critperlevel": 0,
+      "attackdamage": 70,
+      "attackdamageperlevel": 3.2,
+      "attackspeedperlevel": 3,
+      "attackspeed": 0.651
+    },
+    "spells": [{
+      "id": "BlindMonkQOne",
+      "name": "Sonic Wave / Resonating Strike",
+      "cooldown": 11,
+      "image": {
+        "full": "BlindMonkQOne.png",
+        "sprite": "spell6.png",
+        "group": "spell",
+        "x": 96,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "BlindMonkWOne",
+      "name": "Safeguard / Iron Will",
+      "cooldown": 12,
+      "image": {
+        "full": "BlindMonkWOne.png",
+        "sprite": "spell6.png",
+        "group": "spell",
+        "x": 144,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "BlindMonkEOne",
+      "name": "Tempest / Cripple",
+      "cooldown": 10,
+      "image": {
+        "full": "BlindMonkEOne.png",
+        "sprite": "spell6.png",
+        "group": "spell",
+        "x": 192,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "BlindMonkRKick",
+      "name": "Dragon's Rage",
+      "cooldown": 110,
+      "image": {
+        "full": "BlindMonkRKick.png",
+        "sprite": "spell6.png",
+        "group": "spell",
+        "x": 240,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }]
   }
 }
