@@ -132,7 +132,7 @@ export class AmumuQ extends VectorCollideable {
                         this._body.plugin.owner.setVelocity(new Vector(0, 0), 0)
                         const current = this._body.plugin.owner.getPosition()
                         const distance = target.getPosition().substract(current)
-                        this._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(target.getBounds().module() / 2))))
+                        this._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(target.getBounds().module() / 2 + 5))))
                         this._expired = true
                         this.dematerialize()
                     }
@@ -195,13 +195,14 @@ export class LeeSinQ extends CircleCollideable {
             plugin: {
                 owner: owner,
                 id: spell.id,
-                duration: 50,
+                duration: 350,
                 velocity: 14,
                 handleCollision: (target: Collideable) => {
                     if (!target._body.isSensor) {
+                        console.log(target)
                         const current = this._body.plugin.owner.getPosition()
                         const distance = target.getPosition().substract(current)
-                        this._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(target.getBounds().module() / 2))))
+                        this._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(target.getBounds().module() / 2 + 5))))
                         this._expired = true
                         this.dematerialize()
                     }
@@ -238,7 +239,7 @@ export class LeeSinW extends CircleCollideable {
             plugin: {
                 owner: owner,
                 id: spell.id,
-                duration:500,
+                duration: 500,
                 velocity: 0,
                 handleCollision: (target: Collideable) => {
                     if (!target._body.isSensor) {
@@ -252,5 +253,89 @@ export class LeeSinW extends CircleCollideable {
             }
         })
         this._body.plugin.drawer = this
+    }
+}
+
+
+export class ThreshQ extends CircleCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(0, new Vector(0, 0), 10, {
+            restitution: 0,
+            isSensor: true,
+            collisionFilter: {
+                category: AbilityEffectCategory,
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 700,
+                velocity: 7,
+                handleCollision: (target: Collideable) => {
+                    if (!target._body.isSensor) {
+                        const current = this._body.plugin.owner.getPosition()
+                        const distance = target.getPosition().substract(current)
+                        this._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(target.getBounds().module() / 2 + 20))))
+                        this._expired = true
+                        this.dematerialize()
+                    }
+                }
+            }
+        })
+        this._body.plugin.drawer = this
+    }
+
+    serialize(): any {
+        return {
+            type: 'vector',
+            position: this._body.plugin.owner.getPosition().serialize(),
+            to: this.getPosition().serialize(),
+            radius: this._body.circleRadius
+        }
+    }
+}
+
+export class ThreshW extends CircleCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(0, new Vector(0, 0), playerRadius * 1.1, {
+            isStatic: true,
+            restitution: 0,
+            isSensor: true,
+            collisionFilter: {
+                category: AbilityEffectCategory,
+                mask: side === 'LEFT' ? PlayerLeftSideCategory : PlayerRightSideCategory
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 4000,
+                velocity: 0,
+                handleCollision: (target: Collideable) => {
+                    if (!target._body.isSensor) {
+                        const current = target.getPosition()
+                        const distance = this._body.plugin.owner.getPosition().substract(current)
+                        target.setPosition(current.add(distance.substract(distance.normalize().multiply(target.getBounds().module() / 2 + 5))))
+                        this._expired = true
+                        this.dematerialize()
+                    }
+                }
+            }
+        })
+        this._body.plugin.drawer = this
+    }
+
+    setPosition(position: Vector) {
+        const newPosition = position.add((this._body.plugin.owner as Player)._facingVector.normalize().multiply(300))
+        console.log(position, newPosition)
+        super.setPosition(newPosition)
+    }
+
+    serialize(): any {
+        return {
+            type: 'vector',
+            position: this._body.plugin.owner.getPosition().serialize(),
+            to: this.getPosition().serialize(),
+            radius: this._body.circleRadius
+        }
     }
 }

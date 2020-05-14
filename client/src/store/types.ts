@@ -54,7 +54,7 @@ export interface EffectImage {
 
 export interface Effect {
     id: string
-    type: 'circle' | 'rect' | 'compound' | 'ring' | 'polygon'
+    type: 'circle' | 'rect' | 'compound' | 'ring' | 'polygon' | 'vector'
     position: Vector
     image: EffectImage
     direction: Vector
@@ -80,6 +80,11 @@ export interface RingEffect extends Effect {
 export interface PolygonEffect extends Effect {
     type: 'polygon'
     points: [number, number][]
+}
+export interface VectorEffect extends Effect {
+    type: 'vector'
+    to: Vector,
+    radius: number
 }
 
 
