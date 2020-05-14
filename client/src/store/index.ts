@@ -33,6 +33,7 @@ export const ApplicationContext = React.createContext<IApplicationContext>(
         champions: [],
         victory: null,
         effects: [],
+        debug: [],
         changeName: (name: string) => { },
         changeChampion: (champion: string) => { },
         connectSocket: (roomId: string) => { },

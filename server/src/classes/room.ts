@@ -2,6 +2,7 @@ import Player from "./collideables/player"
 import { RoomStage, IChatMessage, ResetType } from "../types"
 import { Field } from "./field"
 import { ChampionName } from "../league/classes"
+import { Vector } from "./math"
 
 export class Room extends Field {
     _socket: SocketIO.Namespace
@@ -146,6 +147,7 @@ export class Room extends Field {
     }
 
 
+
     serialize() {
         const seconds = this.getSeconds()
         return {
@@ -156,12 +158,13 @@ export class Room extends Field {
                     r[key] = this._players[key].serialize()
                 return r;
             }, {}),
-            ball: this._ball ? this._ball.serialize() : null,
+            ball: this._ball._mounted ? this._ball.serialize() : null,
             score: this._score ? this._score.serialize() : null,
             time: this.__seconds_limit - seconds,
             countdown: this.__countdown > seconds ? this.__countdown - seconds : 0,
             victory: this._gameEnded === true ? this._victorySide : null,
-            effects: this._serializeEffects()
+            effects: this._serializeEffects(),
+            debug: this._getAllObjects()
         }
     }
 }

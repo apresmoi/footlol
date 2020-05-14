@@ -49,7 +49,8 @@ export const ApplicationContextProvider = ({ children }) => {
     score: null,
     time: null,
     players: {},
-    effects: []
+    effects: [],
+    debug: []
   })
 
   const changeName = (name: string) => {
@@ -157,6 +158,8 @@ export const ApplicationContextProvider = ({ children }) => {
         setState({ ...state, champions })
       }).catch(err => { console.log(err) })
   }
+
+  if(!state.champions || state.champions.length === 0) updateChampionPool()
 
   return (<ApplicationContext.Provider value={{
     ...state,

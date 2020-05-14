@@ -4,11 +4,10 @@ import { TeamSide } from "../types"
 import { Collideable } from "../classes/collideables/physics"
 import { elapsedSeconds } from "../utilities/dates"
 
-export type ChampionName = 'Veigar' |
-    'Lux'
+export type ChampionName = 'Veigar' | 'Ashe'
 
 export type ChampionList = {
-    'Lux': (side: TeamSide, owner: Player) => Champion,
+    'Ashe': (side: TeamSide, owner: Player) => Champion,
     'Veigar': (side: TeamSide, owner: Player) => Champion,
 }
 
@@ -61,6 +60,8 @@ export interface ChampionSpell {
 }
 
 export class Champion {
+    _owner: Player
+
     name: ChampionName
     movespeed: number
     hp: number
@@ -76,7 +77,8 @@ export class Champion {
     _abilityW: Collideable
     _tsW: Date
 
-    constructor(name: ChampionName, data: ChampionSourceStats) {
+    constructor(name: ChampionName, data: ChampionSourceStats, owner: Player) {
+        this._owner = owner
         this.name = name;
         this.movespeed = data.stats.movespeed;
         this.hp = data.stats.hp;

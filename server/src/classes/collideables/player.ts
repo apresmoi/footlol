@@ -94,11 +94,11 @@ export default class Player extends CompoundCollideable {
         return this._champion.getAbility(ability)
     }
 
-    update() {
+    update(dt: number) {
         if (this._direction.module()) {
-            Body.applyForce(this._body, this._body.position, this._direction.multiply(this._acceleration));
+            Body.applyForce(this._body, this._body.position, this._direction.normalize().multiply(this._acceleration));
         }
-        super.update();
+        super.update(dt);
     }
 
     setReady(ready: boolean) {

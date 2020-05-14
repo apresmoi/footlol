@@ -13,10 +13,9 @@ interface ActionBarProps {
 }
 
 const ActionBar = (props: ActionBarProps) => {
-  const { champions, updateChampionPool } = useContext(ApplicationContext)
-  if (!champions || champions.length === 0) updateChampionPool()
+  const { champions } = useContext(ApplicationContext)
+  if (!props.self) return null
   const champion = champions.find(row => row.name === props.self.champion)
-  if (!props.self || !champion) return null
 
   return (
     <g transform={`translate(${props.width / 2}, ${props.height - 80})`}>

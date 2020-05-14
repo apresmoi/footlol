@@ -1,13 +1,14 @@
 const champions = ['Veigar',
-    'Lux',
     'Yasuo',
     'Thresh',
     'Shaco',
     'Blitzcrank',
-    'Zilean',
     'Amumu',
     'Ashe',
-    'Teemo']
+    'Garen',
+    'Anivia',
+    'Malphite'
+]
 
 fetch(`http://ddragon.leagueoflegends.com/cdn/10.9.1/data/en_US/champion.json`).then(response => response.json()).then(async data => {
     return await Promise.all(champions.map(async (name) => {
@@ -31,4 +32,4 @@ fetch(`http://ddragon.leagueoflegends.com/cdn/10.9.1/data/en_US/champion.json`).
 }).then(data => console.log(JSON.stringify(data.reduce((result, champ) => {
     result[champ.name] = champ
     return result
-}, {}))))
+}, {})))).then(data => console.log(JSON.stringify(data)))

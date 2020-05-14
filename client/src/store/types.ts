@@ -54,9 +54,10 @@ export interface EffectImage {
 
 export interface Effect {
     id: string
-    type: 'circle' | 'rect' | 'compound' | 'ring'
+    type: 'circle' | 'rect' | 'compound' | 'ring' | 'polygon'
     position: Vector
     image: EffectImage
+    direction: Vector
 }
 export interface CircleEffect extends Effect {
     type: 'circle'
@@ -74,6 +75,10 @@ export interface RingEffect extends Effect {
     type: 'ring'
     radius: number
     thickness: number
+}
+export interface PolygonEffect extends Effect {
+    type: 'polygon'
+    points: [number, number][]
 }
 
 
@@ -142,6 +147,7 @@ export interface ApplicationContextProviderState {
     score?: Score
     time?: number
     effects: Array<CircleEffect | RectEffect | CompoundEffect>
+    debug: Array<Effect>,
     players: { [x: string]: Player }
     victory?: 'LEFT' | 'RIGHT'
     countdown?: number

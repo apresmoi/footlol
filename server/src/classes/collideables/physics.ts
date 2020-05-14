@@ -16,6 +16,11 @@ export class Collideable {
 
     _mounted: boolean = false
     _mountedTS: Date = null
+    _expired: boolean = false
+
+    _alreadyCollided: string[] = []
+
+    _world: World
 
     constructor(position: Vector) {
         this._direction = new Vector(0, 0);
@@ -31,6 +36,8 @@ export class Collideable {
 
     materialize(world: World) {
         if (!this._mounted) {
+            this._world = world
+            this._alreadyCollided = []
             this._mounted = true;
             this._mountedTS = new Date()
             World.add(world, this._body);
@@ -38,19 +45,19 @@ export class Collideable {
         }
     }
 
-    dematerialize(world: World) {
-        if (this._mounted) {
+    dematerialize() {
+        if (this._mounted && this._world) {
             this._mounted = false;
             this._mountedTS = null
-            World.remove(world, this._body);
+            World.remove(this._world, this._body);
             console.log("dematerialize")
         }
     }
 
-    resetPosition(world: World): void {
-        this.dematerialize(world)
+    resetPosition(world: World = null): void {
+        if (world) this.dematerialize()
         Body.setPosition(this._body, this._startPosition);
-        this.materialize(world)
+        if (world) this.materialize(world)
     }
 
     getPosition(): Vector {
@@ -65,6 +72,13 @@ export class Collideable {
         this._direction = direction;
     }
 
+    addCollision(withID: string): void {
+        this._alreadyCollided.push(withID)
+    }
+
+    hasAlreadyCollided(widthID: string): boolean {
+        return this._alreadyCollided.includes(widthID)
+    }
 
     setStun(timeout: number): void {
         const self = this;
@@ -94,17 +108,24 @@ export class Collideable {
         Body.setPosition(this._body, position);
     }
 
-    update() {
+    update(dt: number): void {
         if (this._body.speed > 0 && this._body.speed < 0.01) {
             this.setVelocity(new Vector(0, 0));
         }
+    }
+
+    getPoints() {
+        if (this._body.parts.length > 1)
+            return this._body.parts.map(x => [x.position.x, x.position.y])
+        return this._body.vertices.map(x => [x.x, x.y])
     }
 
     serialize(): any {
         return {
             type: 'none',
             position: this.getPosition().serialize(),
-            angle: this.getAngle()
+            angle: this.getAngle(),
+            direction: this.getVelocity().director()
         }
     }
 }
@@ -128,6 +149,7 @@ export class CircleCollideable extends Collideable {
             position: this.getPosition().serialize(),
             angle: this.getAngle(),
             radius: this._body.circleRadius,
+            direction: this.getVelocity().director()
         }
     }
 }
@@ -160,7 +182,8 @@ export class RectCollideable extends Collideable {
             position: this.getPosition().serialize(),
             angle: this.getAngle(),
             width: this._width,
-            height: this._height
+            height: this._height,
+            direction: this.getVelocity().director()
         }
     }
 }
@@ -178,7 +201,17 @@ export class PolygonCollideable extends Collideable {
             },
             mass,
             ...(options ? options : {}),
-        })
+        }, null, null, 0)
+    }
+
+    serialize(): any {
+        return {
+            type: 'polygon',
+            position: this.getPosition().serialize(),
+            angle: this.getAngle(),
+            points: this.getPoints(),
+            direction: this.getVelocity().director()
+        }
     }
 }
 

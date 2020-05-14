@@ -56,6 +56,10 @@ export class Vector {
         return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2))
     }
 
+    director(): Vector {
+        return new Vector(this.x !== 0 ? this.x / Math.abs(this.x) : 0, this.y !== 0 ? this.y / Math.abs(this.y) : 0)
+    }
+
     normalize(): Vector {
         const module = this.module();
         if (module > 0)

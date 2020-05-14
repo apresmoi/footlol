@@ -10,10 +10,13 @@ export type ResetType = 'GOAL' | 'RESET'
 export interface ICollideableBody extends Body {
     plugin: {
         owner: Collideable,
+        drawer: Collideable,
         id?: string,
         duration?: number,
+        effectDuration?: number,
         velocity?: number,
-        cooldown?: number
+        cooldown?: number,
+        handleCollision?: () => void
     }
 }
 

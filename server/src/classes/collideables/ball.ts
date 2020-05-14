@@ -18,6 +18,10 @@ export default class Ball extends CircleCollideable {
         this._body.plugin.owner = this
     }
 
+    clearKickers(): void {
+        this._kickers = []
+    }
+
     addKicker(seconds: number, player: Player): void {
         this._kickers.push({
             player,

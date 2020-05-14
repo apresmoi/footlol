@@ -2,16 +2,20 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Player, CircleEffect, RectEffect, CompoundEffect, Effect } from '../../../store/types'
 import { pallete } from '../../../settings';
 import { VeigarW, VeigarQ } from './Skills/Veigar';
+import { AsheQ, AsheW } from './Skills/Ashe';
 
 
 const EffectComponent = (props: { effect }) => {
   const { effect } = props
 
   if (effect.id === "VeigarEventHorizon") return <VeigarW effect={effect} />
-  else if(effect.id === "VeigarBalefulStrike") return <VeigarQ effect={effect} />
+  else if (effect.id === "VeigarBalefulStrike") return <VeigarQ effect={effect} />
+  else if (effect.id === "Volley") return <AsheQ effect={effect} />
+  else if (effect.id === "EnchantedCrystalArrow") return <AsheW effect={effect} />
+
 
   return <g
-    transform={`translate(${effect.position.x}, ${effect.position.y})`}
+    transform={effect.type !== 'polygon' ? `translate(${effect.position.x}, ${effect.position.y})` : ""}
   >
     <defs>
       {/* <pattern id={`${player.id}_image`} x="-5%" y="-5%" height="105%" width="105%"
@@ -23,8 +27,9 @@ const EffectComponent = (props: { effect }) => {
         <feComposite in="SourceGraphic" operator="and" />
       </filter> */}
     </defs>
-    {effect.type === 'circle' && <circle cx={0} cy={0} r={effect.radius} />}
-    {effect.type === 'rect' && <rect cx={-effect.width / 2} cy={-effect.height / 2} width={effect.width} height={effect.height} />}
+    {(effect.type === 'circle' || !effect.type) && <circle cx={0} cy={0} r={effect.radius || 10} />}
+    {effect.type === 'rect' && <rect x={-effect.width / 2} y={-effect.height / 2} width={effect.width} height={effect.height} />}
+    {effect.type === 'polygon' && <polygon x={0} y={0} points={effect.points.map(point => point[0] + "," + point[1]).join(' ')} />}
   </g >
 }
 

@@ -8,7 +8,7 @@ import { ApplicationContext } from '../../store';
 
 
 const Draw = () => {
-  const { players, self, ball, effects } = useContext(ApplicationContext)
+  const { players, self, ball, effects, debug } = useContext(ApplicationContext)
   return (
     <>
       <FieldComponent />
@@ -21,6 +21,7 @@ const Draw = () => {
           .map(id => <PlayerComponent key={id} player={players[id]} />)}
         {self && <PlayerComponent isSelf player={self} />}
         {effects.map((effect, i) => <EffectComponent key={i} effect={effect} />)}
+        {/* {debug.map((effect, i) => <EffectComponent key={i} effect={effect} />)} */}
       </g>
     </>
   );
