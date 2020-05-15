@@ -12,7 +12,7 @@ export default class Ball extends CircleCollideable {
         super(ballMass, position, ballRadius, {
             restitution: 0.9,
             collisionFilter: {
-                category: BallCategory
+                category: BallCategory,
             },
         });
         this._body.plugin.owner = this

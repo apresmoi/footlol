@@ -4,7 +4,7 @@ import { source } from './source'
 import Player from '../classes/collideables/player'
 import { Collideable } from '../classes/collideables/physics'
 import { TeamSide } from '../types'
-import { AsheQ, AsheW, VeigarQ, VeigarW, AmumuW, AmumuQ, LeeSinQ, LeeSinW, ThreshQ, ThreshW, ShacoW, GarenW } from './abilities'
+import { AsheQ, AsheW, VeigarQ, VeigarW, AmumuW, AmumuQ, LeeSinQ, LeeSinW, ThreshQ, ThreshW, ShacoW, GarenW, AniviaQ, AniviaW, YasuoQ, YasuoW } from './abilities'
 import { deepCopy } from '../utilities/objects'
 
 class Veigar extends Champion {
@@ -210,6 +210,56 @@ class Garen extends Champion {
     }
 }
 
+
+class Anivia extends Champion {
+    constructor(side: TeamSide, owner: Player) {
+        super('Anivia', source.Anivia, owner);
+        this.spells.Q = { ...this.spells.Q, cooldown: 0 }
+        this.spells.W = { ...this.spells.W, cooldown: 0 }
+        this._spellQ = this.spells.Q
+        this._spellW = this.spells.W
+    }
+
+    getAbility(ability: 'Q' | 'W'): Collideable {
+        if (this._canUseAbility(ability))
+            switch (ability) {
+                case 'Q':
+                    return new AniviaQ(this._spellQ, this._owner._side, this._owner)
+                case 'W':
+                    return new AniviaW(this._spellW, this._owner._side, this._owner)
+                default:
+                    break;
+            }
+        return null
+    }
+}
+
+
+class Yasuo extends Champion {
+    constructor(side: TeamSide, owner: Player) {
+        super('Yasuo', source.Yasuo, owner);
+        this.spells.Q = { ...this.spells.E, cooldown: 0 }
+        this.spells.W = { ...this.spells.W, cooldown: 0 }
+        this._spellQ = this.spells.Q
+        this._spellW = this.spells.W
+    }
+
+    getAbility(ability: 'Q' | 'W'): Collideable {
+        if (this._canUseAbility(ability))
+            switch (ability) {
+                case 'Q':
+                    return new YasuoQ(this._spellQ, this._owner._side, this._owner)
+                case 'W':
+                    return new YasuoW(this._spellW, this._owner._side, this._owner)
+                default:
+                    break;
+            }
+        return null
+    }
+}
+
+
+
 export const champions: ChampionList = {
     'Ashe': (side: TeamSide, owner: Player) => new Ashe(side, owner),
     'Veigar': (side: TeamSide, owner: Player) => new Veigar(side, owner),
@@ -218,4 +268,6 @@ export const champions: ChampionList = {
     'Thresh': (side: TeamSide, owner: Player) => new Thresh(side, owner),
     'Shaco': (side: TeamSide, owner: Player) => new Shaco(side, owner),
     'Garen': (side: TeamSide, owner: Player) => new Garen(side, owner),
+    'Anivia': (side: TeamSide, owner: Player) => new Anivia(side, owner),
+    'Yasuo': (side: TeamSide, owner: Player) => new Yasuo(side, owner),
 }

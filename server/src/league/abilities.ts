@@ -3,13 +3,12 @@ import { Vector } from "../classes/math";
 import { TeamSide } from "../types";
 import Player from "../classes/collideables/player";
 import { ChampionSpell } from "./classes";
-import { AbilityProjectileCategory, PlayerRightSideCategory, PlayerLeftSideCategory, AbilityStunCategory, AbilityEffectCategory, BallCategory } from "../classes/collideables/categories";
-import { Body, World } from "matter-js";
-import { CircleCollideable, Collideable, RectCollideable } from "../classes/collideables/physics";
+import { AbilityProjectileCategory, PlayerRightSideCategory, PlayerLeftSideCategory, AbilityStunCategory, AbilityEffectCategory, BallCategory, WallCategory } from "../classes/collideables/categories";
+import { Body, World, Composites, Composite } from "matter-js";
+import { CircleCollideable, Collideable, RectCollideable, PolygonCollideable } from "../classes/collideables/physics";
 import Ring from "../classes/collideables/ring";
 import { playerRadius } from "../globals";
 import VectorCollideable from "../classes/collideables/vector";
-
 
 export class AsheQ extends Cone {
     constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
@@ -326,7 +325,6 @@ export class ThreshW extends CircleCollideable {
 
     setPosition(position: Vector) {
         const newPosition = position.add((this._body.plugin.owner as Player)._facingVector.normalize().multiply(300))
-        console.log(position, newPosition)
         super.setPosition(newPosition)
     }
 
@@ -427,4 +425,150 @@ export class GarenW extends RectCollideable {
     //         radius: this._body.circleRadius
     //     }
     // }
+}
+
+
+
+export class AniviaW extends RectCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(20, new Vector(0, 0), playerRadius, playerRadius * 10, 0, {
+            isStatic: true,
+            collisionFilter: {
+                category: WallCategory,
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 3500,
+                velocity: 0,
+            }
+        })
+        this._body.plugin.drawer = this
+    }
+
+    setPosition(position: Vector) {
+        const facingVector = (this._body.plugin.owner as Player)._facingVector.normalize()
+        const newPosition = position.add(facingVector.multiply(300))
+        Body.setAngle(this._body, facingVector.angle());
+        super.setPosition(newPosition)
+    }
+}
+
+export class AniviaQ extends CircleCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(10, new Vector(0, 0), 25, {
+            isSensor: true,
+            collisionFilter: {
+                category: AbilityStunCategory,
+                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 1200,
+                velocity: 7,
+                effectDuration: 500,
+                handleCollision: (target) => {
+                    this._expired = true
+                    this.dematerialize()
+                }
+            }
+        })
+        this._body.plugin.drawer = this
+    }
+}
+
+
+export class YasuoQ extends CircleCollideable {
+    _targetPosition: Vector
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(0, new Vector(0, 0), 10, {
+            isSensor: true,
+            collisionFilter: {
+                category: AbilityEffectCategory,
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory)
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 100,
+                velocity: 40,
+                handleCollision: (target: Collideable) => {
+                    if (!target._body.isSensor && !this._targetPosition) {
+                        this.setVelocity(new Vector(0, 0))
+                        this._body.plugin.duration = 1000
+                        const current = this._body.plugin.owner.getPosition()
+                        const distance = target.getPosition().substract(current)
+                        this._targetPosition = current.add(distance.add(distance.normalize().multiply(target.getBounds().module())))
+                    }
+                }
+            }
+        })
+        this._body.plugin.drawer = this
+    }
+
+    dematerialize() {
+        (this._body.plugin.owner as Player).disableCollisions(false)
+        super.dematerialize()
+    }
+
+    update(dt: number) {
+        if (this._targetPosition) {
+            const current = this._body.plugin.owner.getPosition()
+            const distance = this._targetPosition.substract(current).module()
+            if (distance > 0) {
+                (this._body.plugin.owner as Player).disableCollisions(true)
+                this._body.plugin.owner.setPosition(
+                    current
+                        .setX(current.x + (this._targetPosition.x - current.x) / 10)
+                        .setY(current.y + (this._targetPosition.y - current.y) / 10)
+                )
+            } else {
+                this._expired = true
+                this.dematerialize()
+            }
+        }
+    }
+}
+export class YasuoW extends PolygonCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(0, new Vector(0, 0), [[
+
+            new Vector(40, 0 * 3),
+            new Vector(47, 12 * 3),
+            new Vector(50, 30 * 3),
+            new Vector(50, 50 * 3),
+            new Vector(50, 70 * 3),
+            new Vector(47, 88 * 3),
+            new Vector(40, 100 * 3),
+
+            new Vector(20, 100 * 3),
+            new Vector(27, 88 * 3),
+            new Vector(30, 70 * 3),
+            new Vector(30, 50 * 3),
+            new Vector(30, 30 * 3),
+            new Vector(27, 12 * 3),
+            new Vector(20, 0 * 3),
+
+        ]], {
+            isStatic: true,
+            collisionFilter: {
+                category: WallCategory,
+                mask: BallCategory
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 3500,
+                velocity: 0,
+            }
+        })
+    }
+
+    setPosition(position: Vector) {
+        const facingVector = (this._body.plugin.owner as Player)._facingVector.normalize()
+        const newPosition = position.add(facingVector.multiply(300))
+        Body.setAngle(this._body, facingVector.angle());
+        super.setPosition(newPosition)
+    }
 }

@@ -6,6 +6,8 @@ import { LeeSinQ, LeeSinW } from './Skills/LeeSin';
 import { ThreshQ, ThreshW } from './Skills/Thresh';
 import { ShacoW } from './Skills/Shaco';
 import { GarenW } from './Skills/Garen';
+import { AniviaW, AniviaQ } from './Skills/Anivia';
+import { YasuoW, YasuoQ } from './Skills/Yasuo';
 
 
 const EffectComponent = (props: { effect, self }) => {
@@ -23,6 +25,10 @@ const EffectComponent = (props: { effect, self }) => {
   else if (effect.id === "ThreshW") return <ThreshW effect={effect} />
   else if (effect.id === "JackInTheBox") return <ShacoW effect={effect} self={self} />
   else if (effect.id === "GarenE") return <GarenW effect={effect} />
+  else if (effect.id === "FlashFrost") return <AniviaQ effect={effect} />
+  else if (effect.id === "Crystallize") return <AniviaW effect={effect} />
+  else if (effect.id === "YasuoE") return <YasuoQ effect={effect} />
+  else if (effect.id === "YasuoW") return <YasuoW effect={effect} />
   else if (effect.id) {
     console.log(effect.id)
   }
@@ -31,7 +37,7 @@ const EffectComponent = (props: { effect, self }) => {
     transform={effect.type !== 'polygon' ? `translate(${effect.position.x}, ${effect.position.y})` : ""}
   >
     {(effect.type === 'circle' || !effect.type) && <circle cx={0} cy={0} r={effect.radius || 10} />}
-    {effect.type === 'rect' && <rect x={-effect.width / 2} y={-effect.height / 2} width={effect.width} height={effect.height} />}
+    {effect.type === 'rect' && <rect transform={`rotate(${effect.angle * 180 / Math.PI})`} x={-effect.width / 2} y={-effect.height / 2} width={effect.width} height={effect.height} />}
     {effect.type === 'polygon' && <polygon x={0} y={0} points={effect.points.map(point => point[0] + "," + point[1]).join(' ')} />}
   </g >
 }

@@ -6,7 +6,7 @@ import { champions } from "../../league/champions";
 import { Body, World } from "matter-js";
 import Ball from "./ball";
 import { TeamSide } from "../../types";
-import { PlayerLeftSideCategory, PlayerRightSideCategory } from "./categories";
+import { PlayerLeftSideCategory, PlayerRightSideCategory, WallCategory, GoalCategory } from "./categories";
 
 export default class Player extends CompoundCollideable {
     _id: string
@@ -46,6 +46,9 @@ export default class Player extends CompoundCollideable {
         this._physicalBody = new CircleCollideable(mass, position, playerRadius, {
             plugin: {
                 owner: this,
+            },
+            collisionFilter: {
+                category: side === 'LEFT' ? PlayerLeftSideCategory : PlayerRightSideCategory,
             }
         });
         this._sensorBody = new CircleCollideable(0, position, playerActionRadius, {
@@ -68,6 +71,21 @@ export default class Player extends CompoundCollideable {
                 owner: this,
             }
         })._body
+
+        this._backupCollision = this._body.collisionFilter
+    }
+
+    _backupCollision
+    disableCollisions(disabled: boolean): void {
+        console.log("disableCollisions", disabled)
+        if (disabled) {
+            this._body.collisionFilter = {
+                mask: WallCategory
+            }
+        }
+        else {
+            this._body.collisionFilter = this._backupCollision
+        }
     }
 
     handleCollision(target: Collideable): void {

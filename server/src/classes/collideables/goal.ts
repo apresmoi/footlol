@@ -109,12 +109,12 @@ export default class Goal extends PolygonCollideable {
         }
     }
 
-    dematerialize(world: World) {
+    dematerialize() {
         if (this._mounted) {
-            super.dematerialize(world);
-            World.remove(world, this._bodyGoalStickLeft._body);
-            World.remove(world, this._bodyGoalStickRight._body);
-            World.remove(world, this._sensor._body);
+            super.dematerialize();
+            World.remove(this._world, this._bodyGoalStickLeft._body);
+            World.remove(this._world, this._bodyGoalStickRight._body);
+            World.remove(this._world, this._sensor._body);
         }
     }
 

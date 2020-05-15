@@ -2,21 +2,6 @@ import React from 'react';
 import { PolygonEffect, CircleEffect, RectEffect } from '../../../../store/types';
 import './styles.scss'
 
-
-const AmumuQ = (props: { effect: RectEffect }) => {
-  const { effect } = props
-  const { position, width, height, angle } = effect
-
-  console.log(props)
-
-  return <g
-    className="veigar-q"
-    transform={`translate(${position.x}, ${position.y}) rotate(${angle * 180 / Math.PI})`}
-  >
-    <rect x={0} y={-height / 2} width={width} height={height} />
-  </g >
-}
-
 const GarenW = (props: { effect: RectEffect }) => {
   const { effect } = props
   const { position, width, height, angle } = effect
