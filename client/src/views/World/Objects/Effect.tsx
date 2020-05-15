@@ -8,10 +8,11 @@ import { ShacoW } from './Skills/Shaco';
 import { GarenW } from './Skills/Garen';
 import { AniviaW, AniviaQ } from './Skills/Anivia';
 import { YasuoW, YasuoQ } from './Skills/Yasuo';
+import { MalphiteW, MalphiteQ } from './Skills/Malphite';
 
 
-const EffectComponent = (props: { effect, self }) => {
-  const { effect, self } = props
+const EffectComponent = (props: { effect, self, players }) => {
+  const { effect, self, players } = props
 
   if (effect.id === "VeigarEventHorizon") return <VeigarW effect={effect} />
   else if (effect.id === "VeigarBalefulStrike") return <VeigarQ effect={effect} />
@@ -23,12 +24,16 @@ const EffectComponent = (props: { effect, self }) => {
   else if (effect.id === "BlindMonkRKick") return <LeeSinW effect={effect} />
   else if (effect.id === "ThreshQ") return <ThreshQ effect={effect} />
   else if (effect.id === "ThreshW") return <ThreshW effect={effect} />
-  else if (effect.id === "JackInTheBox") return <ShacoW effect={effect} self={self} />
+  else if (effect.id === "JackInTheBox") return <ShacoW effect={effect}
+    shacoInTeam={self.champion === "Shaco" || players.some(x => x.side === self.side && x.champion === "Shaco")}
+  />
   else if (effect.id === "GarenE") return <GarenW effect={effect} />
   else if (effect.id === "FlashFrost") return <AniviaQ effect={effect} />
   else if (effect.id === "Crystallize") return <AniviaW effect={effect} />
   else if (effect.id === "YasuoE") return <YasuoQ effect={effect} />
   else if (effect.id === "YasuoW") return <YasuoW effect={effect} />
+  else if (effect.id === "UFSlash") return <MalphiteW effect={effect} />
+  else if (effect.id === "Obduracy") return <MalphiteQ effect={effect} />
   else if (effect.id) {
     console.log(effect.id)
   }

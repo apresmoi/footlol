@@ -572,3 +572,56 @@ export class YasuoW extends PolygonCollideable {
         super.setPosition(newPosition)
     }
 }
+
+
+
+export class MalphiteQ extends CircleCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(999999999, new Vector(0, 0), playerRadius * 3, {
+            isStatic: true,
+            restitution: 0,
+            collisionFilter: {
+                category: AbilityStunCategory,
+                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 100,
+                effectDuration: 200,
+                velocity: 0,
+            }
+        })
+        this._body.plugin.drawer = this
+    }
+}
+
+export class MalphiteW extends CircleCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(999999, new Vector(0, 0), playerRadius * 4, {
+            restitution: 0,
+            isSensor: true,
+            collisionFilter: {
+                category: AbilityEffectCategory,
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
+            },
+            mass: 999999999,
+            inertia: 999999999,
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 500,
+                velocity: 0,
+                handleCollision: (target: Collideable) => {
+                    if (!target._body.isSensor) {
+                        const velocity = target.getPosition().substract(this._body.plugin.owner.getPosition()).normalize().multiply(10)
+                        target._body.plugin.owner.setVelocity(velocity, 5)
+                        // this._expired = true
+                        // this.dematerialize()
+                    }
+                }
+            }
+        })
+        this._body.plugin.drawer = this
+    }
+}

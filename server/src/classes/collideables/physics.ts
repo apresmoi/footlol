@@ -1,6 +1,7 @@
 import { Bodies, Body, World, Vertices } from 'matter-js'
 import { Vector } from '../math'
 import { ICollideableBody } from '../../types'
+import { mapSize } from '../../globals'
 
 //sources
 //https://www.wired.com/2012/08/maximum-acceleration-in-the-100-m-dash/
@@ -108,7 +109,8 @@ export class Collideable {
     }
 
     setPosition(position: Vector): void {
-        Body.setPosition(this._body, position);
+        if (position.x > 0 && position.x < mapSize.width && position.y > 0 && position.y < mapSize.height)
+            Body.setPosition(this._body, position);
     }
 
     update(dt: number): void {
@@ -125,6 +127,10 @@ export class Collideable {
 
     getBounds(): Vector {
         return new Vector(this._body.bounds.max.x - this._body.bounds.min.x, this._body.bounds.max.y - this._body.bounds.min.y)
+    }
+
+    applyForce(force: Vector, position: Vector) {
+        Body.applyForce(this._body, position, force)
     }
 
     serialize(): any {

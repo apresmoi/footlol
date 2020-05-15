@@ -3,10 +3,10 @@ import { Player } from '../../../store/types'
 import { pallete } from '../../../settings';
 
 
-const PlayerComponent = (props: { player: Player, isSelf?: boolean }) => {
-  const { player, isSelf } = props
+const PlayerComponent = (props: { player: Player, isSelf?: boolean, teammate?: boolean }) => {
+  const { player, isSelf, teammate } = props
   return <g
-    className={"player " + (!player.visible ? "invisible" : "") + (isSelf ? " self" : "")}
+    className={"player " + (!player.visible ? "invisible" : "") + (isSelf || teammate ? " self" : "")}
     key={player.id}
     transform={`translate(${player.position.x}, ${player.position.y})`}
   >

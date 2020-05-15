@@ -4,7 +4,7 @@ import { Champion } from '../../store/types'
 
 const ChampionPool = ({ champions, disabledChampions, onClick }) => {
   return <div className="champion-pool">
-    {champions.map(champion => <ChampionComponent onClick={onClick} champion={champion} disabled={disabledChampions.includes(champion)} />)}
+    {champions.map(champion => <ChampionComponent onClick={onClick} champion={champion} disabled={disabledChampions.includes(champion.name)} />)}
   </div>
 }
 

@@ -4,7 +4,7 @@ import { source } from './source'
 import Player from '../classes/collideables/player'
 import { Collideable } from '../classes/collideables/physics'
 import { TeamSide } from '../types'
-import { AsheQ, AsheW, VeigarQ, VeigarW, AmumuW, AmumuQ, LeeSinQ, LeeSinW, ThreshQ, ThreshW, ShacoW, GarenW, AniviaQ, AniviaW, YasuoQ, YasuoW } from './abilities'
+import { AsheQ, AsheW, VeigarQ, VeigarW, AmumuW, AmumuQ, LeeSinQ, LeeSinW, ThreshQ, ThreshW, ShacoW, GarenW, AniviaQ, AniviaW, YasuoQ, YasuoW, MalphiteW, MalphiteQ } from './abilities'
 import { deepCopy } from '../utilities/objects'
 
 class Veigar extends Champion {
@@ -259,6 +259,32 @@ class Yasuo extends Champion {
 }
 
 
+class Malphite extends Champion {
+    constructor(side: TeamSide, owner: Player) {
+        super('Malphite', source.Malphite, owner);
+        this.spells.Q = { ...this.spells.W, cooldown: 0 }
+        this.spells.W = { ...this.spells.R, cooldown: 0 }
+        this._spellQ = this.spells.Q
+        this._spellW = this.spells.W
+    }
+
+    getAbility(ability: 'Q' | 'W'): Collideable {
+        if (this._canUseAbility(ability))
+            switch (ability) {
+                case 'Q':
+                    return new MalphiteQ(this._spellW, this._owner._side, this._owner)
+                case 'W':
+                    const facingVector = (this._owner as Player)._facingVector.normalize()
+                    const newPosition = this._owner.getPosition().add(facingVector.multiply(300))
+                    this._owner.setPosition(newPosition)
+                    return new MalphiteW(this._spellW, this._owner._side, this._owner)
+                default:
+                    break;
+            }
+        return null
+    }
+}
+
 
 export const champions: ChampionList = {
     'Ashe': (side: TeamSide, owner: Player) => new Ashe(side, owner),
@@ -270,4 +296,5 @@ export const champions: ChampionList = {
     'Garen': (side: TeamSide, owner: Player) => new Garen(side, owner),
     'Anivia': (side: TeamSide, owner: Player) => new Anivia(side, owner),
     'Yasuo': (side: TeamSide, owner: Player) => new Yasuo(side, owner),
+    'Malphite': (side: TeamSide, owner: Player) => new Malphite(side, owner),
 }

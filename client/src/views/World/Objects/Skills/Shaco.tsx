@@ -4,11 +4,11 @@ import React from 'react';
 import { RingEffect, CircleEffect, Player } from '../../../../store/types';
 import './styles.scss'
 
-const ShacoW = (props: { effect: CircleEffect, self: Player }) => {
-  const { effect, self } = props
+const ShacoW = (props: { effect: CircleEffect, shacoInTeam: boolean }) => {
+  const { effect, shacoInTeam } = props
   const { position, radius } = effect
   return <g
-    className={`shaco-w ${effect.visible ? "visible" : ""} ${self && self.champion === "Shaco" ? "self" : ""}`}
+    className={`shaco-w ${effect.visible ? "visible" : ""} ${shacoInTeam ? "self" : ""}`}
     transform={`translate(${position.x}, ${position.y})`}
   >
     <circle r={radius} fill='transparent' stroke="white" strokeWidth={1} />
