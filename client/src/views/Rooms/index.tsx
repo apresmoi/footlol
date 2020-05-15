@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { Container, Header, Wrapper } from '../../layout';
 import "./styles.scss"
 import { ApplicationContext } from '../../store';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { Room } from '../../store/types';
 
 const Rooms = () => {
@@ -17,7 +17,7 @@ const Rooms = () => {
     context.updateRooms()
     const interval = setInterval(() => {
       context.updateRooms()
-    }, 5000)
+    }, 2000)
     return () => {
       clearInterval(interval)
     }

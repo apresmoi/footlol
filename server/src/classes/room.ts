@@ -6,7 +6,6 @@ import { Vector } from "./math"
 
 export class Room extends Field {
     _socket: SocketIO.Namespace
-    _messages: IChatMessage[]
     _stage: RoomStage = 'TEAM_SELECT'
 
     constructor(id: string, name: string, socket: SocketIO.Namespace) {
@@ -114,12 +113,7 @@ export class Room extends Field {
 
     playerSendMessage(client: SocketIO.Socket, { message }: { message: string }) {
         const player = this._players[client.id]
-        this._messages.push({
-            player,
-            message,
-            date: new Date()
-        })
-        client.broadcast.emit('message_sent', { name: player._name, message });
+        this._socket.emit('message_sent', { name: player._name, message });
     }
 
     playerReady(client: SocketIO.Socket, ready: boolean) {
@@ -164,7 +158,7 @@ export class Room extends Field {
             countdown: this.__countdown > seconds ? this.__countdown - seconds : 0,
             victory: this._gameEnded === true ? this._victorySide : null,
             effects: this._serializeEffects(),
-            debug: this._getAllObjects()
+            // debug: this._getAllObjects()
         }
     }
 }

@@ -10,6 +10,8 @@ interface IApplicationContext extends ApplicationContextProviderState {
     updateRooms: () => void
     updateChampionPool: () => void
 
+    disconnectSocket: () => void
+
     requestPlayerReady: (ready: boolean) => void
     requestDirectionChange: (direction: Vector) => void
     requestKeyPress: (code: string) => void
@@ -34,6 +36,7 @@ export const ApplicationContext = React.createContext<IApplicationContext>(
         victory: null,
         effects: [],
         debug: [],
+        messages: [],
         changeName: (name: string) => { },
         changeChampion: (champion: string) => { },
         connectSocket: (roomId: string) => { },
@@ -43,7 +46,8 @@ export const ApplicationContext = React.createContext<IApplicationContext>(
         requestDirectionChange: (direction: Vector) => { },
         requestKeyPress: (code: string) => { },
         requestSendMessage: (payload: { message: string }) => { },
-        requestChampionSelect: (champion: string) => { }
+        requestChampionSelect: (champion: string) => { },
+        disconnectSocket: () => { }
     })
 
 export const ApplicationContextConsumer = ApplicationContext.Consumer

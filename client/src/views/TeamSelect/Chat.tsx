@@ -1,14 +1,32 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
+import { ApplicationContext } from '../../store'
 
 
 const Chat = () => {
+  const context = useContext(ApplicationContext)
+  const [message, setMessage] = useState("")
+  const handleKeyDown = (e) => {
+    const { code } = e
+    console.log(code)
+  }
+  const sendMessage = () => {
+    if (message.length) {
+      context.requestSendMessage({ message: message })
+      setMessage("")
+    }
+  }
+  const handleChange = (e) => {
+    setMessage(e.target.value);
+  }
   return <div className="chat">
     <div className="chat-history">
-      <ChatMessage player={{ name: "Lluvia de verano" }} message="hola" />
+      {context.messages.map((msg, i) =>
+        <ChatMessage key={i} player={{ name: msg.name }} message={msg.message} />
+      )}
     </div>
     <div className="chat-input">
-      <input type="text" maxLength={140} />
-      <button >Send</button>
+      <input type="text" maxLength={140} onKeyDown={handleKeyDown} value={message} onChange={handleChange} />
+      <button onClick={() => sendMessage()} >Send</button>
     </div>
   </div>
 }

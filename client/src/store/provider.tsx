@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ApplicationContext } from '.'
 import RoomSocket from './socket'
 import { Vector, RoomStage, ApplicationContextProviderState, Champion, Player } from './types';
@@ -24,18 +24,19 @@ const defaultState = {
   players: {}
 }
 
-export const ApplicationContextProvider = ({ children }) => {
-  const DEBUG = false
+const DEBUG = false
+const stage: RoomStage = DEBUG ? 'FIELD' : null
+const roomID: string = DEBUG ? '/gg' : null
+const champion: string = DEBUG ? 'Veigar' : null
+const defaultSelf: Player = DEBUG ? {
+  visible: true,
+  champion: 'Veigar', id: '', name: '',
+  ready: false, direction: { x: 0, y: 0 }, kicking: false,
+  position: { ...mapSize.center }, side: 'LEFT', cooldown: { Q: 10, W: 4 }
+} : null
 
-  const stage: RoomStage = DEBUG ? 'FIELD' : null
-  const roomID: string = DEBUG ? '/gg' : null
-  const champion: string = DEBUG ? 'Veigar' : null
-  const defaultSelf: Player = DEBUG ? {
-    visible: true,
-    champion: 'Veigar', id: '', name: '',
-    ready: false, direction: { x: 0, y: 0 }, kicking: false,
-    position: { ...mapSize.center }, side: 'LEFT', cooldown: { Q: 10, W: 4 }
-  } : null
+export const ApplicationContextProvider = ({ children }) => {
+  const history = useHistory()
 
   const name: string = localStorageData && localStorageData.name ? localStorageData.name : ""
   const [state, setState] = useState<ApplicationContextProviderState>({
@@ -49,9 +50,10 @@ export const ApplicationContextProvider = ({ children }) => {
     ball: null,
     score: null,
     time: null,
+    messages: [],
     players: {},
     effects: [],
-    debug: []
+    debug: [],
   })
 
   const changeName = (name: string) => {
@@ -65,19 +67,44 @@ export const ApplicationContextProvider = ({ children }) => {
 
   const connectSocket = (roomId: string) => {
     socket = new RoomSocket(roomId, state.name);
-    setState({ ...state, roomId, })
+    setState({ ...state, roomId })
     socket.connect()
   }
+
+  const disconnectSocket = () => {
+    if (socket) {
+      setState({ ...state, roomId: null })
+      socket.disconnect()
+      socket = null
+    }
+  }
+
+  useEffect(() => {
+    history.listen((location, action) => {
+      if (action === "POP" || location.pathname.includes('/room-select'))
+        disconnectSocket()
+      else if (location.pathname === "/game" && !socket) {
+        history.push("/room-select")
+      }
+    })
+  })
 
   if (socket) {
     socket.subscribeLoginSuccess((payload) => {
       setState({
         ...state,
-        ...payload
+        ...payload,
       })
     })
     socket.subscribePlayerJoin((player) => {
-      setState({ ...state, players: { ...state.players, [player.id]: player } })
+      setState({
+        ...state,
+        players: { ...state.players, [player.id]: player },
+        messages: [...state.messages, {
+          name: "GameServer",
+          message: `Player ${player.name} has joined.`
+        }]
+      })
     })
     socket.subscribePositionChange((player) => {
       setState({
@@ -86,12 +113,17 @@ export const ApplicationContextProvider = ({ children }) => {
       })
     })
     socket.subscribePlayerLeave((player) => {
+      const newMessages = state.players[player.id] ? [...state.messages, {
+        name: "GameServer",
+        message: `Player ${state.players[player.id].name} left.`
+      }] : state.messages
       setState({
         ...state,
         players: Object.keys(state.players).reduce((result, id) => {
           if (id !== player.id && state.players[id]) result[id] = state.players[id]
           return result
-        }, {})
+        }, {}),
+        messages: newMessages
       })
     })
     socket.subscribeUpdate((payload) => {
@@ -107,6 +139,13 @@ export const ApplicationContextProvider = ({ children }) => {
           self: state.self ? { ...payload.players[state.self.id], direction: state.self.direction } : state.self
         })
       }
+    })
+
+    socket.subscribeMessageSent((payload) => {
+      setState({
+        ...state,
+        messages: [...state.messages, payload]
+      })
     })
 
     socket.subscribeStageChange((payload) => {
@@ -170,7 +209,8 @@ export const ApplicationContextProvider = ({ children }) => {
     requestKeyPress,
     requestDirectionChange,
     requestSendMessage,
-    requestChampionSelect
+    requestChampionSelect,
+    disconnectSocket
   }}>
     {children}
   </ApplicationContext.Provider>)

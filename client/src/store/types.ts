@@ -154,6 +154,7 @@ export interface ApplicationContextProviderState {
     ball?: Ball
     score?: Score
     time?: number
+    messages: PlayerMessage[]
     effects: Array<CircleEffect | RectEffect | CompoundEffect>
     debug: Array<Effect>,
     players: { [x: string]: Player }
