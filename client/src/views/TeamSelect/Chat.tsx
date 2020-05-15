@@ -6,8 +6,10 @@ const Chat = () => {
   const context = useContext(ApplicationContext)
   const [message, setMessage] = useState("")
   const handleKeyDown = (e) => {
-    const { code } = e
-    console.log(code)
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      sendMessage()
+    }
   }
   const sendMessage = () => {
     if (message.length) {
