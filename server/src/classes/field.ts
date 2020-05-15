@@ -84,14 +84,14 @@ export class Field {
         console.log('_startGame')
 
         this._score = new Score()
-        this._connectedPlayers().forEach(player => player.materialize(this._world))
-        this._mountStartWalls();
         this._gameEnded = false
         this._victorySide = 'LEFT'
         this._effectCollideables = []
+        this._connectedPlayers().forEach(player => player.materialize(this._world))
+        this._mountStartWalls();
+        this._mountSensors()
 
         this._contdownTimeout = setTimeout(() => {
-            this._mountSensors()
             this._mountBall()
             Events.on(this._engine, 'collisionStart', this._handleCollisionsStart);
             Events.on(this._engine, 'collisionEnd', this._handleCollisionsEnd);
@@ -125,6 +125,9 @@ export class Field {
         this._unmountBall()
         this._unmountStartWalls()
         this._ball.clearKickers()
+        this._effectCollideables.forEach(effect => {
+            effect.dematerialize()
+        })
     }
 
     _reset(type: ResetType) {
@@ -152,6 +155,9 @@ export class Field {
             this._score.reset()
             this._unmountBall()
             this._unmountStartWalls()
+            this._effectCollideables.forEach(effect => {
+                effect.dematerialize()
+            })
         }
     }
 

@@ -9,6 +9,7 @@ import { CircleCollideable, Collideable, RectCollideable, PolygonCollideable } f
 import Ring from "../classes/collideables/ring";
 import { playerRadius } from "../globals";
 import VectorCollideable from "../classes/collideables/vector";
+import Ball from "../classes/collideables/ball";
 
 export class AsheQ extends Cone {
     constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
@@ -112,28 +113,29 @@ export class VeigarW extends Ring {
     }
 }
 
+
 export class AmumuQ extends VectorCollideable {
+    _targetPosition: Vector
     constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
         super(0, new Vector(0, 0), 10, {
             restitution: 0,
             isSensor: true,
             collisionFilter: {
                 category: AbilityEffectCategory,
-                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
             },
             plugin: {
                 owner: owner,
                 id: spell.id,
-                duration: 700,
+                duration: 1000,
                 velocity: 7,
                 handleCollision: (target: Collideable) => {
-                    if (!target._body.isSensor) {
-                        this._body.plugin.owner.setVelocity(new Vector(0, 0), 0)
+                    if (!target._body.isSensor && !this._targetPosition) {
+                        this.setVelocity(new Vector(0, 0))
+                        this._body.plugin.duration = 1000
                         const current = this._body.plugin.owner.getPosition()
                         const distance = target.getPosition().substract(current)
-                        this._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(target.getBounds().module() / 2 + 5))))
-                        this._expired = true
-                        this.dematerialize()
+                        this._targetPosition = current.add(distance.substract(distance.normalize().multiply(target.getBounds().module())))
                     }
                 }
             }
@@ -141,22 +143,22 @@ export class AmumuQ extends VectorCollideable {
         this._body.plugin.drawer = this
     }
 
-    materialize(world: World) {
-        this._body.plugin.owner.setVelocity(new Vector(0, 0), 0)
-        super.materialize(world)
-    }
-
-    setVelocity(velocity: Vector, angularVelocity: number = 0): void {
-        super.setVelocity(velocity, angularVelocity)
-    }
-
-    _scale = new Vector(1, 1)
     update(dt: number) {
-        const f = dt / 2000
-        Body.scale(this._body, 1 / this._scale.x, 1 / this._scale.y)
-        this._scale = this._scale.add(new Vector(f, f))
-        Body.scale(this._body, this._scale.x, this._scale.y)
-        super.update(dt)
+        if (this._targetPosition) {
+            const current = this._body.plugin.owner.getPosition()
+            const distance = this._targetPosition.substract(current).module()
+            if (distance > 0) {
+                this._body.plugin.owner.setPosition(
+                    current
+                        .setX(current.x + (this._targetPosition.x - current.x) / 10)
+                        .setY(current.y + (this._targetPosition.y - current.y) / 10)
+                )
+
+            } else {
+                this._expired = true
+                this.dematerialize()
+            }
+        }
     }
 }
 
@@ -256,7 +258,9 @@ export class LeeSinW extends CircleCollideable {
 }
 
 
+
 export class ThreshQ extends CircleCollideable {
+    _targetPosition: Vector
     constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
         super(0, new Vector(0, 0), 10, {
             restitution: 0,
@@ -271,17 +275,35 @@ export class ThreshQ extends CircleCollideable {
                 duration: 700,
                 velocity: 7,
                 handleCollision: (target: Collideable) => {
-                    if (!target._body.isSensor) {
+                    if (!target._body.isSensor && !this._targetPosition) {
+                        this.setVelocity(new Vector(0, 0))
+                        this._body.plugin.duration = 1000
                         const current = this._body.plugin.owner.getPosition()
                         const distance = target.getPosition().substract(current)
-                        this._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(target.getBounds().module() / 2 + 20))))
-                        this._expired = true
-                        this.dematerialize()
+                        this._targetPosition = current.add(distance.substract(distance.normalize().multiply(target.getBounds().module())))
                     }
                 }
             }
         })
         this._body.plugin.drawer = this
+    }
+
+    update(dt: number) {
+        if (this._targetPosition) {
+            const current = this._body.plugin.owner.getPosition()
+            const distance = this._targetPosition.substract(current).module()
+            if (distance > 0) {
+                this._body.plugin.owner.setPosition(
+                    current
+                        .setX(current.x + (this._targetPosition.x - current.x) / 10)
+                        .setY(current.y + (this._targetPosition.y - current.y) / 10)
+                )
+
+            } else {
+                this._expired = true
+                this.dematerialize()
+            }
+        }
     }
 
     serialize(): any {
@@ -293,6 +315,8 @@ export class ThreshQ extends CircleCollideable {
         }
     }
 }
+
+
 
 export class ThreshW extends CircleCollideable {
     constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
@@ -355,7 +379,7 @@ export class ShacoW extends CircleCollideable {
                 duration: 30000,
                 velocity: 0,
                 handleCollision: (target: Collideable) => {
-                    if (!target._body.isSensor) {
+                    if (!target._body.isSensor && !(target._body.plugin.owner instanceof Ball)) {
                         this._visible = true
                         const current = target.getPosition()
                         const direction = current.substract(this.getPosition()).normalize()

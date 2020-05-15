@@ -11,6 +11,7 @@ export default class Ball extends CircleCollideable {
     constructor(position: Vector) {
         super(ballMass, position, ballRadius, {
             restitution: 0.9,
+            frictionAir: 0.02,
             collisionFilter: {
                 category: BallCategory,
             },

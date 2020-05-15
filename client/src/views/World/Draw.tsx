@@ -16,7 +16,7 @@ const Draw = () => {
       <GoalComponent side="LEFT" />
       <GoalComponent side="RIGHT" />
       <g>
-        {/* {debug.map((effect, i) => <EffectComponent key={i} effect={effect} self={self} players={playerList} />)} */}
+        {debug.map((effect, i) => <EffectComponent key={i} effect={effect} self={self} players={playerList} />)}
         {effects.map((effect, i) => <EffectComponent key={i} effect={effect} self={self} players={playerList} />)}
         {ball && <BallComponent ball={ball} />}
         {Object.keys(players)

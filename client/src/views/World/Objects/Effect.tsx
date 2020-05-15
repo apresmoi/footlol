@@ -25,7 +25,7 @@ const EffectComponent = (props: { effect, self, players }) => {
   else if (effect.id === "ThreshQ") return <ThreshQ effect={effect} />
   else if (effect.id === "ThreshW") return <ThreshW effect={effect} />
   else if (effect.id === "JackInTheBox") return <ShacoW effect={effect}
-    shacoInTeam={self.champion === "Shaco" || players.some(x => x.side === self.side && x.champion === "Shaco")}
+    shacoInTeam={self ? self.champion === "Shaco" || players.some(x => x.side === self.side && x.champion === "Shaco") : true}
   />
   else if (effect.id === "GarenE") return <GarenW effect={effect} />
   else if (effect.id === "FlashFrost") return <AniviaQ effect={effect} />
