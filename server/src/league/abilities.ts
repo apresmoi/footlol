@@ -191,7 +191,7 @@ export class LeeSinQ extends CircleCollideable {
             isSensor: true,
             collisionFilter: {
                 category: AbilityEffectCategory,
-                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
             },
             plugin: {
                 owner: owner,
