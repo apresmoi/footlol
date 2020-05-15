@@ -10,8 +10,8 @@ import { deepCopy } from '../utilities/objects'
 class Veigar extends Champion {
     constructor(side: TeamSide, owner: Player) {
         super('Veigar', source.Veigar, owner);
-        this.spells.Q = { ...this.spells.Q, cooldown: 0 }
-        this.spells.W = { ...this.spells.E, cooldown: 0 }
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
+        this.spells.W = deepCopy({ ...this.spells.E, cooldown: 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
@@ -38,8 +38,8 @@ class Ashe extends Champion {
 
     constructor(side: TeamSide, owner: Player) {
         super('Ashe', source.Ashe, owner);
-        this.spells.Q = deepCopy({ ...this.spells.W, cooldown: 1 })
-        this.spells.W = deepCopy({ ...this.spells.R, cooldown: 1 })
+        this.spells.Q = deepCopy({ ...this.spells.W, cooldown: 5 })
+        this.spells.W = deepCopy({ ...this.spells.R, cooldown: 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
@@ -66,8 +66,8 @@ class Amumu extends Champion {
 
     constructor(side: TeamSide, owner: Player) {
         super('Amumu', source.Amumu, owner);
-        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 1 })
-        this.spells.W = deepCopy({ ...this.spells.R, cooldown: 1 })
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
+        this.spells.W = deepCopy({ ...this.spells.R, cooldown: 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
@@ -94,8 +94,8 @@ class LeeSin extends Champion {
 
     constructor(side: TeamSide, owner: Player) {
         super('LeeSin', source.LeeSin, owner);
-        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 1 })
-        this.spells.W = deepCopy({ ...this.spells.R, cooldown: 1 })
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
+        this.spells.W = deepCopy({ ...this.spells.R, cooldown: 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
@@ -123,8 +123,8 @@ class Thresh extends Champion {
 
     constructor(side: TeamSide, owner: Player) {
         super('Thresh', source.Thresh, owner);
-        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 1 })
-        this.spells.W = deepCopy({ ...this.spells.W, cooldown: 1 })
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
+        this.spells.W = deepCopy({ ...this.spells.W, cooldown: 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
@@ -151,8 +151,8 @@ class Shaco extends Champion {
 
     constructor(side: TeamSide, owner: Player) {
         super('Shaco', source.Shaco, owner);
-        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 1 })
-        this.spells.W = deepCopy({ ...this.spells.W, cooldown: 1 })
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
+        this.spells.W = deepCopy({ ...this.spells.W, cooldown: 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
@@ -185,8 +185,8 @@ class Garen extends Champion {
 
     constructor(side: TeamSide, owner: Player) {
         super('Garen', source.Garen, owner);
-        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 1 })
-        this.spells.W = deepCopy({ ...this.spells.E, cooldown: 1 })
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
+        this.spells.W = deepCopy({ ...this.spells.E, cooldown: 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
@@ -214,8 +214,8 @@ class Garen extends Champion {
 class Anivia extends Champion {
     constructor(side: TeamSide, owner: Player) {
         super('Anivia', source.Anivia, owner);
-        this.spells.Q = { ...this.spells.Q, cooldown: 0 }
-        this.spells.W = { ...this.spells.W, cooldown: 0 }
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
+        this.spells.W = deepCopy({ ...this.spells.W, cooldown: 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
@@ -238,8 +238,8 @@ class Anivia extends Champion {
 class Yasuo extends Champion {
     constructor(side: TeamSide, owner: Player) {
         super('Yasuo', source.Yasuo, owner);
-        this.spells.Q = { ...this.spells.E, cooldown: 0 }
-        this.spells.W = { ...this.spells.W, cooldown: 0 }
+        this.spells.Q = deepCopy({ ...this.spells.E, cooldown: 5 })
+        this.spells.W = deepCopy({ ...this.spells.W, cooldown: 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
@@ -262,8 +262,8 @@ class Yasuo extends Champion {
 class Malphite extends Champion {
     constructor(side: TeamSide, owner: Player) {
         super('Malphite', source.Malphite, owner);
-        this.spells.Q = { ...this.spells.W, cooldown: 0 }
-        this.spells.W = { ...this.spells.R, cooldown: 0 }
+        this.spells.Q = deepCopy({ ...this.spells.W, cooldown: 5 })
+        this.spells.W = deepCopy({ ...this.spells.R, cooldown: 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }

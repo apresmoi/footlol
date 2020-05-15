@@ -352,7 +352,7 @@ export class ShacoW extends CircleCollideable {
             plugin: {
                 owner: owner,
                 id: spell.id,
-                duration: 20000,
+                duration: 30000,
                 velocity: 0,
                 handleCollision: (target: Collideable) => {
                     if (!target._body.isSensor) {
@@ -364,7 +364,7 @@ export class ShacoW extends CircleCollideable {
                         const interval = setInterval(() => {
                             if (iterations < 1500) {
                                 iterations += 50
-                                target.setPosition(target.getPosition().add(direction.multiply(1).setY(Math.random() * 2 - 1)))
+                                target.setPosition(target.getPosition().add(direction.multiply(1).setY(Math.random() * 4 - 2)))
                             } else {
                                 clearInterval(interval)
                             }
