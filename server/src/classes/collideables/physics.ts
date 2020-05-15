@@ -191,8 +191,8 @@ export class RectCollideable extends Collideable {
             type: 'rect',
             position: this.getPosition().serialize(),
             angle: this.getAngle(),
-            width: this._body.bounds.max.x - this._body.bounds.min.x,
-            height: this._body.bounds.max.y - this._body.bounds.min.y,
+            width: this._width,
+            height: this._height,
             direction: this.getVelocity().director()
         }
     }

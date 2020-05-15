@@ -5,7 +5,7 @@ import Player from "../classes/collideables/player";
 import { ChampionSpell } from "./classes";
 import { AbilityProjectileCategory, PlayerRightSideCategory, PlayerLeftSideCategory, AbilityStunCategory, AbilityEffectCategory, BallCategory } from "../classes/collideables/categories";
 import { Body, World } from "matter-js";
-import { CircleCollideable, Collideable } from "../classes/collideables/physics";
+import { CircleCollideable, Collideable, RectCollideable } from "../classes/collideables/physics";
 import Ring from "../classes/collideables/ring";
 import { playerRadius } from "../globals";
 import VectorCollideable from "../classes/collideables/vector";
@@ -392,4 +392,39 @@ export class ShacoW extends CircleCollideable {
             visible: this._visible
         }
     }
+}
+
+
+export class GarenW extends RectCollideable {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+        super(100, new Vector(0, 0), playerRadius / 2, playerRadius * 6, 0, {
+            // isStatic: true,
+            collisionFilter: {
+                category: AbilityProjectileCategory,
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
+            },
+            plugin: {
+                owner: owner,
+                id: spell.id,
+                duration: 4000,
+                velocity: 0,
+                angularVelocity: Math.PI / 10
+            },
+        })
+        this._body.plugin.drawer = this
+    }
+
+    update(dt: number) {
+        this.setPosition(this._body.plugin.owner.getPosition())
+        this.setVelocity(this._body.plugin.owner.getVelocity(), this._body.plugin.angularVelocity)
+    }
+
+    // serialize(): any {
+    //     return {
+    //         type: 'vector',
+    //         position: this._body.plugin.owner.getPosition().serialize(),
+    //         to: this.getPosition().serialize(),
+    //         radius: this._body.circleRadius
+    //     }
+    // }
 }

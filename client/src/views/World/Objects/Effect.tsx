@@ -5,6 +5,7 @@ import { AmumuQ, AmumuW } from './Skills/Amumu';
 import { LeeSinQ, LeeSinW } from './Skills/LeeSin';
 import { ThreshQ, ThreshW } from './Skills/Thresh';
 import { ShacoW } from './Skills/Shaco';
+import { GarenW } from './Skills/Garen';
 
 
 const EffectComponent = (props: { effect, self }) => {
@@ -21,6 +22,7 @@ const EffectComponent = (props: { effect, self }) => {
   else if (effect.id === "ThreshQ") return <ThreshQ effect={effect} />
   else if (effect.id === "ThreshW") return <ThreshW effect={effect} />
   else if (effect.id === "JackInTheBox") return <ShacoW effect={effect} self={self} />
+  else if (effect.id === "GarenE") return <GarenW effect={effect} />
   else if (effect.id) {
     console.log(effect.id)
   }

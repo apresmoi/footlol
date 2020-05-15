@@ -467,6 +467,84 @@ export const source = {
       }
     }]
   },
+  "Garen": {
+    "name": "Garen",
+    "stats": {
+      "hp": 620,
+      "hpperlevel": 84,
+      "mp": 0,
+      "mpperlevel": 0,
+      "movespeed": 340,
+      "armor": 36,
+      "armorperlevel": 3,
+      "spellblock": 32.1,
+      "spellblockperlevel": 0.75,
+      "attackrange": 175,
+      "hpregen": 8,
+      "hpregenperlevel": 0.5,
+      "mpregen": 0,
+      "mpregenperlevel": 0,
+      "crit": 0,
+      "critperlevel": 0,
+      "attackdamage": 66,
+      "attackdamageperlevel": 4.5,
+      "attackspeedperlevel": 3.65,
+      "attackspeed": 0.625
+    },
+    "spells": [{
+      "id": "GarenQ",
+      "name": "Decisive Strike",
+      "cooldown": 8,
+      "image": {
+        "full": "GarenQ.png",
+        "sprite": "spell3.png",
+        "group": "spell",
+        "x": 288,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "GarenW",
+      "name": "Courage",
+      "cooldown": 23,
+      "image": {
+        "full": "GarenW.png",
+        "sprite": "spell3.png",
+        "group": "spell",
+        "x": 336,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "GarenE",
+      "name": "Judgment",
+      "cooldown": 9,
+      "image": {
+        "full": "GarenE.png",
+        "sprite": "spell3.png",
+        "group": "spell",
+        "x": 384,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "GarenR",
+      "name": "Demacian Justice",
+      "cooldown": 120,
+      "image": {
+        "full": "GarenR.png",
+        "sprite": "spell3.png",
+        "group": "spell",
+        "x": 432,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }]
+  },
 
   "Yasuo": {
     "name": "Yasuo",
@@ -541,84 +619,6 @@ export const source = {
         "group": "spell",
         "x": 144,
         "y": 48,
-        "w": 48,
-        "h": 48
-      }
-    }]
-  },
-  "Garen": {
-    "name": "Garen",
-    "stats": {
-      "hp": 620,
-      "hpperlevel": 84,
-      "mp": 0,
-      "mpperlevel": 0,
-      "movespeed": 340,
-      "armor": 36,
-      "armorperlevel": 3,
-      "spellblock": 32.1,
-      "spellblockperlevel": 0.75,
-      "attackrange": 175,
-      "hpregen": 8,
-      "hpregenperlevel": 0.5,
-      "mpregen": 0,
-      "mpregenperlevel": 0,
-      "crit": 0,
-      "critperlevel": 0,
-      "attackdamage": 66,
-      "attackdamageperlevel": 4.5,
-      "attackspeedperlevel": 3.65,
-      "attackspeed": 0.625
-    },
-    "spells": [{
-      "id": "GarenQ",
-      "name": "Decisive Strike",
-      "cooldown": 8,
-      "image": {
-        "full": "GarenQ.png",
-        "sprite": "spell3.png",
-        "group": "spell",
-        "x": 288,
-        "y": 96,
-        "w": 48,
-        "h": 48
-      }
-    }, {
-      "id": "GarenW",
-      "name": "Courage",
-      "cooldown": 23,
-      "image": {
-        "full": "GarenW.png",
-        "sprite": "spell3.png",
-        "group": "spell",
-        "x": 336,
-        "y": 96,
-        "w": 48,
-        "h": 48
-      }
-    }, {
-      "id": "GarenE",
-      "name": "Judgment",
-      "cooldown": 9,
-      "image": {
-        "full": "GarenE.png",
-        "sprite": "spell3.png",
-        "group": "spell",
-        "x": 384,
-        "y": 96,
-        "w": 48,
-        "h": 48
-      }
-    }, {
-      "id": "GarenR",
-      "name": "Demacian Justice",
-      "cooldown": 120,
-      "image": {
-        "full": "GarenR.png",
-        "sprite": "spell3.png",
-        "group": "spell",
-        "x": 432,
-        "y": 96,
         "w": 48,
         "h": 48
       }

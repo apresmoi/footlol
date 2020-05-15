@@ -13,6 +13,10 @@ export type ChampionList = {
     'LeeSin': (side: TeamSide, owner: Player) => Champion,
     'Thresh': (side: TeamSide, owner: Player) => Champion,
     'Shaco': (side: TeamSide, owner: Player) => Champion,
+    'Garen': (side: TeamSide, owner: Player) => Champion,
+    'Yasuo': (side: TeamSide, owner: Player) => Champion,
+    'Anivia': (side: TeamSide, owner: Player) => Champion,
+    'Blitzcrank': (side: TeamSide, owner: Player) => Champion,
 }
 
 export class ChampionSourceStats {

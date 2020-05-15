@@ -410,7 +410,9 @@ export class Field {
                     if (collideable._body.plugin.velocity)
                         collideable.setVelocity((collideable._body.plugin.owner as Player)
                             ._facingVector.normalize()
-                            .multiply(collideable._body.plugin.velocity + collideable._body.plugin.owner.getVelocity().module()))
+                            .multiply(collideable._body.plugin.velocity + collideable._body.plugin.owner.getVelocity().module()), collideable._body.plugin.angularVelocity)
+                    else if (collideable._body.plugin.angularVelocity)
+                        collideable.setVelocity(new Vector(0, 0), collideable._body.plugin.angularVelocity)
                     collideable.setPosition(collideable._body.plugin.owner.getPosition())
                     collideable.materialize(this._world)
                 }
