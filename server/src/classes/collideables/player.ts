@@ -47,9 +47,9 @@ export default class Player extends CompoundCollideable {
             plugin: {
                 owner: this,
             },
-            collisionFilter: {
-                category: side === 'LEFT' ? PlayerLeftSideCategory : PlayerRightSideCategory,
-            }
+            // collisionFilter: {
+            //     category: side === 'LEFT' ? PlayerLeftSideCategory : PlayerRightSideCategory,
+            // }
         });
         this._sensorBody = new CircleCollideable(0, position, playerActionRadius, {
             isSensor: true,

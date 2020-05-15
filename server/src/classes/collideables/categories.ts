@@ -1,10 +1,10 @@
-export const WallCategory = 0x0001
-export const BallCategory = 0x0002
-export const GoalCategory = 0x0004
+export const WallCategory = 1
+export const BallCategory = 2
+export const GoalCategory = 4
 
-export const PlayerLeftSideCategory = 0x0008
-export const PlayerRightSideCategory = 0x0016
+export const PlayerLeftSideCategory = 8
+export const PlayerRightSideCategory = 16
 
-export const AbilityProjectileCategory = 0x0032
-export const AbilityStunCategory = 0x0064
-export const AbilityEffectCategory = 0x0128
+export const AbilityProjectileCategory = 32
+export const AbilityStunCategory = 64
+export const AbilityEffectCategory = 128

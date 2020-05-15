@@ -238,7 +238,7 @@ class Anivia extends Champion {
 class Yasuo extends Champion {
     constructor(side: TeamSide, owner: Player) {
         super('Yasuo', source.Yasuo, owner);
-        this.spells.Q = deepCopy({ ...this.spells.E, cooldown: 5 })
+        this.spells.Q = deepCopy({ ...this.spells.E, cooldown: 2 })
         this.spells.W = deepCopy({ ...this.spells.W, cooldown: 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W

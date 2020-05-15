@@ -486,7 +486,7 @@ export class YasuoQ extends CircleCollideable {
             isSensor: true,
             collisionFilter: {
                 category: AbilityEffectCategory,
-                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory)
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
             },
             plugin: {
                 owner: owner,
@@ -517,12 +517,14 @@ export class YasuoQ extends CircleCollideable {
             const current = this._body.plugin.owner.getPosition()
             const distance = this._targetPosition.substract(current).module()
             if (distance > 0) {
-                (this._body.plugin.owner as Player).disableCollisions(true)
+                (this._body.plugin.owner as Player).disableCollisions(true);
+                (this._body.plugin.owner as Player)._champion.clearCooldown('Q');
                 this._body.plugin.owner.setPosition(
                     current
                         .setX(current.x + (this._targetPosition.x - current.x) / 10)
                         .setY(current.y + (this._targetPosition.y - current.y) / 10)
                 )
+
             } else {
                 this._expired = true
                 this.dematerialize()

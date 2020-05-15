@@ -120,6 +120,11 @@ export class Champion {
         return false
     }
 
+    clearCooldown(ability: 'Q' | 'W'): void {
+        if(ability === 'Q') this._tsQ = null
+        else if(ability === 'W') this._tsW = null
+    }
+
     getCooldowns() {
         let Q: number = 0
         let W: number = 0
