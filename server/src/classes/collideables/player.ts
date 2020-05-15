@@ -27,6 +27,8 @@ export default class Player extends CompoundCollideable {
 
     _facingVector: Vector
 
+    _visible: boolean
+
     constructor(id: string, name: string, championName: ChampionName, position: Vector, side: TeamSide) {
         super(position)
         this._id = id;
@@ -35,6 +37,7 @@ export default class Player extends CompoundCollideable {
         this._side = side
         this._acceleration = 0.07
         this._ready = false
+        this._visible = true
 
         const mass = this._champion?.hp / 10 || 50
 
@@ -65,6 +68,11 @@ export default class Player extends CompoundCollideable {
                 owner: this,
             }
         })._body
+    }
+
+    handleCollision(target: Collideable): void {
+        this.makeVisible()
+        super.handleCollision(target)
     }
 
     checkSensor(body: Body): boolean {
@@ -121,6 +129,14 @@ export default class Player extends CompoundCollideable {
         return this._ready
     }
 
+    makeInvisible() {
+        this._visible = false
+    }
+
+    makeVisible() {
+        this._visible = true
+    }
+
     serialize() {
         return {
             id: this._id,
@@ -130,7 +146,8 @@ export default class Player extends CompoundCollideable {
             side: this._side,
             kicking: this._kicking,
             ready: this._ready,
-            cooldown: this._champion ? this._champion.getCooldowns() : { W: 0, Q: 0 }
+            cooldown: this._champion ? this._champion.getCooldowns() : { W: 0, Q: 0 },
+            visible: this._visible,
         }
     }
 }

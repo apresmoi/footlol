@@ -15,7 +15,8 @@ export interface Player {
         Q: number
         W: number
     }
-    side: 'LEFT' | 'RIGHT'
+    side: 'LEFT' | 'RIGHT',
+    visible: boolean
 }
 
 export interface Ball {
@@ -59,6 +60,7 @@ export interface Effect {
     image: EffectImage
     direction: Vector
     angle: number
+    visible?: boolean
 }
 export interface CircleEffect extends Effect {
     type: 'circle'

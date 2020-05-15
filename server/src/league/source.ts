@@ -77,79 +77,79 @@ export const source = {
       }
     }]
   },
-  "Yasuo": {
-    "name": "Yasuo",
+  "LeeSin": {
+    "name": "LeeSin",
     "stats": {
-      "hp": 523,
-      "hpperlevel": 87,
-      "mp": 100,
+      "hp": 575,
+      "hpperlevel": 85,
+      "mp": 200,
       "mpperlevel": 0,
       "movespeed": 345,
-      "armor": 30,
-      "armorperlevel": 3.4,
-      "spellblock": 30,
+      "armor": 33,
+      "armorperlevel": 3.7,
+      "spellblock": 32.1,
       "spellblockperlevel": 1.25,
-      "attackrange": 175,
-      "hpregen": 6.5,
-      "hpregenperlevel": 0.9,
-      "mpregen": 0,
+      "attackrange": 125,
+      "hpregen": 7.5,
+      "hpregenperlevel": 0.7,
+      "mpregen": 50,
       "mpregenperlevel": 0,
       "crit": 0,
       "critperlevel": 0,
-      "attackdamage": 60,
+      "attackdamage": 70,
       "attackdamageperlevel": 3.2,
-      "attackspeedperlevel": 2.5,
-      "attackspeed": 0.697
+      "attackspeedperlevel": 3,
+      "attackspeed": 0.651
     },
     "spells": [{
-      "id": "YasuoQ1Wrapper",
-      "name": "Steel Tempest",
-      "cooldown": 4,
+      "id": "BlindMonkQOne",
+      "name": "Sonic Wave / Resonating Strike",
+      "cooldown": 11,
       "image": {
-        "full": "YasuoQ1Wrapper.png",
-        "sprite": "spell14.png",
-        "group": "spell",
-        "x": 0,
-        "y": 48,
-        "w": 48,
-        "h": 48
-      }
-    }, {
-      "id": "YasuoW",
-      "name": "Wind Wall",
-      "cooldown": 26,
-      "image": {
-        "full": "YasuoW.png",
-        "sprite": "spell14.png",
-        "group": "spell",
-        "x": 48,
-        "y": 48,
-        "w": 48,
-        "h": 48
-      }
-    }, {
-      "id": "YasuoE",
-      "name": "Sweeping Blade",
-      "cooldown": 0.5,
-      "image": {
-        "full": "YasuoE.png",
-        "sprite": "spell14.png",
+        "full": "BlindMonkQOne.png",
+        "sprite": "spell6.png",
         "group": "spell",
         "x": 96,
-        "y": 48,
+        "y": 96,
         "w": 48,
         "h": 48
       }
     }, {
-      "id": "YasuoR",
-      "name": "Last Breath",
-      "cooldown": 80,
+      "id": "BlindMonkWOne",
+      "name": "Safeguard / Iron Will",
+      "cooldown": 12,
       "image": {
-        "full": "YasuoR.png",
-        "sprite": "spell14.png",
+        "full": "BlindMonkWOne.png",
+        "sprite": "spell6.png",
         "group": "spell",
         "x": 144,
-        "y": 48,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "BlindMonkEOne",
+      "name": "Tempest / Cripple",
+      "cooldown": 10,
+      "image": {
+        "full": "BlindMonkEOne.png",
+        "sprite": "spell6.png",
+        "group": "spell",
+        "x": 192,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "BlindMonkRKick",
+      "name": "Dragon's Rage",
+      "cooldown": 110,
+      "image": {
+        "full": "BlindMonkRKick.png",
+        "sprite": "spell6.png",
+        "group": "spell",
+        "x": 240,
+        "y": 96,
         "w": 48,
         "h": 48
       }
@@ -233,157 +233,79 @@ export const source = {
       }
     }]
   },
-  "Shaco": {
-    "name": "Shaco",
+  "Ashe": {
+    "name": "Ashe",
     "stats": {
-      "hp": 587,
-      "hpperlevel": 89,
-      "mp": 297.2,
-      "mpperlevel": 40,
-      "movespeed": 350,
-      "armor": 30,
-      "armorperlevel": 3.5,
-      "spellblock": 32.1,
-      "spellblockperlevel": 1.25,
-      "attackrange": 125,
-      "hpregen": 8.5,
+      "hp": 539,
+      "hpperlevel": 85,
+      "mp": 280,
+      "mpperlevel": 32,
+      "movespeed": 325,
+      "armor": 26,
+      "armorperlevel": 3.4,
+      "spellblock": 30,
+      "spellblockperlevel": 0.5,
+      "attackrange": 600,
+      "hpregen": 3.5,
       "hpregenperlevel": 0.55,
-      "mpregen": 7.156,
-      "mpregenperlevel": 0.45,
+      "mpregen": 6.972,
+      "mpregenperlevel": 0.4,
       "crit": 0,
       "critperlevel": 0,
-      "attackdamage": 63,
-      "attackdamageperlevel": 3,
-      "attackspeedperlevel": 3,
-      "attackspeed": 0.694
+      "attackdamage": 61,
+      "attackdamageperlevel": 2.96,
+      "attackspeedperlevel": 3.33,
+      "attackspeed": 0.658
     },
     "spells": [{
-      "id": "Deceive",
-      "name": "Deceive",
-      "cooldown": 12,
+      "id": "AsheQ",
+      "name": "Ranger's Focus",
+      "cooldown": 0,
       "image": {
-        "full": "Deceive.png",
-        "sprite": "spell10.png",
+        "full": "AsheQ.png",
+        "sprite": "spell1.png",
         "group": "spell",
-        "x": 96,
-        "y": 96,
+        "x": 288,
+        "y": 0,
         "w": 48,
         "h": 48
       }
     }, {
-      "id": "JackInTheBox",
-      "name": "Jack In The Box",
-      "cooldown": 16,
+      "id": "Volley",
+      "name": "Volley",
+      "cooldown": 14,
       "image": {
-        "full": "JackInTheBox.png",
-        "sprite": "spell10.png",
+        "full": "Volley.png",
+        "sprite": "spell1.png",
         "group": "spell",
-        "x": 144,
-        "y": 96,
+        "x": 336,
+        "y": 0,
         "w": 48,
         "h": 48
       }
     }, {
-      "id": "TwoShivPoison",
-      "name": "Two-Shiv Poison",
-      "cooldown": 8,
+      "id": "AsheSpiritOfTheHawk",
+      "name": "Hawkshot",
+      "cooldown": 5,
       "image": {
-        "full": "TwoShivPoison.png",
-        "sprite": "spell10.png",
+        "full": "AsheSpiritOfTheHawk.png",
+        "sprite": "spell1.png",
         "group": "spell",
-        "x": 192,
-        "y": 96,
+        "x": 384,
+        "y": 0,
         "w": 48,
         "h": 48
       }
     }, {
-      "id": "HallucinateFull",
-      "name": "Hallucinate",
+      "id": "EnchantedCrystalArrow",
+      "name": "Enchanted Crystal Arrow",
       "cooldown": 100,
       "image": {
-        "full": "HallucinateFull.png",
-        "sprite": "spell10.png",
-        "group": "spell",
-        "x": 240,
-        "y": 96,
-        "w": 48,
-        "h": 48
-      }
-    }]
-  },
-  "Blitzcrank": {
-    "name": "Blitzcrank",
-    "stats": {
-      "hp": 582.6,
-      "hpperlevel": 95,
-      "mp": 267.2,
-      "mpperlevel": 40,
-      "movespeed": 325,
-      "armor": 37,
-      "armorperlevel": 3.5,
-      "spellblock": 32.1,
-      "spellblockperlevel": 1.25,
-      "attackrange": 125,
-      "hpregen": 8.5,
-      "hpregenperlevel": 0.75,
-      "mpregen": 8.5,
-      "mpregenperlevel": 0.8,
-      "crit": 0,
-      "critperlevel": 0,
-      "attackdamage": 61.54,
-      "attackdamageperlevel": 3.5,
-      "attackspeedperlevel": 1.13,
-      "attackspeed": 0.625
-    },
-    "spells": [{
-      "id": "RocketGrab",
-      "name": "Rocket Grab",
-      "cooldown": 20,
-      "image": {
-        "full": "RocketGrab.png",
+        "full": "EnchantedCrystalArrow.png",
         "sprite": "spell1.png",
         "group": "spell",
-        "x": 96,
-        "y": 96,
-        "w": 48,
-        "h": 48
-      }
-    }, {
-      "id": "Overdrive",
-      "name": "Overdrive",
-      "cooldown": 15,
-      "image": {
-        "full": "Overdrive.png",
-        "sprite": "spell1.png",
-        "group": "spell",
-        "x": 144,
-        "y": 96,
-        "w": 48,
-        "h": 48
-      }
-    }, {
-      "id": "PowerFist",
-      "name": "Power Fist",
-      "cooldown": 9,
-      "image": {
-        "full": "PowerFist.png",
-        "sprite": "spell1.png",
-        "group": "spell",
-        "x": 192,
-        "y": 96,
-        "w": 48,
-        "h": 48
-      }
-    }, {
-      "id": "StaticField",
-      "name": "Static Field",
-      "cooldown": 60,
-      "image": {
-        "full": "StaticField.png",
-        "sprite": "spell1.png",
-        "group": "spell",
-        "x": 240,
-        "y": 96,
+        "x": 432,
+        "y": 0,
         "w": 48,
         "h": 48
       }
@@ -467,79 +389,158 @@ export const source = {
       }
     }]
   },
-  "Ashe": {
-    "name": "Ashe",
+  "Shaco": {
+    "name": "Shaco",
     "stats": {
-      "hp": 539,
-      "hpperlevel": 85,
-      "mp": 280,
-      "mpperlevel": 32,
-      "movespeed": 325,
-      "armor": 26,
-      "armorperlevel": 3.4,
-      "spellblock": 30,
-      "spellblockperlevel": 0.5,
-      "attackrange": 600,
-      "hpregen": 3.5,
+      "hp": 587,
+      "hpperlevel": 89,
+      "mp": 297.2,
+      "mpperlevel": 40,
+      "movespeed": 350,
+      "armor": 30,
+      "armorperlevel": 3.5,
+      "spellblock": 32.1,
+      "spellblockperlevel": 1.25,
+      "attackrange": 125,
+      "hpregen": 8.5,
       "hpregenperlevel": 0.55,
-      "mpregen": 6.972,
-      "mpregenperlevel": 0.4,
+      "mpregen": 7.156,
+      "mpregenperlevel": 0.45,
       "crit": 0,
       "critperlevel": 0,
-      "attackdamage": 61,
-      "attackdamageperlevel": 2.96,
-      "attackspeedperlevel": 3.33,
-      "attackspeed": 0.658
+      "attackdamage": 63,
+      "attackdamageperlevel": 3,
+      "attackspeedperlevel": 3,
+      "attackspeed": 0.694
     },
     "spells": [{
-      "id": "AsheQ",
-      "name": "Ranger's Focus",
-      "cooldown": 0,
+      "id": "Deceive",
+      "name": "Deceive",
+      "cooldown": 12,
       "image": {
-        "full": "AsheQ.png",
-        "sprite": "spell1.png",
+        "full": "Deceive.png",
+        "sprite": "spell10.png",
         "group": "spell",
-        "x": 288,
-        "y": 0,
+        "x": 96,
+        "y": 96,
         "w": 48,
         "h": 48
       }
     }, {
-      "id": "Volley",
-      "name": "Volley",
-      "cooldown": 14,
+      "id": "JackInTheBox",
+      "name": "Jack In The Box",
+      "cooldown": 16,
       "image": {
-        "full": "Volley.png",
-        "sprite": "spell1.png",
+        "full": "JackInTheBox.png",
+        "sprite": "spell10.png",
         "group": "spell",
-        "x": 336,
-        "y": 0,
+        "x": 144,
+        "y": 96,
         "w": 48,
         "h": 48
       }
     }, {
-      "id": "AsheSpiritOfTheHawk",
-      "name": "Hawkshot",
-      "cooldown": 5,
+      "id": "TwoShivPoison",
+      "name": "Two-Shiv Poison",
+      "cooldown": 8,
       "image": {
-        "full": "AsheSpiritOfTheHawk.png",
-        "sprite": "spell1.png",
+        "full": "TwoShivPoison.png",
+        "sprite": "spell10.png",
         "group": "spell",
-        "x": 384,
-        "y": 0,
+        "x": 192,
+        "y": 96,
         "w": 48,
         "h": 48
       }
     }, {
-      "id": "EnchantedCrystalArrow",
-      "name": "Enchanted Crystal Arrow",
+      "id": "HallucinateFull",
+      "name": "Hallucinate",
       "cooldown": 100,
       "image": {
-        "full": "EnchantedCrystalArrow.png",
-        "sprite": "spell1.png",
+        "full": "HallucinateFull.png",
+        "sprite": "spell10.png",
         "group": "spell",
-        "x": 432,
-        "y": 0,
+        "x": 240,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }]
+  },
+
+  "Yasuo": {
+    "name": "Yasuo",
+    "stats": {
+      "hp": 523,
+      "hpperlevel": 87,
+      "mp": 100,
+      "mpperlevel": 0,
+      "movespeed": 345,
+      "armor": 30,
+      "armorperlevel": 3.4,
+      "spellblock": 30,
+      "spellblockperlevel": 1.25,
+      "attackrange": 175,
+      "hpregen": 6.5,
+      "hpregenperlevel": 0.9,
+      "mpregen": 0,
+      "mpregenperlevel": 0,
+      "crit": 0,
+      "critperlevel": 0,
+      "attackdamage": 60,
+      "attackdamageperlevel": 3.2,
+      "attackspeedperlevel": 2.5,
+      "attackspeed": 0.697
+    },
+    "spells": [{
+      "id": "YasuoQ1Wrapper",
+      "name": "Steel Tempest",
+      "cooldown": 4,
+      "image": {
+        "full": "YasuoQ1Wrapper.png",
+        "sprite": "spell14.png",
+        "group": "spell",
+        "x": 0,
+        "y": 48,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "YasuoW",
+      "name": "Wind Wall",
+      "cooldown": 26,
+      "image": {
+        "full": "YasuoW.png",
+        "sprite": "spell14.png",
+        "group": "spell",
+        "x": 48,
+        "y": 48,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "YasuoE",
+      "name": "Sweeping Blade",
+      "cooldown": 0.5,
+      "image": {
+        "full": "YasuoE.png",
+        "sprite": "spell14.png",
+        "group": "spell",
+        "x": 96,
+        "y": 48,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "YasuoR",
+      "name": "Last Breath",
+      "cooldown": 80,
+      "image": {
+        "full": "YasuoR.png",
+        "sprite": "spell14.png",
+        "group": "spell",
+        "x": 144,
+        "y": 48,
         "w": 48,
         "h": 48
       }
@@ -701,6 +702,84 @@ export const source = {
       }
     }]
   },
+  "Blitzcrank": {
+    "name": "Blitzcrank",
+    "stats": {
+      "hp": 582.6,
+      "hpperlevel": 95,
+      "mp": 267.2,
+      "mpperlevel": 40,
+      "movespeed": 325,
+      "armor": 37,
+      "armorperlevel": 3.5,
+      "spellblock": 32.1,
+      "spellblockperlevel": 1.25,
+      "attackrange": 125,
+      "hpregen": 8.5,
+      "hpregenperlevel": 0.75,
+      "mpregen": 8.5,
+      "mpregenperlevel": 0.8,
+      "crit": 0,
+      "critperlevel": 0,
+      "attackdamage": 61.54,
+      "attackdamageperlevel": 3.5,
+      "attackspeedperlevel": 1.13,
+      "attackspeed": 0.625
+    },
+    "spells": [{
+      "id": "RocketGrab",
+      "name": "Rocket Grab",
+      "cooldown": 20,
+      "image": {
+        "full": "RocketGrab.png",
+        "sprite": "spell1.png",
+        "group": "spell",
+        "x": 96,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "Overdrive",
+      "name": "Overdrive",
+      "cooldown": 15,
+      "image": {
+        "full": "Overdrive.png",
+        "sprite": "spell1.png",
+        "group": "spell",
+        "x": 144,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "PowerFist",
+      "name": "Power Fist",
+      "cooldown": 9,
+      "image": {
+        "full": "PowerFist.png",
+        "sprite": "spell1.png",
+        "group": "spell",
+        "x": 192,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }, {
+      "id": "StaticField",
+      "name": "Static Field",
+      "cooldown": 60,
+      "image": {
+        "full": "StaticField.png",
+        "sprite": "spell1.png",
+        "group": "spell",
+        "x": 240,
+        "y": 96,
+        "w": 48,
+        "h": 48
+      }
+    }]
+  },
   "Malphite": {
     "name": "Malphite",
     "stats": {
@@ -779,82 +858,4 @@ export const source = {
       }
     }]
   },
-  "LeeSin": {
-    "name": "LeeSin",
-    "stats": {
-      "hp": 575,
-      "hpperlevel": 85,
-      "mp": 200,
-      "mpperlevel": 0,
-      "movespeed": 345,
-      "armor": 33,
-      "armorperlevel": 3.7,
-      "spellblock": 32.1,
-      "spellblockperlevel": 1.25,
-      "attackrange": 125,
-      "hpregen": 7.5,
-      "hpregenperlevel": 0.7,
-      "mpregen": 50,
-      "mpregenperlevel": 0,
-      "crit": 0,
-      "critperlevel": 0,
-      "attackdamage": 70,
-      "attackdamageperlevel": 3.2,
-      "attackspeedperlevel": 3,
-      "attackspeed": 0.651
-    },
-    "spells": [{
-      "id": "BlindMonkQOne",
-      "name": "Sonic Wave / Resonating Strike",
-      "cooldown": 11,
-      "image": {
-        "full": "BlindMonkQOne.png",
-        "sprite": "spell6.png",
-        "group": "spell",
-        "x": 96,
-        "y": 96,
-        "w": 48,
-        "h": 48
-      }
-    }, {
-      "id": "BlindMonkWOne",
-      "name": "Safeguard / Iron Will",
-      "cooldown": 12,
-      "image": {
-        "full": "BlindMonkWOne.png",
-        "sprite": "spell6.png",
-        "group": "spell",
-        "x": 144,
-        "y": 96,
-        "w": 48,
-        "h": 48
-      }
-    }, {
-      "id": "BlindMonkEOne",
-      "name": "Tempest / Cripple",
-      "cooldown": 10,
-      "image": {
-        "full": "BlindMonkEOne.png",
-        "sprite": "spell6.png",
-        "group": "spell",
-        "x": 192,
-        "y": 96,
-        "w": 48,
-        "h": 48
-      }
-    }, {
-      "id": "BlindMonkRKick",
-      "name": "Dragon's Rage",
-      "cooldown": 110,
-      "image": {
-        "full": "BlindMonkRKick.png",
-        "sprite": "spell6.png",
-        "group": "spell",
-        "x": 240,
-        "y": 96,
-        "w": 48,
-        "h": 48
-      }
-    }]
-  }
 }

@@ -31,6 +31,7 @@ export const ApplicationContextProvider = ({ children }) => {
   const roomID: string = DEBUG ? '/gg' : null
   const champion: string = DEBUG ? 'Veigar' : null
   const defaultSelf: Player = DEBUG ? {
+    visible: true,
     champion: 'Veigar', id: '', name: '',
     ready: false, direction: { x: 0, y: 0 }, kicking: false,
     position: { ...mapSize.center }, side: 'LEFT', cooldown: { Q: 10, W: 4 }
@@ -159,7 +160,7 @@ export const ApplicationContextProvider = ({ children }) => {
       }).catch(err => { console.log(err) })
   }
 
-  if(!state.champions || state.champions.length === 0) updateChampionPool()
+  if (!state.champions || state.champions.length === 0) updateChampionPool()
 
   return (<ApplicationContext.Provider value={{
     ...state,

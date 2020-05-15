@@ -278,6 +278,13 @@ export class Field {
         for (let i = 0, j = pairs.length; i != j; ++i) {
             const pair = pairs[i];
 
+            if (pair.bodyA.plugin.owner instanceof Player || !pair.bodyA.isSensor) {
+                pair.bodyA.plugin.owner.handleCollision(pair.bodyB.plugin.owner)
+            }
+            if (pair.bodyB.plugin.owner instanceof Player || !pair.bodyB.isSensor) {
+                pair.bodyB.plugin.owner.handleCollision(pair.bodyA.plugin.owner)
+            }
+
 
             //Anything collides with an AbilityEffectCategory
             if (pair.bodyA.collisionFilter.category === AbilityEffectCategory

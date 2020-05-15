@@ -15,8 +15,8 @@ const Draw = () => {
       <GoalComponent side="LEFT" />
       <GoalComponent side="RIGHT" />
       <g>
-        {debug.map((effect, i) => <EffectComponent key={i} effect={effect} />)}
-        {effects.map((effect, i) => <EffectComponent key={i} effect={effect} />)}
+        {debug.map((effect, i) => <EffectComponent key={i} effect={effect} self={self} />)}
+        {effects.map((effect, i) => <EffectComponent key={i} effect={effect} self={self} />)}
         {ball && <BallComponent ball={ball} />}
         {Object.keys(players)
           .filter(id => self ? self.id !== id : true)

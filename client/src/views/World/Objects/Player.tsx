@@ -6,6 +6,7 @@ import { pallete } from '../../../settings';
 const PlayerComponent = (props: { player: Player, isSelf?: boolean }) => {
   const { player, isSelf } = props
   return <g
+    className={"player " + (!player.visible ? "invisible" : "") + (isSelf ? " self" : "")}
     key={player.id}
     transform={`translate(${player.position.x}, ${player.position.y})`}
   >

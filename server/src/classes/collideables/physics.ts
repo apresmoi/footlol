@@ -28,6 +28,9 @@ export class Collideable {
         this._startPosition = position
     }
 
+    handleCollision(target: Collideable): void {
+    }
+
     getLife(): number {
         if (this._mounted && this._mountedTS)
             return (new Date().getTime() - this._mountedTS.getTime())

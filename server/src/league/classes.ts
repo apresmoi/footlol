@@ -4,7 +4,7 @@ import { TeamSide } from "../types"
 import { Collideable } from "../classes/collideables/physics"
 import { elapsedSeconds } from "../utilities/dates"
 
-export type ChampionName = 'Veigar' | 'Ashe' | 'Amumu' | 'LeeSin' | 'Thresh'
+export type ChampionName = 'Veigar' | 'Ashe' | 'Amumu' | 'LeeSin' | 'Thresh' | 'Shaco' | 'Yasuo' | 'Garen' | 'Anivia' | 'Blitzcrank'
 
 export type ChampionList = {
     'Ashe': (side: TeamSide, owner: Player) => Champion,
@@ -12,6 +12,7 @@ export type ChampionList = {
     'Amumu': (side: TeamSide, owner: Player) => Champion,
     'LeeSin': (side: TeamSide, owner: Player) => Champion,
     'Thresh': (side: TeamSide, owner: Player) => Champion,
+    'Shaco': (side: TeamSide, owner: Player) => Champion,
 }
 
 export class ChampionSourceStats {

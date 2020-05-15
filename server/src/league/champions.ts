@@ -4,7 +4,7 @@ import { source } from './source'
 import Player from '../classes/collideables/player'
 import { Collideable } from '../classes/collideables/physics'
 import { TeamSide } from '../types'
-import { AsheQ, AsheW, VeigarQ, VeigarW, AmumuW, AmumuQ, LeeSinQ, LeeSinW, ThreshQ, ThreshW } from './abilities'
+import { AsheQ, AsheW, VeigarQ, VeigarW, AmumuW, AmumuQ, LeeSinQ, LeeSinW, ThreshQ, ThreshW, ShacoW } from './abilities'
 import { deepCopy } from '../utilities/objects'
 
 class Veigar extends Champion {
@@ -143,10 +143,45 @@ class Thresh extends Champion {
     }
 }
 
+
+class Shaco extends Champion {
+    _owner: Player
+    _abilityQ: Collideable
+    _abilityW: Collideable
+
+    constructor(side: TeamSide, owner: Player) {
+        super('Shaco', source.Shaco, owner);
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 1 })
+        this.spells.W = deepCopy({ ...this.spells.W, cooldown: 1 })
+        this._spellQ = this.spells.Q
+        this._spellW = this.spells.W
+    }
+
+    getAbility(ability: 'Q' | 'W'): Collideable {
+        if (this._canUseAbility(ability))
+            switch (ability) {
+                case 'Q':
+                    console.log("invisible")
+                    this._owner.makeInvisible()
+                    setTimeout(() => {
+                        console.log("visible")
+                        this._owner.makeVisible()
+                    }, 10000);
+                    return null
+                case 'W':
+                    return new ShacoW(this._spellW, this._owner._side, this._owner)
+                default:
+                    break;
+            }
+        return null
+    }
+}
+
 export const champions: ChampionList = {
     'Ashe': (side: TeamSide, owner: Player) => new Ashe(side, owner),
     'Veigar': (side: TeamSide, owner: Player) => new Veigar(side, owner),
     'Amumu': (side: TeamSide, owner: Player) => new Amumu(side, owner),
     'LeeSin': (side: TeamSide, owner: Player) => new LeeSin(side, owner),
     'Thresh': (side: TeamSide, owner: Player) => new Thresh(side, owner),
+    'Shaco': (side: TeamSide, owner: Player) => new Shaco(side, owner),
 }
