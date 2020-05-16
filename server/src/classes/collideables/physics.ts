@@ -33,7 +33,7 @@ export class Collideable {
     }
 
     _checkForCollisionErrors(): void {
-        const nullPosition = !this._body.position.x || this._body.position.y
+        const nullPosition = this._body.position.x === null || this._body.position.y === null
 
         if (nullPosition && this._lastValidPosition) {
             this.setPosition(this._lastValidPosition)
@@ -128,7 +128,7 @@ export class Collideable {
     }
 
     update(dt: number): void {
-        const nullPosition = !this._body.position.x || this._body.position.y
+        const nullPosition = this._body.position.x === null || this._body.position.y === null
         if (!nullPosition) {
             this._lastValidPosition = Vector.fromMatter(this._body.position)
         } else {
