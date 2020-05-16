@@ -75,7 +75,7 @@ export class VeigarQ extends CircleCollideable {
         super(20, new Vector(0, 0), 10, {
             collisionFilter: {
                 category: AbilityProjectileCategory,
-                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
             },
             plugin: {
                 owner: owner,
@@ -169,7 +169,7 @@ export class AmumuW extends CircleCollideable {
             restitution: 0,
             collisionFilter: {
                 category: AbilityStunCategory,
-                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
             },
             plugin: {
                 owner: owner,
@@ -484,7 +484,7 @@ export class AniviaQ extends CircleCollideable {
             isSensor: true,
             collisionFilter: {
                 category: AbilityStunCategory,
-                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
             },
             plugin: {
                 owner: owner,
@@ -608,7 +608,7 @@ export class MalphiteQ extends CircleCollideable {
             restitution: 0,
             collisionFilter: {
                 category: AbilityStunCategory,
-                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
             },
             plugin: {
                 owner: owner,

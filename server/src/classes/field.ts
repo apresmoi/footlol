@@ -137,7 +137,11 @@ export class Field {
                 this._unmountBall()
                 this._mountBall()
                 this._mountStartWalls()
-                this._connectedPlayers().forEach(player => player.resetPosition(this._world))
+                this._connectedPlayers().forEach(player => {
+                    player.resetPosition(this._world)
+                    player._champion.clearCooldown('Q');
+                    player._champion.clearCooldown('W');
+                })
                 this._emit()
             }, 2900);
         }
