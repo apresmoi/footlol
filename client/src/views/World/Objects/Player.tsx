@@ -5,6 +5,17 @@ import { pallete } from '../../../settings';
 
 const PlayerComponent = (props: { player: Player, isSelf?: boolean, teammate?: boolean }) => {
   const { player, isSelf, teammate } = props
+
+  const fill = (() => {
+    if (isSelf) {
+      return 'yellow'
+    }
+    else if (player.side === "LEFT") {
+      return 'blue'
+    }
+    return 'red'
+  })()
+
   return <g
     className={"player " + (!player.visible ? "invisible" : "") + (isSelf || teammate ? " self" : "")}
     key={player.id}
@@ -20,7 +31,10 @@ const PlayerComponent = (props: { player: Player, isSelf?: boolean, teammate?: b
         <feComposite in="SourceGraphic" operator="and" />
       </filter>
     </defs>
-    <circle cx={0} cy={0} r={40} fill={isSelf ? 'yellow' : 'white'} fillOpacity={0.1} stroke={'white'} strokeDasharray={"4 2"} strokeOpacity={player.kicking ? 1 : 0.3} />
+    <circle cx={0} cy={0} r={40} fill={fill} fillOpacity={0.1}
+      stroke={'white'}
+      strokeDasharray={"4 2"} strokeOpacity={player.kicking ? 1 : 0.3}
+    />
     <circle cx={0} cy={0} r={25} />
     <circle cx={0} cy={0} r={23} fill={`url(#${player.id}_image)`} />
     <text fontSize={15} y={-35} filter={`url(#${player.id}_name_background)`} textAnchor="middle" fill='white' >{player.name} </text>

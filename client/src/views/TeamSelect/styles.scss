@@ -10,11 +10,13 @@
     .chat {
         flex: 2;
         background: #283C50;
-
+        max-height: 600px;
+        
         .chat-history {
             padding: 10px;
             height: calc(100% - 20px);
             overflow-y: scroll;
+            max-height: calc(100% - 20px);
         }
 
         .chat-input {
