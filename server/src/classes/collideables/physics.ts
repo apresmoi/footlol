@@ -23,10 +23,24 @@ export class Collideable {
 
     _world: World
 
+    _lastValidPosition: Vector
+
     constructor(position: Vector) {
         this._direction = new Vector(0, 0);
         this._acceleration = 0;
         this._startPosition = position
+        this._lastValidPosition = new Vector(0, 0);
+    }
+
+    _checkForCollisionErrors(): void {
+        const nullPosition = !this._body.position.x || this._body.position.y
+
+        if (nullPosition && this._lastValidPosition) {
+            this.setPosition(this._lastValidPosition)
+        }
+        else {
+            this.setPosition(mapSize.center);
+        }
     }
 
     handleCollision(target: Collideable): void {
@@ -114,6 +128,12 @@ export class Collideable {
     }
 
     update(dt: number): void {
+        const nullPosition = !this._body.position.x || this._body.position.y
+        if (!nullPosition) {
+            this._lastValidPosition = Vector.fromMatter(this._body.position)
+        } else {
+            this._checkForCollisionErrors()
+        }
         if (this._body.speed > 0 && this._body.speed < 0.01) {
             this.setVelocity(new Vector(0, 0));
         }
