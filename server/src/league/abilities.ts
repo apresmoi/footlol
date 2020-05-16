@@ -16,7 +16,7 @@ export class AsheQ extends Cone {
         super(20, new Vector(0, 0), 50, Math.PI, {
             collisionFilter: {
                 category: AbilityProjectileCategory,
-                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
             },
             restitution: 0,
             mass: 99999999999,
@@ -46,7 +46,7 @@ export class AsheW extends CircleCollideable {
         super(99999999, new Vector(0, 0), 25, {
             collisionFilter: {
                 category: AbilityStunCategory,
-                mask: side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory
+                mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
             },
             mass: 99999999,
             inertia: 99999999,
