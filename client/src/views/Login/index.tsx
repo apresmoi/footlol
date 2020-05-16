@@ -23,7 +23,7 @@ const Login = () => {
       <Container>
         <div className="login">
           <div className="login-box">
-            <h1>League Ball</h1>
+            <h1>FootLol Game</h1>
             <div className="login-content">
               <div>Nickname</div>
               <input value={context.name} onChange={handleChange} type="text" />
