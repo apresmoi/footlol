@@ -12,8 +12,6 @@ const LeeSinQ = (props: { effect: CircleEffect }) => {
   const { effect } = props
   const { position, radius } = effect
 
-  console.log(props)
-
   return <g
     className="veigar-q"
     transform={`translate(${position.x}, ${position.y})`}

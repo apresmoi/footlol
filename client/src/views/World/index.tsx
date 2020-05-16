@@ -7,6 +7,7 @@ import { Container, Header, Wrapper } from '../../layout';
 import ActionBar from './UI/ActionBar';
 import Victory from './UI/Victory';
 import Defeat from './UI/Defeat';
+import GameChat from './Chat';
 
 const World = () => {
   return (
@@ -20,6 +21,7 @@ const World = () => {
           </CameraPosition>
           <Score />
           <KeyboardWrapper>
+            <GameChat />
             <ActionBar />
             <Defeat />
             <Victory />

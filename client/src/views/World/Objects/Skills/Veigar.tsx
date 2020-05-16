@@ -5,7 +5,6 @@ import './styles.scss'
 const VeigarW = (props: { effect: RingEffect }) => {
   const { effect } = props
   const { position, thickness, radius } = effect
-  console.log(thickness, radius)
   return <g
     className="veigar-w"
     transform={`translate(${position.x}, ${position.y})`}

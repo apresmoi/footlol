@@ -35,7 +35,6 @@ const EffectComponent = (props: { effect, self, players }) => {
   else if (effect.id === "UFSlash") return <MalphiteW effect={effect} />
   else if (effect.id === "Obduracy") return <MalphiteQ effect={effect} />
   else if (effect.id) {
-    console.log(effect.id)
   }
 
   return <g

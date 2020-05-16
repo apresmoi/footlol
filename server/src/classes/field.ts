@@ -207,7 +207,11 @@ export class Field {
 
     addPlayer(id: string, name: string, champion: ChampionName): boolean {
         const players = this._connectedPlayers()
-        const side: TeamSide = players.length % 2 ? 'RIGHT' : 'LEFT'
+        const sideLengths: { [x in TeamSide]: number } = players.reduce((r, p) => {
+            r[p._side]++
+            return r
+        }, { 'LEFT': 0, 'RIGHT': 0 })
+        const side: TeamSide = sideLengths.RIGHT >= sideLengths.LEFT ? 'LEFT' : 'RIGHT'
 
         if (players.length < 10) {
             this._players[id] = new Player(id, name, champion, playerPositions[side][players.filter(x => x._side === side).length], side);
@@ -220,6 +224,9 @@ export class Field {
         if (this._players[id]) this._players[id].dematerialize();
         this._players = Object.keys(this._players).reduce((result, key) => {
             if (key !== id) result[key] = this._players[key]
+            else {
+                delete this._players[key]
+            }
             return result
         }, {})
     }

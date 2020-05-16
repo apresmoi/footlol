@@ -15,6 +15,7 @@ interface KeyboardWrapperProps {
 interface KeyboardWrapperState {
   actionKeysPressed: string[]
   directionKeysPressed: string[]
+  reportKeyboardInput: boolean
 }
 
 const allowedDirectionKeys = ['ArrowLeft', 'ArrowDown', 'ArrowUp', 'ArrowRight']
@@ -25,7 +26,8 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
     super(props)
     this.state = {
       actionKeysPressed: [],
-      directionKeysPressed: []
+      directionKeysPressed: [],
+      reportKeyboardInput: true
     }
   }
 
@@ -44,32 +46,34 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
 
   handleKeyUp = (e) => {
     const { code } = e
-    if (allowedDirectionKeys.includes(code) || allowedActionKeys.includes(code)) {
-      this.setState(state => ({
-        actionKeysPressed: state.actionKeysPressed.filter(key => key !== code),
-        directionKeysPressed: state.directionKeysPressed.filter(key => key !== code),
-      }), this.handleDirectionChanged)
-    }
+    if (this.state.reportKeyboardInput)
+      if (allowedDirectionKeys.includes(code) || allowedActionKeys.includes(code)) {
+        this.setState(state => ({
+          actionKeysPressed: state.actionKeysPressed.filter(key => key !== code),
+          directionKeysPressed: state.directionKeysPressed.filter(key => key !== code),
+        }), this.handleDirectionChanged)
+      }
   }
   handleKeyDown = (e) => {
     const { code } = e
-    if (allowedDirectionKeys.includes(code)) {
-      const { directionKeysPressed } = this.state
-      if (!directionKeysPressed.includes(code)) {
-        this.setState(state => ({
-          directionKeysPressed: [...state.directionKeysPressed, code]
-        }), this.handleDirectionChanged)
+    if (this.state.reportKeyboardInput)
+      if (allowedDirectionKeys.includes(code)) {
+        const { directionKeysPressed } = this.state
+        if (!directionKeysPressed.includes(code)) {
+          this.setState(state => ({
+            directionKeysPressed: [...state.directionKeysPressed, code]
+          }), this.handleDirectionChanged)
+        }
+      } else if (allowedActionKeys.includes(code)) {
+        const { actionKeysPressed } = this.state
+        if (!actionKeysPressed.includes(code)) {
+          this.setState(state => ({
+            actionKeysPressed: [...state.actionKeysPressed, code]
+          }), () => {
+            this.props.requestKeyPress(code)
+          })
+        }
       }
-    } else if (allowedActionKeys.includes(code)) {
-      const { actionKeysPressed } = this.state
-      if (!actionKeysPressed.includes(code)) {
-        this.setState(state => ({
-          actionKeysPressed: [...state.actionKeysPressed, code]
-        }), () => {
-          this.props.requestKeyPress(code)
-        })
-      }
-    }
   }
 
   componentDidMount() {
@@ -82,6 +86,14 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
     document.removeEventListener('keyup', this.handleKeyUp)
   }
 
+  enableKeyboardInput = () => {
+    this.setState({ reportKeyboardInput: true })
+  }
+
+  disableKeyboardInput = () => {
+    this.setState({ reportKeyboardInput: false })
+  }
+
   render() {
     return <>
       {React.Children.map(this.props.children, (child, index) => {
@@ -91,9 +103,10 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
             ...child.props,
             actionKeysPressed: this.state.actionKeysPressed,
             directionKeysPressed: this.state.directionKeysPressed,
-
             width: this.props['width'],
             height: this.props['height'],
+            disableKeyboardInput: this.disableKeyboardInput,
+            enableKeyboardInput: this.enableKeyboardInput,
           })
         return null
       })}
