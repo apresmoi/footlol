@@ -121,8 +121,13 @@ export class Champion {
     }
 
     clearCooldown(ability: 'Q' | 'W'): void {
-        if(ability === 'Q') this._tsQ = null
-        else if(ability === 'W') this._tsW = null
+        if (ability === 'Q') this._tsQ = null
+        else if (ability === 'W') this._tsW = null
+    }
+
+    setCooldown(ability: 'Q' | 'W'): void {
+        if (ability === 'Q') this._tsQ = new Date()
+        else if (ability === 'W') this._tsW = new Date()
     }
 
     getCooldowns() {

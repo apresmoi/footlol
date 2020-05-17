@@ -12,6 +12,8 @@ import { playerRadius } from '../../globals';
 export default class LeeSin extends Champion {
     _owner: Player
     _abilityQ: Collideable
+    _abilityQTarget: Collideable
+    _abilityQTimeout: NodeJS.Timeout
     _abilityW: Collideable
 
     constructor(side: TeamSide, owner: Player) {
@@ -26,7 +28,23 @@ export default class LeeSin extends Champion {
         if (this._canUseAbility(ability))
             switch (ability) {
                 case 'Q':
-                    return new LeeSinQ(this._spellQ, this._owner._side, this._owner)
+                    if (!this._abilityQTarget) {
+                        return new LeeSinQ(this._spellQ, this._owner._side, this._owner, (target) => {
+                            this.clearCooldown('Q');
+                            this._abilityQTarget = target;
+                            this._abilityQTimeout = setTimeout(() => {
+                                this._abilityQTarget = null;
+                                this.setCooldown('Q');
+                            }, 2000);
+                        })
+                    } else {
+                        clearTimeout(this._abilityQTimeout)
+                        const current = this._owner._body.plugin.owner.getPosition()
+                        const distance = this._abilityQTarget.getPosition().substract(current)
+                        this._owner._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(this._abilityQTarget.getBounds().module()))))
+                        this._abilityQTarget = null;
+                        return null;
+                    }
                 case 'W':
                     return new LeeSinW(this._spellW, this._owner._side, this._owner)
                 default:
@@ -38,7 +56,7 @@ export default class LeeSin extends Champion {
 
 
 export class LeeSinQ extends CircleCollideable {
-    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player, targetAdquired: (target: Collideable) => void) {
         super(0, new Vector(0, 0), 10, {
             restitution: 0,
             isSensor: true,
@@ -53,10 +71,7 @@ export class LeeSinQ extends CircleCollideable {
                 velocity: 14,
                 handleCollision: (target: Collideable) => {
                     if (!target._body.isSensor) {
-                        console.log(target)
-                        const current = this._body.plugin.owner.getPosition()
-                        const distance = target.getPosition().substract(current)
-                        this._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(target.getBounds().module() / 2 + 5))))
+                        targetAdquired(target)
                         this._expired = true
                         this.dematerialize()
                     }
