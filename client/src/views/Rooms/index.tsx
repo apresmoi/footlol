@@ -10,7 +10,7 @@ const Rooms = () => {
   const history = useHistory()
 
   const handleClick = () => {
-    history.push("/create-room");
+    history.push("/room-create");
   }
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const Rooms = () => {
                 </tbody>
               </table>
             </div>
-            {/* <button onClick={handleClick}>Create new Room</button> */}
+            <button onClick={handleClick}>Create new Room</button>
           </div>
         </div>
       </Container>
@@ -63,3 +63,5 @@ const Rooms = () => {
 }
 
 export default Rooms;
+
+export { default as CreateRoom } from './create'

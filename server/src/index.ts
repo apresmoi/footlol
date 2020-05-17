@@ -12,9 +12,9 @@ app.use(body_parser.json());
 const http = require('http').Server(app);
 const io = socketio(http, { path: '/ws' });
 
-let roomId = '/gg'
+let roomId = '/ao'
 let matches = {
-  [roomId]: new Room(roomId, "First room", io.of(roomId))
+  [roomId]: new Room(roomId, "Always open", io.of(roomId))
 }
 
 const newID = (): string => {
@@ -56,13 +56,22 @@ app.get('/api/rooms', function (req, res) {
 });
 
 app.post('/api/rooms', (req, res) => {
-  const name: string = req.query.name as string
-
-  const id = newID()
-  matches[newID()] = new Room(id, name, io.of('/' + id))
-  res.status(201).send({
-    id,
-    name
+  const name: string = req.body.name as string
+  if (name && name.length > 5) {
+    console.log(name, req.body)
+    const id = '/' + newID()
+    matches[id] = new Room(id, name, io.of(id))
+    matches[id].allPlayersDisconnected = () => {
+      delete matches[id]
+    }
+    res.status(201).send({
+      id,
+      name
+    })
+    return;
+  }
+  res.status(500).send({
+    error: "Name min length 6"
   })
 })
 

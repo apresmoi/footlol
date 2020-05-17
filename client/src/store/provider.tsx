@@ -26,7 +26,7 @@ const defaultState = {
 
 const DEBUG = false
 const stage: RoomStage = DEBUG ? 'FIELD' : null
-const roomID: string = DEBUG ? '/gg' : null
+const roomID: string = DEBUG ? '/always-open' : null
 const champion: string = DEBUG ? 'Veigar' : null
 const defaultSelf: Player = DEBUG ? {
   visible: true,
@@ -129,7 +129,6 @@ export const ApplicationContextProvider = ({ children }) => {
     })
 
     socket.subscribePlayerKicked(() => {
-      console.log('kicked')
       history.push("/room-select")
     })
 
@@ -214,12 +213,36 @@ export const ApplicationContextProvider = ({ children }) => {
       }).catch(err => { console.log(err) })
   }
 
+  const createRoom = (name: string) => {
+    console.log("createRoom", name)
+    fetch(
+      'http://' + window.location.host.replace(':8000', '') + ':8081' + '/api/rooms',
+      {
+        'method': 'POST',
+        'body': JSON.stringify({ name: name }),
+        'headers': {
+          'content-type': 'application/json'
+        }
+      }
+    )
+      .then(response => response.json())
+      .then(room => {
+        console.log("createRoom", "resp", room)
+        if (room.id) {
+          connectSocket(room.id)
+          history.push("/game")
+        }
+      }).catch(err => { console.log(err) })
+  }
+
   if (!state.champions || state.champions.length === 0) updateChampionPool()
 
   return (<ApplicationContext.Provider value={{
     ...state,
     changeName, changeChampion,
-    connectSocket, updateRooms, updateChampionPool,
+    connectSocket,
+    updateRooms, updateChampionPool, createRoom,
+
     requestPlayerReady,
     requestKeyPress,
     requestDirectionChange,

@@ -14,6 +14,8 @@ export class Room extends Field {
         this._socket = socket;
     }
 
+    allPlayersDisconnected: () => void = null
+
     _handleSocket(socket: SocketIO.Namespace) {
         const self = this
         socket.on('connection', function (socket) {
@@ -41,6 +43,7 @@ export class Room extends Field {
                 socket.broadcast.emit('player_leave', { id: playerId })
                 if (self._connectedPlayers().length === 0) {
                     self._reset('RESET')
+                    if (self.allPlayersDisconnected) self.allPlayersDisconnected()
                 }
             });
             socket.on('request_send_message', function (payload) {

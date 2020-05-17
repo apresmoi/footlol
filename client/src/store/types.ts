@@ -163,3 +163,22 @@ export interface ApplicationContextProviderState {
     victory?: 'LEFT' | 'RIGHT'
     countdown?: number
 }
+
+export interface IApplicationContext extends ApplicationContextProviderState {
+    changeName: (name: string) => void,
+    changeChampion: (champion: string) => void,
+    connectSocket: (roomId: string) => void,
+    updateRooms: () => void
+    createRoom: (name: string) => void
+    updateChampionPool: () => void
+
+    disconnectSocket: () => void
+
+    requestPlayerReady: (ready: boolean) => void
+    requestDirectionChange: (direction: Vector) => void
+    requestKeyPress: (code: string) => void
+    requestSendMessage: (payload: { message: string }) => void
+    requestChampionSelect: (champion: string) => void
+    requestKickPlayer: (id: string) => void
+    requestChangeSide: (side: string) => void
+}

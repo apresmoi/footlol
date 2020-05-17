@@ -8,7 +8,7 @@ import ChampionSelect from './views/ChampionSelect';
 import Login from './views/Login';
 
 import "./styles.scss"
-import Rooms from './views/Rooms';
+import Rooms, { CreateRoom } from './views/Rooms';
 import { World } from './views';
 
 
@@ -20,6 +20,7 @@ function App() {
           <Switch>
             <Route exact path={'/'} component={Login} />
             <Route exact path={'/room-select'} component={Rooms} />
+            <Route exact path={'/room-create'} component={CreateRoom} />
             <Route exact path={'/game'} component={Game} />
           </Switch>
         </div>
