@@ -214,7 +214,13 @@ export class Field {
         const side: TeamSide = sideLengths.RIGHT >= sideLengths.LEFT ? 'LEFT' : 'RIGHT'
 
         if (players.length < 10) {
-            this._players[id] = new Player(id, name, champion, playerPositions[side][players.filter(x => x._side === side).length], side);
+            this._players[id] = new Player(id,
+                name,
+                champion,
+                playerPositions[side][players.filter(x => x._side === side).length],
+                side,
+                Object.keys(this._players).length === 0
+            );
         }
 
         return true

@@ -17,6 +17,7 @@ export interface Player {
     }
     side: 'LEFT' | 'RIGHT',
     visible: boolean
+    admin: boolean
 }
 
 export interface Ball {
@@ -109,6 +110,7 @@ export type MessageSubscribers = {
     player_leave?: (payload: Player) => void
     player_ready?: (payload: PlayerReadyPayload) => void
     stage_change?: (payload: StageChangePayload) => void
+    player_kicked?: () => void
     position_change?: (payload: Player) => void
     message_sent?: (payload: PlayerMessage) => void
     update?: (payload: UpdatePayload) => void

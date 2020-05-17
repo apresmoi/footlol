@@ -1,5 +1,5 @@
 import Player from "./collideables/player"
-import { RoomStage, IChatMessage, ResetType } from "../types"
+import { RoomStage, IChatMessage, ResetType, TeamSide } from "../types"
 import { Field } from "./field"
 import { ChampionName } from "../league/classes"
 import { Vector } from "./math"
@@ -52,6 +52,13 @@ export class Room extends Field {
             });
             socket.on('request_champion_select', (payload) => {
                 self.tryChangeChampion(socket, payload.champion)
+                self._emit()
+            })
+            socket.on('request_kick_player', (payload) => {
+                self.tryKickPlayer(socket, payload.id)
+            })
+            socket.on('request_change_side', (payload) => {
+                self.tryChangeSide(socket, payload.side)
                 self._emit()
             })
         });
@@ -127,6 +134,20 @@ export class Room extends Field {
             const player = this._players[client.id]
             player.setChampion(champion)
         }
+    }
+
+    tryKickPlayer(client: SocketIO.Socket, id: string) {
+        const admin = this._players[client.id]
+        console.log("is admin?:", admin._admin, id)
+        if (admin && admin._admin && this._connectedPlayers().find(x => x._id === id)) {
+            this.removePlayer(id)
+            this._socket.to(id).emit('player_kicked', { kicked: true })
+        }
+    }
+
+    tryChangeSide(client: SocketIO.Socket, side: TeamSide) {
+        const player = this._players[client.id]
+        player.setSide(side)
     }
 
     _connectedPlayers(): Player[] {

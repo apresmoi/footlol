@@ -13,6 +13,7 @@ export default class Player extends CompoundCollideable {
     _name: string
     _champion: Champion
     _side: TeamSide
+    _admin: boolean = false
 
     _ready: boolean = false
 
@@ -29,7 +30,7 @@ export default class Player extends CompoundCollideable {
 
     _visible: boolean
 
-    constructor(id: string, name: string, championName: ChampionName, position: Vector, side: TeamSide) {
+    constructor(id: string, name: string, championName: ChampionName, position: Vector, side: TeamSide, admin: boolean) {
         super(position)
         this._id = id;
         this._name = name;
@@ -38,6 +39,7 @@ export default class Player extends CompoundCollideable {
         this._acceleration = 0.07
         this._ready = false
         this._visible = true
+        this._admin = admin
 
         const mass = this._champion?.hp / 10 || 50
 
@@ -47,9 +49,6 @@ export default class Player extends CompoundCollideable {
             plugin: {
                 owner: this,
             },
-            // collisionFilter: {
-            //     category: side === 'LEFT' ? PlayerLeftSideCategory : PlayerRightSideCategory,
-            // }
         });
         this._sensorBody = new CircleCollideable(0, position, playerActionRadius, {
             isSensor: true,
@@ -138,6 +137,14 @@ export default class Player extends CompoundCollideable {
         this._force = this._champion.attackdamage / 400
     }
 
+    setSide(side: TeamSide) {
+        this._side = side
+        this._facingVector = side === 'LEFT' ? new Vector(1, 0) : new Vector(-1, 0)
+        this._body.collisionFilter = {
+            category: side === 'LEFT' ? PlayerLeftSideCategory : PlayerRightSideCategory,
+        }
+    }
+
     changeDirection(direction: Vector) {
         super.changeDirection(direction)
         if (direction.x !== 0 || direction.y !== 0) this._facingVector = direction
@@ -166,6 +173,7 @@ export default class Player extends CompoundCollideable {
             ready: this._ready,
             cooldown: this._champion ? this._champion.getCooldowns() : { W: 0, Q: 0 },
             visible: this._visible,
+            admin: this._admin
         }
     }
 }

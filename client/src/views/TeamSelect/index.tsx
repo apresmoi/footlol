@@ -14,18 +14,46 @@ const TeamSelect = () => {
     context.requestPlayerReady(!context.self.ready)
   }
 
+  const handleRemovePlayer = (id: string) => {
+    if (context.self.admin) context.requestKickPlayer(id);
+  }
+
+  const handleTeamChange = (side: string) => {
+    if (context.self.side !== side) context.requestChangeSide(side)
+  }
+
   return (
     <Wrapper>
       <Header>
       </Header>
       <Container>
         <div className="team-select">
-          <Team side="LEFT">
-            {players.LEFT.map(player => <PlayerComponent ready={player.ready} isSelf={player.id === context.self.id} key={player.id} player={player} />)}
+          <Team side="LEFT"
+            onTeamChange={handleTeamChange}
+          >
+            {players.LEFT.map(player => <PlayerComponent
+              key={player.id}
+              player={player}
+              ready={player.ready}
+              isSelf={player.id === context.self.id}
+              selfAdmin={context.self && context.self.admin}
+              isAdmin={player.admin}
+              onRemove={handleRemovePlayer}
+            />)}
           </Team>
           <Chat />
-          <Team side="RIGHT">
-            {players.RIGHT.map(player => <PlayerComponent ready={player.ready} isSelf={player.id === context.self.id} key={player.id} player={player} />)}
+          <Team side="RIGHT"
+            onTeamChange={handleTeamChange}
+          >
+            {players.RIGHT.map(player => <PlayerComponent
+              key={player.id}
+              ready={player.ready}
+              isSelf={player.id === context.self.id}
+              player={player}
+              selfAdmin={context.self && context.self.admin}
+              isAdmin={player.admin}
+              onRemove={handleRemovePlayer}
+            />)}
           </Team>
         </div>
         {context.self &&
@@ -37,22 +65,30 @@ const TeamSelect = () => {
   );
 }
 
-const Team = ({ side, children }) => {
+const Team = ({ side, children, onTeamChange }) => {
+  const handleClick = () => {
+    if (onTeamChange) onTeamChange(side)
+  }
   return <div className={"team " + side.toLowerCase()} >
-    <div className="team-title">
+    <div onClick={handleClick} className="team-title">
       {side} Team
     </div>
     {children}
   </div>
 }
 
-const PlayerComponent = ({ player, isSelf, ready }) => {
+const PlayerComponent = ({ player, isSelf, ready, selfAdmin, isAdmin, onRemove }) => {
+  const handleRemovePlayer = () => {
+    if (onRemove) onRemove(player.id)
+  }
   return <div className={`player ${isSelf ? 'self' : ""} ${ready ? 'ready' : ''}`}>
     <div>
       <img src="http://ddragon.leagueoflegends.com/cdn/10.9.1/img/profileicon/25.png" />
     </div>
     <div>{player.name}</div>
-  </div>
+    {selfAdmin && !isAdmin && <div onClick={handleRemovePlayer} className="player-remove" />}
+    {isAdmin && <div className="player-admin" />}
+  </div >
 }
 
 export default TeamSelect;

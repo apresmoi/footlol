@@ -6,6 +6,8 @@ const REQUEST_KEY_PRESS = 'request_key_press'
 const REQUEST_SEND_MESSAGE = 'request_send_message'
 const REQUEST_PLAYER_READY = 'request_player_ready'
 const REQUEST_CHAMPION_SELECT = 'request_champion_select'
+const REQUEST_KICK_PLAYER = 'request_kick_player'
+const REQUEST_CHANGE_SIDE = 'request_change_side'
 
 const LOGIN_SUCCESS = 'login_success'
 const PLAYER_JOIN = 'player_join'
@@ -14,6 +16,7 @@ const PLAYER_READY = 'player_ready'
 const POSITION_CHANGE = 'position_change'
 const MESSAGE_SENT = 'message_sent'
 const STAGE_CHANGE = 'stage_change'
+const PLAYER_KICKED = 'player_kicked'
 const UPDATE = 'update'
 
 class RoomSocket {
@@ -44,6 +47,11 @@ class RoomSocket {
         this._chatSocket.on(PLAYER_READY, (payload: PlayerReadyPayload) => {
             // console.log('player_ready', payload)
             if (this._onMessageSubscribers.player_ready) this._onMessageSubscribers.player_ready(payload)
+        });
+
+        this._chatSocket.on(PLAYER_KICKED, () => {
+            console.log(PLAYER_KICKED)
+            if (this._onMessageSubscribers.player_kicked) this._onMessageSubscribers.player_kicked()
         });
 
         this._chatSocket.on(STAGE_CHANGE, (payload: StageChangePayload) => {
@@ -85,6 +93,8 @@ class RoomSocket {
     requestSendMessage = (message) => this._sendMessage(REQUEST_SEND_MESSAGE, { message })
     requestPlayerReady = (ready: boolean) => this._sendMessage(REQUEST_PLAYER_READY, { ready })
     requestChampionSelect = (champion: string) => this._sendMessage(REQUEST_CHAMPION_SELECT, { champion })
+    requestKickPlayer = (id: string) => this._sendMessage(REQUEST_KICK_PLAYER, { id })
+    requestChangeSide = (side: string) => this._sendMessage(REQUEST_CHANGE_SIDE, { side })
 
 
     subscribeLoginSuccess = (callback: (payload: LoginSuccessPayload) => void) => {
@@ -101,6 +111,9 @@ class RoomSocket {
     }
     subscribeStageChange = (callback: (payload: StageChangePayload) => void) => {
         this._onMessageSubscribers[STAGE_CHANGE] = (payload) => callback(payload)
+    }
+    subscribePlayerKicked = (callback: () => void) => {
+        this._onMessageSubscribers[PLAYER_KICKED] = () => callback()
     }
     //chat
     subscribeMessageSent = (callback: (payload: PlayerMessage) => void) => {

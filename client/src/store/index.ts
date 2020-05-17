@@ -17,6 +17,8 @@ interface IApplicationContext extends ApplicationContextProviderState {
     requestKeyPress: (code: string) => void
     requestSendMessage: (payload: { message: string }) => void
     requestChampionSelect: (champion: string) => void
+    requestKickPlayer: (id: string) => void
+    requestChangeSide: (side: string) => void
 }
 
 export const ApplicationContext = React.createContext<IApplicationContext>(
@@ -47,6 +49,8 @@ export const ApplicationContext = React.createContext<IApplicationContext>(
         requestKeyPress: (code: string) => { },
         requestSendMessage: (payload: { message: string }) => { },
         requestChampionSelect: (champion: string) => { },
+        requestKickPlayer: (id: string) => { },
+        requestChangeSide: (side: string) => { },
         disconnectSocket: () => { }
     })
 

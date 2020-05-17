@@ -32,7 +32,8 @@ const defaultSelf: Player = DEBUG ? {
   visible: true,
   champion: 'Veigar', id: '', name: '',
   ready: false, direction: { x: 0, y: 0 }, kicking: false,
-  position: { ...mapSize.center }, side: 'LEFT', cooldown: { Q: 10, W: 4 }
+  position: { ...mapSize.center }, side: 'LEFT', cooldown: { Q: 10, W: 4 },
+  admin: false,
 } : null
 
 export const ApplicationContextProvider = ({ children }) => {
@@ -126,6 +127,12 @@ export const ApplicationContextProvider = ({ children }) => {
         messages: newMessages
       })
     })
+
+    socket.subscribePlayerKicked(() => {
+      console.log('kicked')
+      history.push("/room-select")
+    })
+
     socket.subscribeUpdate((payload) => {
       if (payload.stage === 'TEAM_SELECT' && !state.self) {
         socket.disconnect()
@@ -183,6 +190,14 @@ export const ApplicationContextProvider = ({ children }) => {
     socket.requestChampionSelect(champion)
   }
 
+  const requestKickPlayer = (id: string) => {
+    socket.requestKickPlayer(id)
+  }
+
+  const requestChangeSide = (side: string) => {
+    socket.requestChangeSide(side)
+  }
+
   const updateRooms = () => {
     fetch('http://' + window.location.host.replace(':8000', '') + ':8081' + '/api/rooms')
       .then(response => response.json())
@@ -210,7 +225,9 @@ export const ApplicationContextProvider = ({ children }) => {
     requestDirectionChange,
     requestSendMessage,
     requestChampionSelect,
-    disconnectSocket
+    disconnectSocket,
+    requestKickPlayer,
+    requestChangeSide
   }}>
     {children}
   </ApplicationContext.Provider>)
