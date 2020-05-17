@@ -7,6 +7,7 @@ import { deepCopy } from '../../utilities/objects';
 import { Vector } from '../../classes/math';
 import { PlayerRightSideCategory, PlayerLeftSideCategory, AbilityEffectCategory } from '../../classes/collideables/categories';
 import { playerRadius } from '../../globals';
+import Ball from '../../classes/collideables/ball';
 
 export default class Shaco extends Champion {
     _owner: Player
