@@ -226,6 +226,33 @@ export class Field {
         return true
     }
 
+    playerChangeSide(id: string, side: TeamSide): boolean {
+        const sideLengths: { [x in TeamSide]: number } = this._connectedPlayers().reduce((r, p) => {
+            r[p._side]++
+            return r
+        }, { 'LEFT': 0, 'RIGHT': 0 })
+        if (sideLengths[side] < 5) {
+            this._players[id].setSide(side);
+            this._recalculatePlayerPositions();
+            return true
+        }
+        return false
+    }
+
+    _recalculatePlayerPositions(): void {
+        const playersBySide: { [x in TeamSide]: Player[] } = this._connectedPlayers().reduce((r, p) => {
+            r[p._side].push(p)
+            return r
+        }, { 'LEFT': [], 'RIGHT': [] })
+
+        playersBySide.LEFT.forEach((p, i) => {
+            p.setStartPosition(playerPositions[p._side][i])
+        })
+        playersBySide.RIGHT.forEach((p, i) => {
+            p.setStartPosition(playerPositions[p._side][i])
+        })
+    }
+
     removePlayer(id: string) {
         if (this._players[id]) this._players[id].dematerialize();
         this._players = Object.keys(this._players).reduce((result, key) => {
@@ -235,6 +262,7 @@ export class Field {
             }
             return result
         }, {})
+        this._recalculatePlayerPositions()
     }
 
     playerDirectionChanged(id: string, { x, y }: { x: number, y: number }) {

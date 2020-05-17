@@ -2,7 +2,6 @@ import Player from "./collideables/player"
 import { RoomStage, IChatMessage, ResetType, TeamSide } from "../types"
 import { Field } from "./field"
 import { ChampionName } from "../league/classes"
-import { Vector } from "./math"
 
 export class Room extends Field {
     _socket: SocketIO.Namespace
@@ -39,11 +38,16 @@ export class Room extends Field {
 
             socket.on('disconnect', function (ff) {
                 console.log(playerId + ' disconnected');
+                const isAdmin = self._players[playerId] && self._players[playerId]._admin
                 self.removePlayer(playerId);
                 socket.broadcast.emit('player_leave', { id: playerId })
+
                 if (self._connectedPlayers().length === 0) {
                     self._reset('RESET')
                     if (self.allPlayersDisconnected) self.allPlayersDisconnected()
+                } else {
+                    self._players[Object.keys(self._players)[0]]._admin = true
+                    self._emit()
                 }
             });
             socket.on('request_send_message', function (payload) {
@@ -141,7 +145,6 @@ export class Room extends Field {
 
     tryKickPlayer(client: SocketIO.Socket, id: string) {
         const admin = this._players[client.id]
-        console.log("is admin?:", admin._admin, id)
         if (admin && admin._admin && this._connectedPlayers().find(x => x._id === id)) {
             this.removePlayer(id)
             this._socket.to(id).emit('player_kicked', { kicked: true })
@@ -149,8 +152,7 @@ export class Room extends Field {
     }
 
     tryChangeSide(client: SocketIO.Socket, side: TeamSide) {
-        const player = this._players[client.id]
-        player.setSide(side)
+        this.playerChangeSide(client.id, side)
     }
 
     _connectedPlayers(): Player[] {
@@ -163,8 +165,6 @@ export class Room extends Field {
             return r;
         }, [])
     }
-
-
 
     serialize() {
         const seconds = this.getSeconds()

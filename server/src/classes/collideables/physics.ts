@@ -32,6 +32,10 @@ export class Collideable {
         this._lastValidPosition = new Vector(0, 0);
     }
 
+    setStartPosition(position: Vector): void {
+        this._startPosition = position;
+    }
+
     _checkForCollisionErrors(): void {
         const nullPosition = this._body.position.x === null || this._body.position.y === null
 
