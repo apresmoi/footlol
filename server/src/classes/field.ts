@@ -267,9 +267,9 @@ export class Field {
     }
 
     _resetPlayers() {
-        Object.keys(this._players).forEach(id => {
+        Object.keys(this._players).forEach((id, i) => {
             this._players[id].dematerialize()
-            this._players[id] = new Player(id, this._players[id]._name, null, this._players[id]._startPosition, this._players[id]._side)
+            this._players[id] = new Player(id, this._players[id]._name, null, this._players[id]._startPosition, this._players[id]._side, i === 0)
         })
     }
 
