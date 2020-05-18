@@ -20,7 +20,7 @@ const Victory = (props: VictoryProps) => {
       <defs>
         <pattern id={"victory_logo"} x="-5%" y="-5%" height="105%" width="105%"
           viewBox="0 0 120 120">
-          <image x="0" y="0" width="120" height="120" xlinkHref={`http://${window.location.host}/logo/victory.png`}></image>
+          <image x="0" y="0" width="120" height="120" xlinkHref={`${window.location.protocol}//${window.location.host}/logo/victory.png`}></image>
         </pattern>
         <defs>
           <linearGradient id="leave_button_gradient" x1="0%" y1="0%" x2="0%" y2="100%">

@@ -83,7 +83,7 @@ const PlayerComponent = ({ player, isSelf, ready, selfAdmin, isAdmin, onRemove }
   }
   return <div className={`player ${isSelf ? 'self' : ""} ${ready ? 'ready' : ''}`}>
     <div>
-      <img src="http://ddragon.leagueoflegends.com/cdn/10.9.1/img/profileicon/25.png" />
+      <img src={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/profileicon/25.png`} />
     </div>
     <div>{player.name}</div>
     {selfAdmin && !isAdmin && <div onClick={handleRemovePlayer} className="player-remove" />}

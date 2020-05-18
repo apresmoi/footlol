@@ -23,21 +23,21 @@ const ActionBar = (props: ActionBarProps) => {
       <defs>
         <pattern id={`player_image`} x="-5%" y="-5%" height="105%" width="105%"
           viewBox="0 0 120 120">
-          <image x="0" y="0" width="120" height="120" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${props.self.champion}.png`}></image>
+          <image x="0" y="0" width="120" height="120" xlinkHref={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${props.self.champion}.png`}></image>
         </pattern>
 
 
         {/* <pattern id={`spell_pasive`} x="-5%" y="-5%" height="105%" width="105%"
           viewBox="0 0 120 120">
-          <image x="0" y="0" width="120" height="120" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${props.self.champion}.png`}></image>
+          <image x="0" y="0" width="120" height="120" xlinkHref={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${props.self.champion}.png`}></image>
         </pattern> */}
         <pattern id={`sell_primary`} x="-5%" y="-5%" height="105%" width="105%"
           viewBox={`${champion.spells.Q.x} ${champion.spells.Q.y} ${champion.spells.Q.w} ${champion.spells.Q.h}`}>
-          <image x="0" y="0" width="480" height="192" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/sprite/${champion.spells.Q.sprite}`}></image>
+          <image x="0" y="0" width="480" height="192" xlinkHref={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/sprite/${champion.spells.Q.sprite}`}></image>
         </pattern>
         <pattern id={`spell_secondary`} x="-5%" y="-5%" height="105%" width="105%"
           viewBox={`${champion.spells.W.x} ${champion.spells.W.y} ${champion.spells.W.w} ${champion.spells.W.h}`}>
-          <image x="0" y="0" width="480" height="192" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/sprite/${champion.spells.W.sprite}`}></image>
+          <image x="0" y="0" width="480" height="192" xlinkHref={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/sprite/${champion.spells.W.sprite}`}></image>
         </pattern>
 
       </defs>
@@ -69,7 +69,7 @@ const Spell = ({ id, x, y, pressed, cooldown }) => {
     <defs>
       <pattern id={id} x="-5%" y="-5%" height="105%" width="105%"
         viewBox="0 0 120 120">
-        <image x="0" y="0" width="120" height="120" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/Nami.png`}></image>
+        <image x="0" y="0" width="120" height="120" xlinkHref={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/Nami.png`}></image>
       </pattern>
     </defs>
     <rect x={2} y={2} width={40} height={40} fill={`url(#${id})`} />

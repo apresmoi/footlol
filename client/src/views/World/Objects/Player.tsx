@@ -24,7 +24,7 @@ const PlayerComponent = (props: { player: Player, isSelf?: boolean, teammate?: b
     <defs>
       <pattern id={`${player.id}_image`} x="-5%" y="-5%" height="105%" width="105%"
         viewBox="0 0 120 120">
-        <image x="0" y="0" width="120" height="120" xlinkHref={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${player.champion}.png`}></image>
+        <image x="0" y="0" width="120" height="120" xlinkHref={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${player.champion}.png`}></image>
       </pattern>
       <filter x="-5%" y="0%" width="110%" height="120%" id={`${player.id}_name_background`}>
         <feFlood flood-color="black" />

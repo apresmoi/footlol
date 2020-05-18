@@ -57,7 +57,7 @@ const Team = ({ side, children }) => {
 const PlayerComponent = ({ player, isSelf, ready }) => {
   return <div className={`player ${isSelf ? 'self' : ""} ${ready ? 'ready' : ''}`}>
     <div>
-      <img src={player.champion ? `http://ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${player.champion}.png` : null} />
+      <img src={player.champion ? `${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${player.champion}.png` : null} />
     </div>
     <div>{player.name}</div>
   </div>

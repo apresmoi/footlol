@@ -13,7 +13,7 @@ const ChampionComponent = ({ champion, onClick, disabled }: { champion: Champion
     onClick(champion.name)
   }
   return <div className={`champion ${disabled ? 'disabled' : ''}`} onClick={handleClick}>
-    <img src={`http://ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${champion.name}.png`} />
+    <img src={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${champion.name}.png`} />
   </div>
 }
 

@@ -4,13 +4,26 @@ import * as socketio from 'socket.io'
 import { Room } from './classes/room';
 import { champions } from './league/champions';
 import { Champion } from './league/classes';
+import { readFileSync } from 'fs';
+
+const ENV_DEVELOPMENT = process.env.NODE_ENV === "development";
+
+console.log(ENV_DEVELOPMENT ? "DEVELOPMENT ENVIRONMENT" : "PRODUCTION ENVIRONMENT");
 
 const app = express();
 app.use(body_parser.urlencoded({ extended: false }));
 app.use(body_parser.json());
 
+const https_options = {
+  key: readFileSync("cert/privkey.pem"),
+  cert: readFileSync("cert/fullchain.pem"),
+};
+
 const http = require('http').Server(app);
-const io = socketio(http, { path: '/ws' });
+const https = require('https').Server(https_options, app);
+const io = (() => {
+  return socketio(ENV_DEVELOPMENT ? http : https, { path: '/ws' });
+})()
 
 let roomId = '/ao'
 let matches = {
@@ -82,11 +95,19 @@ app.get('/api/champions', (req, res) => {
   }))
 })
 
-http.listen(3000, function () {
-  console.log('started on port 3000');
-  process.on("SIGINT", closeApp);
-  process.on("SIGTERM", closeApp);
-});
+if (ENV_DEVELOPMENT) {
+  http.listen(3000, function () {
+    console.log('started on port 3000');
+    process.on("SIGINT", closeApp);
+    process.on("SIGTERM", closeApp);
+  });
+} else {
+  https.listen(3000, function () {
+    console.log('started on port 3000');
+    process.on("SIGINT", closeApp);
+    process.on("SIGTERM", closeApp);
+  })
+}
 
 function closeApp() {
   process.exit(0)
