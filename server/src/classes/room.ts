@@ -115,6 +115,10 @@ export class Room extends Field {
             if (!players.some(x => !x.isReady())) {
                 this._stage = 'FIELD'
                 this._socket.emit('stage_change', objectToBinary({ stage: this._stage }))
+                this._socket.emit('message_sent', objectToBinary({ name: "GameServer", message: "HOW TO PLAY:" }));
+                this._socket.emit('message_sent', objectToBinary({ name: "GameServer", message: "MOVE WITH ARROW KEYS" }));
+                this._socket.emit('message_sent', objectToBinary({ name: "GameServer", message: "KICK THE BALL WITH SPACE" }));
+                this._socket.emit('message_sent', objectToBinary({ name: "GameServer", message: "Q AND W FOR THE SKILLS" }));
                 players.forEach(x => x.setReady(false))
                 this._startGame()
             }
