@@ -63,7 +63,6 @@ export class Collideable {
             this._mounted = true;
             this._mountedTS = new Date()
             World.add(world, this._body);
-            console.log("materialize")
         }
     }
 
@@ -72,7 +71,6 @@ export class Collideable {
             this._mounted = false;
             this._mountedTS = null
             World.remove(this._world, this._body);
-            console.log("dematerialize")
         }
     }
 

@@ -26,10 +26,8 @@ export default class Shaco extends Champion {
         if (this._canUseAbility(ability))
             switch (ability) {
                 case 'Q':
-                    console.log("invisible")
                     this._owner.makeInvisible()
                     setTimeout(() => {
-                        console.log("visible")
                         this._owner.makeVisible()
                     }, 10000);
                     return null

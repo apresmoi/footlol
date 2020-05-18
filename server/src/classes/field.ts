@@ -219,7 +219,7 @@ export class Field {
                 champion,
                 playerPositions[side][players.filter(x => x._side === side).length],
                 side,
-                Object.keys(this._players).length === 0
+                !players.some(x => x._admin)
             );
         }
 

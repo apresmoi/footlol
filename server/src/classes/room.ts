@@ -2,6 +2,7 @@ import Player from "./collideables/player"
 import { RoomStage, IChatMessage, ResetType, TeamSide } from "../types"
 import { Field } from "./field"
 import { ChampionName } from "../league/classes"
+import { objectToBinary, binaryToObject } from '../utilities/conversion'
 
 export class Room extends Field {
     _socket: SocketIO.Namespace
@@ -25,13 +26,15 @@ export class Room extends Field {
             const { name } = socket.handshake.query
 
             if (self.addPlayer(playerId, name, null)) {
-                socket.emit('login_success', { self: self._players[playerId].serialize(), ...self.serialize(), });
-                socket.broadcast.emit('player_join', self._players[playerId].serialize());
+                socket.emit('login_success', objectToBinary({ self: self._players[playerId].serialize(), ...self.serialize(), }));
+                socket.broadcast.emit('player_join', objectToBinary(self._players[playerId].serialize()));
 
-                socket.on('request_direction_change', function (payload) {
+                socket.on('request_direction_change', function (binary) {
+                    const payload = binaryToObject(binary)
                     self.playerDirectionChanged(playerId, payload.direction)
                 });
-                socket.on('request_key_press', function (payload) {
+                socket.on('request_key_press', function (binary) {
+                    const payload = binaryToObject(binary)
                     self.playerKeyPress(playerId, payload.code)
                 });
             }
@@ -40,7 +43,7 @@ export class Room extends Field {
                 console.log(playerId + ' disconnected');
                 const isAdmin = self._players[playerId] && self._players[playerId]._admin
                 self.removePlayer(playerId);
-                socket.broadcast.emit('player_leave', { id: playerId })
+                socket.broadcast.emit('player_leave', objectToBinary({ id: playerId }))
 
                 if (self._connectedPlayers().length === 0) {
                     self._reset('RESET')
@@ -50,21 +53,26 @@ export class Room extends Field {
                     self._emit()
                 }
             });
-            socket.on('request_send_message', function (payload) {
+            socket.on('request_send_message', function (binary) {
+                const payload = binaryToObject(binary)
                 self.playerSendMessage(socket, payload.message)
             });
-            socket.on('request_player_ready', function (payload) {
+            socket.on('request_player_ready', function (binary) {
+                const payload = binaryToObject(binary)
                 self.playerReady(socket, payload.ready)
                 self._emit()
             });
-            socket.on('request_champion_select', (payload) => {
+            socket.on('request_champion_select', (binary) => {
+                const payload = binaryToObject(binary)
                 self.tryChangeChampion(socket, payload.champion)
                 self._emit()
             })
-            socket.on('request_kick_player', (payload) => {
+            socket.on('request_kick_player', (binary) => {
+                const payload = binaryToObject(binary)
                 self.tryKickPlayer(socket, payload.id)
             })
-            socket.on('request_change_side', (payload) => {
+            socket.on('request_change_side', (binary) => {
+                const payload = binaryToObject(binary)
                 self.tryChangeSide(socket, payload.side)
                 self._emit()
             })
@@ -72,7 +80,7 @@ export class Room extends Field {
     }
 
     _emit = () => {
-        this._socket.emit('update', this.serialize());
+        this._socket.emit('update', objectToBinary(this.serialize()));
     }
 
     _endGame() {
@@ -87,7 +95,7 @@ export class Room extends Field {
         if (type === 'RESET') {
             const players = this._connectedPlayers()
             this._stage = 'TEAM_SELECT'
-            this._socket.emit('stage_change', { stage: this._stage })
+            this._socket.emit('stage_change', objectToBinary({ stage: this._stage }))
             players.forEach(x => x.setReady(false))
         }
     }
@@ -106,7 +114,7 @@ export class Room extends Field {
             const players = this._connectedPlayers()
             if (!players.some(x => !x.isReady())) {
                 this._stage = 'FIELD'
-                this._socket.emit('stage_change', { stage: this._stage })
+                this._socket.emit('stage_change', objectToBinary({ stage: this._stage }))
                 players.forEach(x => x.setReady(false))
                 this._startGame()
             }
@@ -114,20 +122,20 @@ export class Room extends Field {
         else if (this._stage === 'FIELD' && this._gameEnded) {
             const players = this._connectedPlayers()
             this._stage = 'TEAM_SELECT'
-            this._socket.emit('stage_change', { stage: this._stage })
+            this._socket.emit('stage_change', objectToBinary({ stage: this._stage }))
             players.forEach(x => x.setReady(false))
         }
     }
 
     addPlayer(id: string, name: string, champion: ChampionName): boolean {
-        if (['CHAMPION_SELECT', 'TEAM_SELECT'].includes(this._stage))
+        if (['CHAMPION_SELECT', 'TEAM_SELECT'].includes(this._stage) && this._connectedPlayers().length < 10)
             return super.addPlayer(id, name, champion)
         return false
     }
 
     playerSendMessage(client: SocketIO.Socket, { message }: { message: string }) {
         const player = this._players[client.id]
-        this._socket.emit('message_sent', { name: player._name, message });
+        this._socket.emit('message_sent', objectToBinary({ name: player._name, message }));
     }
 
     playerReady(client: SocketIO.Socket, ready: boolean) {
@@ -147,7 +155,7 @@ export class Room extends Field {
         const admin = this._players[client.id]
         if (admin && admin._admin && this._connectedPlayers().find(x => x._id === id)) {
             this.removePlayer(id)
-            this._socket.to(id).emit('player_kicked', { kicked: true })
+            this._socket.to(id).emit('player_kicked', objectToBinary({ kicked: true }))
         }
     }
 

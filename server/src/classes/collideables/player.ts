@@ -76,7 +76,6 @@ export default class Player extends CompoundCollideable {
 
     _backupCollision
     disableCollisions(disabled: boolean): void {
-        console.log("disableCollisions", disabled)
         if (disabled) {
             this._body.collisionFilter = {
                 mask: WallCategory

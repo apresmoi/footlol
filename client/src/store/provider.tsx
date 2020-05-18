@@ -214,7 +214,6 @@ export const ApplicationContextProvider = ({ children }) => {
   }
 
   const createRoom = (name: string) => {
-    console.log("createRoom", name)
     fetch(
       window.location.protocol + '//' + window.location.host.replace(':8000', '') + ':8081' + '/api/rooms',
       {
@@ -227,7 +226,6 @@ export const ApplicationContextProvider = ({ children }) => {
     )
       .then(response => response.json())
       .then(room => {
-        console.log("createRoom", "resp", room)
         if (room.id) {
           connectSocket(room.id)
           history.push("/game")

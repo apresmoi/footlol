@@ -21,8 +21,6 @@ const PlayerComponent = (props: { player: Player, isSelf?: boolean, teammate?: b
     return (Math.sign(player.direction.x) === -1 ? -180 : 0) + Math.atan(player.direction.y / player.direction.x) * 180 / Math.PI
   })()
 
-  console.log(rotate, player.direction)
-
   return <g
     className={"player " + (!player.visible ? "invisible" : "") + (isSelf || teammate ? " self" : "")}
     key={player.id}

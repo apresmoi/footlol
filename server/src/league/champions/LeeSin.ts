@@ -100,7 +100,6 @@ export class LeeSinW extends CircleCollideable {
                 handleCollision: (target: Collideable) => {
                     if (!target._body.isSensor) {
                         const velocity = target.getPosition().substract(this._body.plugin.owner.getPosition()).normalize().multiply(20)
-                        console.log(velocity)
                         target._body.plugin.owner.setVelocity(velocity, 5)
                         this._expired = true
                         this.dematerialize()

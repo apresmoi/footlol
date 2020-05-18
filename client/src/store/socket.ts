@@ -1,5 +1,6 @@
 import { Player, PlayerMessage, MessageSubscribers, UpdatePayload, Vector, PlayerReadyPayload, StageChangePayload, LoginSuccessPayload } from "./types"
 import io from 'socket.io-client';
+import { objectToBinary, binaryToObject } from '../utils/conversion'
 
 const REQUEST_DIRECTION_CHANGE = 'request_direction_change'
 const REQUEST_KEY_PRESS = 'request_key_press'
@@ -26,52 +27,60 @@ class RoomSocket {
     constructor(roomId, name) {
         this._chatSocket = io(window.location.protocol + '//' + window.location.host.replace(':8000', '') + ':8081' + `${roomId}?name=${name}`, {
             path: `/ws`,
-            autoConnect: false
+            autoConnect: false,
         });
 
-        this._chatSocket.on(LOGIN_SUCCESS, (payload: LoginSuccessPayload) => {
+        this._chatSocket.on(LOGIN_SUCCESS, (binary) => {
+            const payload: LoginSuccessPayload = binaryToObject(binary)
             // console.log('login_success', payload)
             if (this._onMessageSubscribers.login_success) this._onMessageSubscribers.login_success(payload)
         });
 
-        this._chatSocket.on(PLAYER_JOIN, (payload: Player) => {
+        this._chatSocket.on(PLAYER_JOIN, (binary) => {
+            const payload: Player = binaryToObject(binary)
             // console.log('player_join', payload)
             if (this._onMessageSubscribers.player_join) this._onMessageSubscribers.player_join(payload)
         });
 
-        this._chatSocket.on(PLAYER_LEAVE, (payload: Player) => {
+        this._chatSocket.on(PLAYER_LEAVE, (binary) => {
+            const payload: Player = binaryToObject(binary)
             // console.log('player_leave', payload)
             if (this._onMessageSubscribers.player_leave) this._onMessageSubscribers.player_leave(payload)
         });
 
-        this._chatSocket.on(PLAYER_READY, (payload: PlayerReadyPayload) => {
+        this._chatSocket.on(PLAYER_READY, (binary) => {
+            const payload: PlayerReadyPayload = binaryToObject(binary)
             // console.log('player_ready', payload)
             if (this._onMessageSubscribers.player_ready) this._onMessageSubscribers.player_ready(payload)
         });
 
         this._chatSocket.on(PLAYER_KICKED, () => {
-            console.log(PLAYER_KICKED)
+            // console.log(PLAYER_KICKED)
             if (this._onMessageSubscribers.player_kicked) this._onMessageSubscribers.player_kicked()
         });
 
-        this._chatSocket.on(STAGE_CHANGE, (payload: StageChangePayload) => {
+        this._chatSocket.on(STAGE_CHANGE, (binary) => {
+            const payload: StageChangePayload = binaryToObject(binary)
             if (this._onMessageSubscribers.stage_change) this._onMessageSubscribers.stage_change(payload)
         });
 
         //chat
 
-        this._chatSocket.on(MESSAGE_SENT, (payload: PlayerMessage) => {
+        this._chatSocket.on(MESSAGE_SENT, (binary) => {
+            const payload: PlayerMessage = binaryToObject(binary)
             // console.log('send_message', payload)
             if (this._onMessageSubscribers.message_sent) this._onMessageSubscribers.message_sent(payload)
         });
 
         //inside the game
-        this._chatSocket.on(POSITION_CHANGE, (payload: Player) => {
+        this._chatSocket.on(POSITION_CHANGE, (binary) => {
+            const payload: Player = binaryToObject(binary)
             // console.log('position_change', payload)
             if (this._onMessageSubscribers.position_change) this._onMessageSubscribers.position_change(payload)
         });
 
-        this._chatSocket.on(UPDATE, (payload: UpdatePayload) => {
+        this._chatSocket.on(UPDATE, (binary) => {
+            const payload: UpdatePayload = binaryToObject(binary)
             // console.log('update', payload)
             if (this._onMessageSubscribers.update) this._onMessageSubscribers.update(payload)
         });
@@ -88,13 +97,13 @@ class RoomSocket {
 
     _sendMessage = (type, payload) => this._chatSocket.emit(type, payload)
 
-    requestDirectionChange = (direction: Vector) => this._sendMessage(REQUEST_DIRECTION_CHANGE, { direction })
-    requestKeyPress = (code: string) => this._sendMessage(REQUEST_KEY_PRESS, { code })
-    requestSendMessage = (message) => this._sendMessage(REQUEST_SEND_MESSAGE, { message })
-    requestPlayerReady = (ready: boolean) => this._sendMessage(REQUEST_PLAYER_READY, { ready })
-    requestChampionSelect = (champion: string) => this._sendMessage(REQUEST_CHAMPION_SELECT, { champion })
-    requestKickPlayer = (id: string) => this._sendMessage(REQUEST_KICK_PLAYER, { id })
-    requestChangeSide = (side: string) => this._sendMessage(REQUEST_CHANGE_SIDE, { side })
+    requestDirectionChange = (direction: Vector) => this._sendMessage(REQUEST_DIRECTION_CHANGE, objectToBinary({ direction }))
+    requestKeyPress = (code: string) => this._sendMessage(REQUEST_KEY_PRESS, objectToBinary({ code }))
+    requestSendMessage = (message) => this._sendMessage(REQUEST_SEND_MESSAGE, objectToBinary({ message }))
+    requestPlayerReady = (ready: boolean) => this._sendMessage(REQUEST_PLAYER_READY, objectToBinary({ ready }))
+    requestChampionSelect = (champion: string) => this._sendMessage(REQUEST_CHAMPION_SELECT, objectToBinary({ champion }))
+    requestKickPlayer = (id: string) => this._sendMessage(REQUEST_KICK_PLAYER, objectToBinary({ id }))
+    requestChangeSide = (side: string) => this._sendMessage(REQUEST_CHANGE_SIDE, objectToBinary({ side }))
 
 
     subscribeLoginSuccess = (callback: (payload: LoginSuccessPayload) => void) => {
