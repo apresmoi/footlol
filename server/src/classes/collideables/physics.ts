@@ -37,12 +37,13 @@ export class Collideable {
     }
 
     _checkForCollisionErrors(): void {
-        const nullPosition = this._body.position.x === null || this._body.position.y === null
-
+        const nullPosition = !this._body.position.x || !this._body.position.y
         if (nullPosition && this._lastValidPosition) {
+            console.log("null position! ressetting")
             this.setPosition(this._lastValidPosition)
         }
         else {
+            console.log("null position! ressetting to center")
             this.setPosition(mapSize.center);
         }
     }
