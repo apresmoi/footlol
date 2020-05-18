@@ -67,6 +67,10 @@ svg {
                 animation-name: fadeOutPlayerSelf;
             }
         }
+
+        .direction {
+            transition: transform 0.2s linear;
+        }
     }
 
     .game-chat {

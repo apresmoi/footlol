@@ -142,7 +142,7 @@ export const ApplicationContextProvider = ({ children }) => {
         setState({
           ...state,
           ...payload,
-          self: state.self ? { ...payload.players[state.self.id], direction: state.self.direction } : state.self
+          self: state.self ? { ...payload.players[state.self.id] } : state.self
         })
       }
     })

@@ -173,7 +173,8 @@ export default class Player extends CompoundCollideable {
             ready: this._ready,
             cooldown: this._champion ? this._champion.getCooldowns() : { W: 0, Q: 0 },
             visible: this._visible,
-            admin: this._admin
+            admin: this._admin,
+            direction: this._direction.serialize()
         }
     }
 }

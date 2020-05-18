@@ -5,7 +5,6 @@ import { pallete } from '../../../settings';
 
 const PlayerComponent = (props: { player: Player, isSelf?: boolean, teammate?: boolean }) => {
   const { player, isSelf, teammate } = props
-
   const fill = (() => {
     if (isSelf) {
       return 'yellow'
@@ -15,6 +14,14 @@ const PlayerComponent = (props: { player: Player, isSelf?: boolean, teammate?: b
     }
     return 'red'
   })()
+
+  const rotate = (() => {
+    if (player.direction.x === 0)
+      return player.direction.y > 0 ? 90 : -90
+    return (Math.sign(player.direction.x) === -1 ? -180 : 0) + Math.atan(player.direction.y / player.direction.x) * 180 / Math.PI
+  })()
+
+  console.log(rotate, player.direction)
 
   return <g
     className={"player " + (!player.visible ? "invisible" : "") + (isSelf || teammate ? " self" : "")}
@@ -35,6 +42,10 @@ const PlayerComponent = (props: { player: Player, isSelf?: boolean, teammate?: b
       stroke={'white'}
       strokeDasharray={"4 2"} strokeOpacity={player.kicking ? 1 : 0.3}
     />
+    {(player.direction.x || player.direction.y) &&
+      <g className="direction" transform={`rotate(${rotate})`}>
+        <polygon points={`${0},${-20} ${15},${-20} ${32},${0} ${15},${20} ${0},${20}`} />
+      </g>}
     <circle cx={0} cy={0} r={25} />
     <circle cx={0} cy={0} r={23} fill={`url(#${player.id}_image)`} />
     <text fontSize={15} y={-35} filter={`url(#${player.id}_name_background)`} textAnchor="middle" fill='white' >{player.name} </text>
