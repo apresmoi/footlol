@@ -449,8 +449,9 @@ export class Field {
 
     _handleAfterUpdate = (e: IEventTimestamped<Engine>): void => {
         this._connectedPlayers().forEach(player => {
-            player._checkForCollisionErrors()
+            player._checkForWrongPositions()
         })
+        this._ball._checkForWrongPositions()
     }
 
     _addEffect(collideable: Collideable) {

@@ -37,7 +37,7 @@ export class Collideable {
         this._startPosition = position;
     }
 
-    _checkForCollisionErrors(): void {
+    _checkForWrongPositions(): void {
         if (this._movementBounds) {
             const [min, max] = this._movementBounds
             const currentPosition = this._body.position;
