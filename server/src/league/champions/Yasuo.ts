@@ -7,12 +7,13 @@ import { deepCopy } from '../../utilities/objects';
 import { Vector } from '../../classes/math';
 import { PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityEffectCategory, WallCategory } from '../../classes/collideables/categories';
 import { Body } from 'matter-js';
+import { DEBUG } from '../../globals';
 
 export default class Yasuo extends Champion {
     constructor(side: TeamSide, owner: Player) {
         super('Yasuo', source.Yasuo, owner);
-        this.spells.Q = deepCopy({ ...this.spells.E, cooldown: 2 })
-        this.spells.W = deepCopy({ ...this.spells.W, cooldown: 15 })
+        this.spells.Q = deepCopy({ ...this.spells.E, cooldown: DEBUG ? 0 :  2 })
+        this.spells.W = deepCopy({ ...this.spells.W, cooldown: DEBUG ? 0 :  15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }

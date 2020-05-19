@@ -3,7 +3,7 @@ import Ball from "./collideables/ball"
 import { Vector } from "./math"
 import { ChampionName } from "../league/classes"
 import { timeConstant, mapSize, mapInnerSize, goalSize, playerPositions } from "../globals"
-import { Engine, World, Events, Body } from 'matter-js'
+import { Engine, World, Events, Body, IEventTimestamped } from 'matter-js'
 import { RectCollideable, Collideable, CircleCollideable, CompoundCollideable, PolygonCollideable } from "./collideables/physics"
 import Wall from "./collideables/wall"
 import Goal from "./collideables/goal"
@@ -95,6 +95,7 @@ export class Field {
             this._mountBall()
             Events.on(this._engine, 'collisionStart', this._handleCollisionsStart);
             Events.on(this._engine, 'collisionEnd', this._handleCollisionsEnd);
+            Events.on(this._engine, 'afterUpdate', this._handleAfterUpdate);
         }, this.__countdown * 1000);
 
         this._startTime = new Date();
@@ -444,6 +445,12 @@ export class Field {
                 continue;
             }
         }
+    }
+
+    _handleAfterUpdate = (e: IEventTimestamped<Engine>): void => {
+        this._connectedPlayers().forEach(player => {
+            player._checkForCollisionErrors()
+        })
     }
 
     _addEffect(collideable: Collideable) {

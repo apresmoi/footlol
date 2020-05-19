@@ -8,6 +8,7 @@ import { Vector } from '../../classes/math';
 import { AbilityProjectileCategory, PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityStunCategory } from '../../classes/collideables/categories';
 import Cone from '../../classes/collideables/cone'
 import { Body } from 'matter-js'
+import { DEBUG } from '../../globals';
 
 export default class Ashe extends Champion {
     _owner: Player
@@ -16,8 +17,8 @@ export default class Ashe extends Champion {
 
     constructor(side: TeamSide, owner: Player) {
         super('Ashe', source.Ashe, owner);
-        this.spells.Q = deepCopy({ ...this.spells.W, cooldown: 5 })
-        this.spells.W = deepCopy({ ...this.spells.R, cooldown: 15 })
+        this.spells.Q = deepCopy({ ...this.spells.W, cooldown: DEBUG ? 0 :  5 })
+        this.spells.W = deepCopy({ ...this.spells.R, cooldown: DEBUG ? 0 :  15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }

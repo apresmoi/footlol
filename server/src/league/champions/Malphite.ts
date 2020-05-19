@@ -6,14 +6,13 @@ import { Collideable, CircleCollideable } from '../../classes/collideables/physi
 import { deepCopy } from '../../utilities/objects';
 import { Vector } from '../../classes/math';
 import { PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityStunCategory, AbilityEffectCategory } from '../../classes/collideables/categories';
-import { playerRadius } from '../../globals';
-
+import { playerRadius, DEBUG } from '../../globals';
 
 export default class Malphite extends Champion {
     constructor(side: TeamSide, owner: Player) {
         super('Malphite', source.Malphite, owner);
-        this.spells.Q = deepCopy({ ...this.spells.W, cooldown: 5 })
-        this.spells.W = deepCopy({ ...this.spells.R, cooldown: 15 })
+        this.spells.Q = deepCopy({ ...this.spells.W, cooldown: DEBUG ? 0 :  5 })
+        this.spells.W = deepCopy({ ...this.spells.R, cooldown: DEBUG ? 0 :  15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }

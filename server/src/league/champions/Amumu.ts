@@ -6,7 +6,7 @@ import { Collideable, CircleCollideable } from '../../classes/collideables/physi
 import { deepCopy } from '../../utilities/objects';
 import { Vector } from '../../classes/math';
 import { PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityStunCategory, AbilityEffectCategory } from '../../classes/collideables/categories';
-import { playerRadius } from '../../globals';
+import { playerRadius, DEBUG } from '../../globals';
 import VectorCollideable from '../../classes/collideables/vector'
 
 export default class Amumu extends Champion {
@@ -16,8 +16,8 @@ export default class Amumu extends Champion {
 
     constructor(side: TeamSide, owner: Player) {
         super('Amumu', source.Amumu, owner);
-        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
-        this.spells.W = deepCopy({ ...this.spells.R, cooldown: 15 })
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: DEBUG ? 0 :  5 })
+        this.spells.W = deepCopy({ ...this.spells.R, cooldown: DEBUG ? 0 :  15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }

@@ -1,6 +1,8 @@
 import { Vector, Size } from "./classes/math"
 import { TeamSide } from "./types";
 
+export const DEBUG: boolean = false;
+
 export const timeConstant: number = 25;
 export const ballRadius: number = 12;
 export const ballMass: number = 2.5;

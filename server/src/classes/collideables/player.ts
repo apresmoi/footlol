@@ -1,12 +1,12 @@
 import { CircleCollideable, CompoundCollideable, Collideable } from "./physics";
-import { playerRadius, playerActionRadius } from "../../globals";
+import { playerRadius, playerActionRadius, mapSize } from "../../globals";
 import { Vector } from "../math";
 import { Champion, ChampionName } from "../../league/classes";
 import { champions } from "../../league/champions";
 import { Body, World } from "matter-js";
 import Ball from "./ball";
 import { TeamSide } from "../../types";
-import { PlayerLeftSideCategory, PlayerRightSideCategory, WallCategory, GoalCategory } from "./categories";
+import { PlayerLeftSideCategory, PlayerRightSideCategory, WallCategory, GoalCategory, BallCategory } from "./categories";
 
 export default class Player extends CompoundCollideable {
     _id: string
@@ -72,6 +72,7 @@ export default class Player extends CompoundCollideable {
         })._body
 
         this._backupCollision = this._body.collisionFilter
+        this._movementBounds = [new Vector(0, 0), new Vector(mapSize.width, mapSize.height)]
     }
 
     _backupCollision

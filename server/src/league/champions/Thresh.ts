@@ -6,8 +6,7 @@ import { Collideable, CircleCollideable } from '../../classes/collideables/physi
 import { deepCopy } from '../../utilities/objects';
 import { Vector } from '../../classes/math';
 import { PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityEffectCategory } from '../../classes/collideables/categories';
-import { playerRadius } from '../../globals';
-
+import { playerRadius, DEBUG } from '../../globals';
 
 export default class Thresh extends Champion {
     _owner: Player
@@ -16,8 +15,8 @@ export default class Thresh extends Champion {
 
     constructor(side: TeamSide, owner: Player) {
         super('Thresh', source.Thresh, owner);
-        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
-        this.spells.W = deepCopy({ ...this.spells.W, cooldown: 15 })
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: DEBUG ? 0 :  5 })
+        this.spells.W = deepCopy({ ...this.spells.W, cooldown: DEBUG ? 0 :  15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }

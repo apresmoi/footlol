@@ -6,14 +6,14 @@ import { Collideable, CircleCollideable, RectCollideable } from '../../classes/c
 import { deepCopy } from '../../utilities/objects';
 import { Vector } from '../../classes/math';
 import { PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityStunCategory, WallCategory } from '../../classes/collideables/categories';
-import { playerRadius } from '../../globals';
+import { playerRadius, DEBUG } from '../../globals';
 import { Body } from 'matter-js';
 
 export default class Anivia extends Champion {
     constructor(side: TeamSide, owner: Player) {
         super('Anivia', source.Anivia, owner);
-        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
-        this.spells.W = deepCopy({ ...this.spells.W, cooldown: 15 })
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: DEBUG ? 0 :  5 })
+        this.spells.W = deepCopy({ ...this.spells.W, cooldown: DEBUG ? 0 :  15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }

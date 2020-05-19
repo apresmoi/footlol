@@ -6,8 +6,7 @@ import { Collideable, CircleCollideable } from '../../classes/collideables/physi
 import { deepCopy } from '../../utilities/objects';
 import { Vector } from '../../classes/math';
 import { PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityEffectCategory } from '../../classes/collideables/categories';
-import { playerRadius } from '../../globals';
-
+import { playerRadius, DEBUG, ballRadius } from '../../globals';
 
 export default class LeeSin extends Champion {
     _owner: Player
@@ -18,8 +17,8 @@ export default class LeeSin extends Champion {
 
     constructor(side: TeamSide, owner: Player) {
         super('LeeSin', source.LeeSin, owner);
-        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
-        this.spells.W = deepCopy({ ...this.spells.R, cooldown: 15 })
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: DEBUG ? 0 : 5 })
+        this.spells.W = deepCopy({ ...this.spells.R, cooldown: DEBUG ? 0 : 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
@@ -35,13 +34,14 @@ export default class LeeSin extends Champion {
                             this._abilityQTimeout = setTimeout(() => {
                                 this._abilityQTarget = null;
                                 this.setCooldown('Q');
-                            }, 2000);
+                            }, 3000);
                         })
                     } else {
                         clearTimeout(this._abilityQTimeout)
+                        const radius = this._abilityQTarget._body.plugin.owner instanceof Player ? playerRadius : ballRadius
                         const current = this._owner._body.plugin.owner.getPosition()
                         const distance = this._abilityQTarget.getPosition().substract(current)
-                        this._owner._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(this._abilityQTarget.getBounds().module()))))
+                        this._owner._body.plugin.owner.setPosition(current.add(distance.substract(distance.normalize().multiply(radius * 2 + 5))))
                         this._abilityQTarget = null;
                         return null;
                     }

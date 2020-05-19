@@ -1,7 +1,6 @@
 import { Bodies, Body, World, Vertices } from 'matter-js'
 import { Vector } from '../math'
 import { ICollideableBody } from '../../types'
-import { mapSize } from '../../globals'
 
 //sources
 //https://www.wired.com/2012/08/maximum-acceleration-in-the-100-m-dash/
@@ -25,6 +24,8 @@ export class Collideable {
 
     _lastValidPosition: Vector
 
+    _movementBounds: [Vector, Vector]
+
     constructor(position: Vector) {
         this._direction = new Vector(0, 0);
         this._acceleration = 0;
@@ -37,14 +38,15 @@ export class Collideable {
     }
 
     _checkForCollisionErrors(): void {
-        const nullPosition = !this._body.position.x || !this._body.position.y
-        if (nullPosition && this._lastValidPosition) {
-            console.log("null position! ressetting")
-            this.setPosition(this._lastValidPosition)
-        }
-        else {
-            console.log("null position! ressetting to center")
-            this.setPosition(mapSize.center);
+        if (this._movementBounds) {
+            const [min, max] = this._movementBounds
+            const currentPosition = this._body.position;
+            if (min.x > currentPosition.x || min.y > currentPosition.y ||
+                max.x < currentPosition.x || max.y < currentPosition.y)
+                this.setPosition(this._lastValidPosition);
+            else {
+                this._lastValidPosition = Vector.fromMatter(currentPosition);
+            }
         }
     }
 
@@ -126,17 +128,10 @@ export class Collideable {
     }
 
     setPosition(position: Vector): void {
-        if (position.x > 0 && position.x < mapSize.width && position.y > 0 && position.y < mapSize.height)
-            Body.setPosition(this._body, position);
+        Body.setPosition(this._body, position);
     }
 
     update(dt: number): void {
-        const nullPosition = this._body.position.x === null || this._body.position.y === null
-        if (!nullPosition) {
-            this._lastValidPosition = Vector.fromMatter(this._body.position)
-        } else {
-            this._checkForCollisionErrors()
-        }
         if (this._body.speed > 0 && this._body.speed < 0.01) {
             this.setVelocity(new Vector(0, 0));
         }

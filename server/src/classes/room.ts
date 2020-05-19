@@ -144,8 +144,10 @@ export class Room extends Field {
 
     playerReady(client: SocketIO.Socket, ready: boolean) {
         const player = this._players[client.id]
-        player.setReady(ready)
-        this._tryStageChange()
+        if (this._stage === "TEAM_SELECT" || (player._champion && this._stage === "CHAMPION_SELECT")) {
+            player.setReady(ready)
+            this._tryStageChange()
+        }
     }
 
     tryChangeChampion(client: SocketIO.Socket, champion: ChampionName) {

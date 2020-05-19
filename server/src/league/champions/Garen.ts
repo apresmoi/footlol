@@ -6,8 +6,7 @@ import { Collideable, RectCollideable } from '../../classes/collideables/physics
 import { deepCopy } from '../../utilities/objects';
 import { Vector } from '../../classes/math';
 import { PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityProjectileCategory } from '../../classes/collideables/categories';
-import { playerRadius } from '../../globals';
-
+import { playerRadius, DEBUG } from '../../globals';
 
 export default class Garen extends Champion {
     _owner: Player
@@ -16,8 +15,8 @@ export default class Garen extends Champion {
 
     constructor(side: TeamSide, owner: Player) {
         super('Garen', source.Garen, owner);
-        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: 5 })
-        this.spells.W = deepCopy({ ...this.spells.E, cooldown: 15 })
+        this.spells.Q = deepCopy({ ...this.spells.Q, cooldown: DEBUG ? 0 : 5 })
+        this.spells.W = deepCopy({ ...this.spells.E, cooldown: DEBUG ? 0 : 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
