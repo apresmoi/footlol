@@ -90,6 +90,10 @@ export const ApplicationContextProvider = ({ children }) => {
     })
   })
 
+  useEffect(() => {
+    updateChampionPool();
+  }, [])
+
   if (socket) {
     socket.subscribeLoginSuccess((payload) => {
       setState({
@@ -233,7 +237,6 @@ export const ApplicationContextProvider = ({ children }) => {
       }).catch(err => { console.log(err) })
   }
 
-  if (!state.champions || state.champions.length === 0) updateChampionPool()
 
   return (<ApplicationContext.Provider value={{
     ...state,

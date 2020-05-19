@@ -4,18 +4,17 @@ import { Player, Ball, Score as MatchScore } from '../../../store/types'
 import { ApplicationContext } from '../../../store'
 
 interface ActionBarProps {
-  self?: Player
   width?: number
   height?: number
-
   actionKeysPressed?: string[]
   directionKeysPressed?: string[]
 }
 
 const ActionBar = (props: ActionBarProps) => {
-  const { champions } = useContext(ApplicationContext)
-  if (!props.self) return null
-  const champion = champions.find(row => row.name === props.self.champion)
+  const { champions, self } = useContext(ApplicationContext)
+  const champion = champions.find(row => row.name === self.champion)
+
+  if (!self) return null
 
   return (
     <g transform={`translate(${props.width / 2}, ${props.height - 80})`}>
@@ -23,13 +22,13 @@ const ActionBar = (props: ActionBarProps) => {
       <defs>
         <pattern id={`player_image`} x="-5%" y="-5%" height="105%" width="105%"
           viewBox="0 0 120 120">
-          <image x="0" y="0" width="120" height="120" xlinkHref={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${props.self.champion}.png`}></image>
+          <image x="0" y="0" width="120" height="120" xlinkHref={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${self.champion}.png`}></image>
         </pattern>
 
 
         {/* <pattern id={`spell_pasive`} x="-5%" y="-5%" height="105%" width="105%"
           viewBox="0 0 120 120">
-          <image x="0" y="0" width="120" height="120" xlinkHref={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${props.self.champion}.png`}></image>
+          <image x="0" y="0" width="120" height="120" xlinkHref={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${self.champion}.png`}></image>
         </pattern> */}
         <pattern id={`sell_primary`} x="-5%" y="-5%" height="105%" width="105%"
           viewBox={`${champion.spells.Q.x} ${champion.spells.Q.y} ${champion.spells.Q.w} ${champion.spells.Q.h}`}>
@@ -58,8 +57,8 @@ const ActionBar = (props: ActionBarProps) => {
       />
       {/* spells */}
       {/* <Spell x={-50} y={30} id={'spell_pasive'} pressed={false} /> */}
-      <Spell x={0} y={30} id={'sell_primary'} cooldown={props.self.cooldown.Q} pressed={props.actionKeysPressed && props.actionKeysPressed.includes('KeyQ')} />
-      <Spell x={55} y={30} id={'spell_secondary'} cooldown={props.self.cooldown.W} pressed={props.actionKeysPressed && props.actionKeysPressed.includes('KeyW')} />
+      <Spell x={0} y={30} id={'sell_primary'} cooldown={self.cooldown.Q} pressed={props.actionKeysPressed && props.actionKeysPressed.includes('KeyQ')} />
+      <Spell x={55} y={30} id={'spell_secondary'} cooldown={self.cooldown.W} pressed={props.actionKeysPressed && props.actionKeysPressed.includes('KeyW')} />
     </g>
   )
 }
