@@ -8,6 +8,11 @@ import ChampionPool from './ChampionPool';
 const TeamSelect = () => {
   const context = useContext(ApplicationContext)
 
+
+  useEffect(() => {
+    if (!context.champions || context.champions.length === 0) context.updateChampionPool()
+  })
+
   const calculated = Object.keys(context.players).reduce((result, id) => {
     result[context.players[id].side].push(context.players[id])
     result.disabledChampions.push(context.players[id].champion)
