@@ -9,6 +9,10 @@
     display: flex;
 }
 
+* {
+    user-select: none;
+}
+
 .defeat-logo,
 .victory-logo {
     rect:nth-child(2) {

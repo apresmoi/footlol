@@ -37,6 +37,8 @@ export class Room extends Field {
                     const payload = binaryToObject(binary)
                     self.playerKeyPress(playerId, payload.code)
                 });
+            } else {
+                socket.emit('login_success', objectToBinary({ self: null, ...self.serialize(), }));
             }
 
             socket.on('disconnect', function (ff) {
@@ -132,7 +134,7 @@ export class Room extends Field {
     }
 
     addPlayer(id: string, name: string, champion: ChampionName): boolean {
-        if (['CHAMPION_SELECT', 'TEAM_SELECT'].includes(this._stage) && this._connectedPlayers().length < 10)
+        if (['TEAM_SELECT'].includes(this._stage) && this._connectedPlayers().length < 10)
             return super.addPlayer(id, name, champion)
         return false
     }
@@ -144,7 +146,7 @@ export class Room extends Field {
 
     playerReady(client: SocketIO.Socket, ready: boolean) {
         const player = this._players[client.id]
-        if (this._stage === "TEAM_SELECT" || (player._champion && this._stage === "CHAMPION_SELECT")) {
+        if (player && this._stage === "TEAM_SELECT" || (player._champion && this._stage === "CHAMPION_SELECT")) {
             player.setReady(ready)
             this._tryStageChange()
         }

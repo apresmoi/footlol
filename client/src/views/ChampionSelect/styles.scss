@@ -7,37 +7,52 @@
 
     flex-wrap: wrap;
 
-    .champion-pool {
+    .champion-pool-container {
         flex: 2;
-        width: 432px;
         background: #283C50;
         display: flex;
         flex-wrap: wrap;
-        margin: auto;
-        margin-top: 0px;
-        padding: 10px;
+        position: relative;
 
+        .champion-select-header {
+            position: absolute;
+            width: 100%;
+            font-size: 20px;
+            text-align: center;
+            margin-top: 10px;
+        }
 
-        .champion {
-            cursor: pointer;
-            padding: 2px;
-            flex: 70px;
-            max-height: 70px;
-            max-width: 70px;
+        .champion-pool {
+            flex: 2;
+            width: 432px;
+            display: flex;
+            flex-wrap: wrap;
+            margin: auto;
+            margin-top: 40px;
+            padding: 10px;
 
-            img {
-                width: 70px;
+            .champion {
+                cursor: pointer;
+                padding: 2px;
+                flex: 70px;
+                max-height: 70px;
+                max-width: 70px;
+
+                img {
+                    width: 70px;
+                }
+
+                border: 1px solid transparent;
+
+                &:hover {
+                    border: 1px solid yellow;
+                }
+
+                &.disabled {
+                    opacity: 0.2;
+                }
             }
 
-            border: 1px solid transparent;
-
-            &:hover {
-                border: 1px solid yellow;
-            }
-
-            &.disabled {
-                opacity: 0.2;
-            }
         }
     }
 
@@ -47,7 +62,7 @@
 
         .team-title {
             font-size: 20px;
-            padding: 10;
+            padding: 5px;
             text-align: center;
             background: #4C6F97;
             color: white;
@@ -64,14 +79,14 @@
 
             box-shadow: 1px 1px 1px 1px #000;
 
-            border: 1px solid transparent;
+            border: 3px solid transparent;
 
             &.ready {
-                border: 1px solid #424C27;
+                border: 3px solid #384522;
             }
 
             &.self {
-                border: 1px solid yellow;
+                border: 3px solid #FFFF0088;
             }
 
             &>div {
@@ -99,13 +114,16 @@
     margin-top: 50px;
     text-align: center;
 
-    button {
+    a {
         border: none;
-        width: 300px;
+        width: 325px;
+        max-width: 300px;
         padding: 20px 20px;
         font-size: 30px;
         background: #4C6F97;
         cursor: pointer;
+
+        transition: all 0.1s ease-in-out;
 
         &:hover {
             background: #8DAFD6;
@@ -113,6 +131,13 @@
 
         &.ready {
             background: #384522;
+            width: 325px;
+
+            &:before {
+                margin-right: 10px;
+                vertical-align: middle;
+                content: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 512 512"><ellipse fill="green" cx="256" cy="256" rx="256" ry="255.832" /><polygon fill="white" points="235.472,392.08 114.432,297.784 148.848,253.616 223.176,311.52 345.848,134.504 391.88,166.392 " /></svg>');
+            }
         }
     }
 }

@@ -58,7 +58,7 @@ const TeamSelect = () => {
         </div>
         {context.self &&
           <div className="team-select-ready">
-            <button className={context.self.ready ? "ready" : ""} onClick={handleReadyClick}>READY</button>
+            <a className={context.self.ready ? "ready" : ""} onClick={handleReadyClick}>READY</a>
           </div>}
       </Container>
     </Wrapper>
@@ -71,7 +71,7 @@ const Team = ({ side, children, onTeamChange }) => {
   }
   return <div className={"team " + side.toLowerCase()} >
     <div onClick={handleClick} className="team-title">
-      {side} Team
+      {side === "LEFT" ? "Left" : "Right"} Team
     </div>
     {children}
   </div>

@@ -8,18 +8,18 @@ const AniviaW = (props: { effect: RectEffect }) => {
 
 
   return <g
-    className="veigar-w"
+    className="anivia-w"
     transform={`translate(${position.x}, ${position.y}) rotate(${angle * 180 / Math.PI})`}
   >
     <defs>
-      <linearGradient id="grad1" x1="0%" y1="0%" x2="50%" y2="100%">
+      <linearGradient id="aniviaw" x1="0%" y1="0%" x2="50%" y2="100%">
         <stop offset="0%" stopColor="#6caef2" stopOpacity={1} />
         <stop offset="25%" stopColor="#2f5299" stopOpacity={1} />
         <stop offset="50%%" stopColor="#6caef2" stopOpacity={1} />
         <stop offset="75%" stopColor="#2f5299" stopOpacity={1} />
         <stop offset="100%" stopColor="#6caef2" stopOpacity={1} />
       </linearGradient>
-      <linearGradient id="grad2" x1="0%" y1="0%" x2="25%" y2="100%">
+      <linearGradient id="aniviaw2" x1="0%" y1="0%" x2="25%" y2="100%">
         <stop offset="0%" stopColor="#6caef2" stopOpacity={1} />
         <stop offset="25%" stopColor="#2f5299" stopOpacity={1} />
         <stop offset="50%%" stopColor="#6caef2" stopOpacity={1} />
@@ -27,8 +27,8 @@ const AniviaW = (props: { effect: RectEffect }) => {
         <stop offset="100%" stopColor="#6caef2" stopOpacity={1} />
       </linearGradient>
     </defs>
-    <rect x={-width / 2} y={-height / 2} width={width} height={height} fill="url(#grad1)" />
-    <rect x={-width / 2} y={-height / 2} width={width} height={height} fill="url(#grad2)" opacity={0.5} />
+    <rect x={-width / 2} y={-height / 2} width={width} height={height} fill="url(#aniviaw)" />
+    <rect x={-width / 2} y={-height / 2} width={width} height={height} fill="url(#aniviaw2)" opacity={0.5} />
   </g >
 }
 
@@ -37,7 +37,7 @@ const AniviaQ = (props: { effect: CircleEffect }) => {
   const { position, radius } = effect
 
   return <g
-    className="veigar-q"
+    className="anivia-q"
     transform={`translate(${position.x}, ${position.y})`}
   >
     <circle r={radius} fill="#2167ea" opacity={0.3} />

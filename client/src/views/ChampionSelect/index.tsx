@@ -34,16 +34,16 @@ const TeamSelect = () => {
       <Container>
         <div className="champion-select">
           <Team side="LEFT">
-            {calculated.LEFT.map(player => <PlayerComponent ready={player.ready} isSelf={player.id === context.self.id} key={player.id} player={player} />)}
+            {calculated.LEFT.map(player => <PlayerComponent ready={player.ready} isSelf={context.self && player.id === context.self.id} key={player.id} player={player} />)}
           </Team>
           <ChampionPool disabledChampions={calculated.disabledChampions} champions={context.champions} onClick={handleChampionSelect} />
           <Team side="RIGHT">
-            {calculated.RIGHT.map(player => <PlayerComponent ready={player.ready} isSelf={player.id === context.self.id} key={player.id} player={player} />)}
+            {calculated.RIGHT.map(player => <PlayerComponent ready={player.ready} isSelf={context.self && player.id === context.self.id} key={player.id} player={player} />)}
           </Team>
         </div>
         {context.self &&
           <div className="team-select-ready">
-            <button className={context.self.ready ? "ready" : ""} onClick={handleReadyClick}>READY</button>
+            <a className={context.self.ready ? "ready" : ""} onClick={handleReadyClick}>READY</a>
           </div>}
       </Container>
     </Wrapper>
@@ -53,7 +53,7 @@ const TeamSelect = () => {
 const Team = ({ side, children }) => {
   return <div className={"team " + side.toLowerCase()} >
     <div className="team-title">
-      {side} Team
+      {side === "LEFT" ? "Left" : "Right"} Team
     </div>
     {children}
   </div>

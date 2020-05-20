@@ -9,10 +9,6 @@ interface VictoryProps {
 
 const Victory = (props: VictoryProps) => {
   const context = useContext(ApplicationContext)
-  // const handleClick = () => {
-  //   context.requestPlayerReady(true)
-  // }
-
   if (!context.victory || !context.self) return null
   if (context.victory && context.self && context.self.side !== context.victory) return null
   return (
@@ -31,24 +27,6 @@ const Victory = (props: VictoryProps) => {
       </defs>
       <rect x={0} y={0} width={props.width} height={props.height} fill="black" opacity={0.3} />
       <rect x={30} y={0} width={props.width} height={props.height} fill="url(#victory_logo)" />
-
-      {/* <g onClick={handleClick} className="leave-button" transform={`translate(${props.width / 2 - props.width * 0.05}, ${props.height * 3 / 4 - 30})`}>
-        <path
-          x={0} y={0}
-          fill={"url(#leave_button_gradient)"}
-          d={`M-10,0 L${props.width * 0.1 + 10},${0} L${props.width * 0.1},${props.width * 0.03} L${0},${props.width * 0.03} Z`}
-        />
-        <text
-          x={props.width * 0.05}
-          y={props.width * 0.015}
-          textAnchor="middle"
-          alignmentBaseline="middle"
-          color={'white'}
-          fontWeight={600}
-        >
-          CONTINUE
-        </text>
-      </g> */}
     </g>
   )
 }

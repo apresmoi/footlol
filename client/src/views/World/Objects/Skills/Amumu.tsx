@@ -32,7 +32,7 @@ const AmumuQ = (props: { effect: RectEffect }) => {
     transform={`translate(${position.x}, ${position.y}) rotate(${angle * 180 / Math.PI})`}
   >
     <defs>
-      <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <linearGradient id="amumuq" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor="#779677" stopOpacity={0.5} />
         <stop offset="25%" stopColor="##4d6854" stopOpacity={0.7} />
         <stop offset="50%" stopColor="#779677" stopOpacity={0.8} />
@@ -40,7 +40,7 @@ const AmumuQ = (props: { effect: RectEffect }) => {
         <stop offset="100%" stopColor="#779677" stopOpacity={0.5} />
       </linearGradient>
     </defs>
-    <rect x={0} y={-height / 2} width={width} height={height} fill={`url(#grad2)`} />
+    <rect x={0} y={-height / 2} width={width} height={height} fill={`url(#amumuq)`} />
   </g >
 }
 

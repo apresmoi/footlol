@@ -12,9 +12,9 @@ interface ActionBarProps {
 
 const ActionBar = (props: ActionBarProps) => {
   const { champions, self } = useContext(ApplicationContext)
-  const champion = champions.find(row => row.name === self.champion)
-
   if (!self) return null
+
+  const champion = champions.find(row => row.name === self.champion)
 
   return (
     <g transform={`translate(${props.width / 2}, ${props.height - 80})`}>

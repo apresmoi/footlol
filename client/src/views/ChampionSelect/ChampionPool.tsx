@@ -3,8 +3,13 @@ import { Champion } from '../../store/types'
 
 
 const ChampionPool = ({ champions, disabledChampions, onClick }) => {
-  return <div className="champion-pool">
-    {champions.map(champion => <ChampionComponent onClick={onClick} champion={champion} disabled={disabledChampions.includes(champion.name)} />)}
+  return <div className="champion-pool-container">
+    <div className="champion-select-header">
+      Select a Champion and press READY
+    </div>
+    <div className="champion-pool">
+      {champions.map(champion => <ChampionComponent onClick={onClick} champion={champion} disabled={disabledChampions.includes(champion.name)} />)}
+    </div>
   </div>
 }
 

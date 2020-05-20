@@ -13,16 +13,16 @@ const AsheW = (props: { effect: CircleEffect }) => {
   })()
 
   return <g
-    className="veigar-w"
+    className="ashe-w"
     transform={`translate(${position.x}, ${position.y}) rotate(${rotate})`}
   >
     <defs>
-      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <linearGradient id="ashe-w" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stopColor="#aef0ff" stopOpacity={0.1} />
         <stop offset="100%" stopColor="#aef0ff" stopOpacity={1} />
       </linearGradient>
     </defs>
-    <path d="m -85 -6 l 25 0 l 5 4 l 30 0 l 10 -10 l 10 10 l 10 -12 l 15 14 l -15 14 l -10 -12 l -10 10 l -10 -10 l -30 0 l -5 4 l -25 0 z" fill="url(#grad1)" />
+    <path d="m -85 -6 l 25 0 l 5 4 l 30 0 l 10 -10 l 10 10 l 10 -12 l 15 14 l -15 14 l -10 -12 l -10 10 l -10 -10 l -30 0 l -5 4 l -25 0 z" fill="url(#ashe-w)" />
   </g >
 }
 
@@ -38,11 +38,11 @@ const AsheQ = (props: { effect: PolygonEffect }) => {
   }
 
   return <g
-    className="veigar-q"
+    className="ashe-q"
     transform={`translate(${position.x}, ${position.y})`}
   >
     <defs>
-      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <linearGradient id="ashe-q" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" stopColor="#aef0ff" stopOpacity={0.1} />
         <stop offset="100%" stopColor="#aef0ff" stopOpacity={1} />
       </linearGradient>
@@ -50,17 +50,9 @@ const AsheQ = (props: { effect: PolygonEffect }) => {
     {points.map((point, i) => <g key={i}
       transform={`translate(${point[0] - position.x}, ${point[1] - position.y}) rotate(${rotate({ x: point[0] - position.x, y: point[1] - position.y })})`}
     >
-      {/* <line
-        x1={0}
-        x2={point[0] - position.x}
-        y1={0}
-        y2={point[1] - position.y}
-        strokeWidth={3}
-        stroke="url(#grad1)"
-      /> */}
       <path
         transform={`scale(0.75, 0.25)`}
-        d="m -100 0 l 25 0 l 5 4 l 30 0 l 10 -10 l 10 10 l 10 -12 l 15 14 l -15 14 l -10 -12 l -10 10 l -10 -10 l -30 0 l -5 4 l -25 0 z" fill="url(#grad1)" />
+        d="m -100 0 l 25 0 l 5 4 l 30 0 l 10 -10 l 10 10 l 10 -12 l 15 14 l -15 14 l -10 -12 l -10 10 l -10 -10 l -30 0 l -5 4 l -25 0 z" fill="url(#ashe-q)" />
     </g>)}
   </g >
 }
