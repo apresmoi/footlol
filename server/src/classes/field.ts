@@ -276,12 +276,14 @@ export class Field {
                 this._players[id].kick(this._ball)
                 break;
             case 'KeyQ':
-                const qResult = this._players[id].requestAbility('Q')
-                if (qResult) this._addEffect(qResult)
+                this._players[id].requestAbility('Q').then(qResult => {
+                    if (qResult) this._addEffect(qResult)
+                })
                 break
             case 'KeyW':
-                const wResult = this._players[id].requestAbility('W')
-                if (wResult) this._addEffect(wResult)
+                this._players[id].requestAbility('W').then(wResult => {
+                    if (wResult) this._addEffect(wResult)
+                })
                 break
             default:
                 break;

@@ -157,7 +157,7 @@ export class Champion {
         }
     }
 
-    getAbility(ability: 'Q' | 'W'): Collideable {
+    async getAbility(ability: 'Q' | 'W'): Promise<Collideable> {
         return null
     }
 

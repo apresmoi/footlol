@@ -11,22 +11,38 @@ import { playerRadius, DEBUG } from '../../globals';
 export default class Malphite extends Champion {
     constructor(side: TeamSide, owner: Player) {
         super('Malphite', source.Malphite, owner);
-        this.spells.Q = deepCopy({ ...this.spells.W, cooldown: DEBUG ? 0 :  5 })
-        this.spells.W = deepCopy({ ...this.spells.R, cooldown: DEBUG ? 0 :  15 })
+        this.spells.Q = deepCopy({ ...this.spells.W, cooldown: DEBUG ? 0 : 5 })
+        this.spells.W = deepCopy({ ...this.spells.R, cooldown: DEBUG ? 0 : 15 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
 
-    getAbility(ability: 'Q' | 'W'): Collideable {
+    async getAbility(ability: 'Q' | 'W'): Promise<Collideable> {
         if (this._canUseAbility(ability))
             switch (ability) {
                 case 'Q':
                     return new MalphiteQ(this._spellW, this._owner._side, this._owner)
                 case 'W':
-                    const facingVector = (this._owner as Player)._facingVector.normalize()
-                    const newPosition = this._owner.getPosition().add(facingVector.multiply(300))
-                    this._owner.setPosition(newPosition)
-                    return new MalphiteW(this._spellW, this._owner._side, this._owner)
+                    return new Promise((resolve, _reject) => {
+                        const facingVector = (this._owner as Player)._facingVector.normalize()
+                        const targetPosition = this._owner.getPosition().add(facingVector.multiply(300))
+                        const interval = setInterval(() => {
+                            const current = this._owner.getPosition()
+                            const distance = targetPosition.substract(current).module()
+                            if (distance > 10) {
+                                this._owner.setPosition(
+                                    current
+                                        .setX(current.x + (targetPosition.x - current.x) / 10)
+                                        .setY(current.y + (targetPosition.y - current.y) / 10)
+                                )
+                            } else {
+                                clearInterval(interval)
+                                this._owner.setPosition(targetPosition)
+                                this._owner.setStun(200)
+                                resolve(new MalphiteW(this._spellW, this._owner._side, this._owner))
+                            }
+                        }, 10);
+                    })
                 default:
                     break;
             }
@@ -46,8 +62,8 @@ export class MalphiteQ extends CircleCollideable {
             plugin: {
                 owner: owner,
                 id: spell.id,
-                duration: 100,
-                effectDuration: 200,
+                duration: 250,
+                effectDuration: 500,
                 velocity: 0,
             }
         })
@@ -73,10 +89,8 @@ export class MalphiteW extends CircleCollideable {
                 velocity: 0,
                 handleCollision: (target: Collideable) => {
                     if (!target._body.isSensor) {
-                        const velocity = target.getPosition().substract(this._body.plugin.owner.getPosition()).normalize().multiply(10)
+                        const velocity = target.getPosition().substract(this._body.plugin.owner.getPosition()).normalize().multiply(20)
                         target._body.plugin.owner.setVelocity(velocity, 5)
-                        // this._expired = true
-                        // this.dematerialize()
                     }
                 }
             }

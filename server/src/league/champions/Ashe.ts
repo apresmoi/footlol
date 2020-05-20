@@ -23,7 +23,7 @@ export default class Ashe extends Champion {
         this._spellW = this.spells.W
     }
 
-    getAbility(ability: 'Q' | 'W'): Collideable {
+    async getAbility(ability: 'Q' | 'W'): Promise<Collideable> {
         if (this._canUseAbility(ability))
             switch (ability) {
                 case 'Q':

@@ -115,7 +115,7 @@ export default class Player extends CompoundCollideable {
         }, 100);
     }
 
-    requestAbility(ability: 'Q' | 'W'): Collideable {
+    async requestAbility(ability: 'Q' | 'W'): Promise<Collideable> {
         return this._champion.getAbility(ability)
     }
 
