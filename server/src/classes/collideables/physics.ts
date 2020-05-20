@@ -42,7 +42,8 @@ export class Collideable {
             const [min, max] = this._movementBounds
             const currentPosition = this._body.position;
             if (min.x > currentPosition.x || min.y > currentPosition.y ||
-                max.x < currentPosition.x || max.y < currentPosition.y)
+                max.x < currentPosition.x || max.y < currentPosition.y ||
+                isNaN(currentPosition.x) || isNaN(currentPosition.y))
                 this.setPosition(this._lastValidPosition);
             else {
                 this._lastValidPosition = Vector.fromMatter(currentPosition);
