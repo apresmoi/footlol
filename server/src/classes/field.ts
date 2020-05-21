@@ -43,9 +43,12 @@ export class Field {
 
         new Wall(new Vector(-100 + (mapSize.width - mapInnerSize.width) / 2, 0), 100, (mapSize.height - goalSize.height) / 2, { collisionFilter: { mask: BallCategory } }),
         new Wall(new Vector(-100 + (mapSize.width - mapInnerSize.width) / 2, (mapSize.height + goalSize.height) / 2), 100, (mapSize.height - goalSize.height) / 2, { collisionFilter: { mask: BallCategory } }),
+        new Wall(new Vector(-165 + (mapSize.width - mapInnerSize.width) / 2, 0), 100, mapSize.height, { collisionFilter: { mask: BallCategory } }),
 
         new Wall(new Vector(mapSize.max.x - (mapSize.width - mapInnerSize.width) / 2, 0), 100, (mapSize.height - goalSize.height) / 2, { collisionFilter: { mask: BallCategory } }),
         new Wall(new Vector(mapSize.max.x - (mapSize.width - mapInnerSize.width) / 2, (mapSize.height + goalSize.height) / 2), 100, (mapSize.height - goalSize.height) / 2, { collisionFilter: { mask: BallCategory } }),
+        new Wall(new Vector(75 + mapSize.max.x - (mapSize.width - mapInnerSize.width) / 2, 0), 100, mapSize.height, { collisionFilter: { mask: BallCategory } }),
+
     ]
 
     _startWalls: { [side in TeamSide]: Collideable } = {
@@ -54,7 +57,7 @@ export class Field {
     }
 
     _sensors: { [key in RoomSensors]: Goal } = {
-        LEFT_GOAL: new Goal(mapSize.center.setX(0), 'LEFT'),
+        LEFT_GOAL: new Goal(mapSize.center.setX(75), 'LEFT'),
         RIGHT_GOAL: new Goal(new Vector(mapSize.max.x - (mapSize.width - mapInnerSize.width) / 2, mapSize.center.y), 'RIGHT')
     }
 

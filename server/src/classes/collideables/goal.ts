@@ -95,7 +95,6 @@ export default class Goal extends PolygonCollideable {
             }
         })
 
-        this._movementBounds = [new Vector(0, 0), new Vector(mapSize.width, mapSize.height)]
     }
 
     checkSensor(body: Body): boolean {

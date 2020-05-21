@@ -1,5 +1,5 @@
 import { CircleCollideable } from "./physics";
-import { ballRadius, ballMass } from "../../globals";
+import { ballRadius, ballMass, mapSize } from "../../globals";
 import { Vector } from "../math";
 import Player from "./player";
 import { BallCategory } from "./categories";
@@ -18,6 +18,7 @@ export default class Ball extends CircleCollideable {
             },
         });
         this._body.plugin.owner = this
+        this._movementBounds = [new Vector(0, 0), new Vector(mapSize.width, mapSize.height)]
     }
 
     clearKickers(): void {

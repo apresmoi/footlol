@@ -65,7 +65,7 @@ export class ShacoW extends CircleCollideable {
                         const interval = setInterval(() => {
                             if (iterations < 1500) {
                                 iterations += 50
-                                target.setPosition(target.getPosition().add(direction.multiply(1).setY(Math.random() * 4 - 2)))
+                                target.setPosition(target.getPosition().add(direction.multiply(1).setY(Math.random() * 10 - 2)))
                             } else {
                                 clearInterval(interval)
                             }

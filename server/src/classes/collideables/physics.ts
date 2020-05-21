@@ -30,24 +30,28 @@ export class Collideable {
         this._direction = new Vector(0, 0);
         this._acceleration = 0;
         this._startPosition = position
-        this._lastValidPosition = new Vector(0, 0);
+        this._lastValidPosition = position;
     }
 
     setStartPosition(position: Vector): void {
         this._startPosition = position;
     }
 
-    _checkForWrongPositions(): void {
+    _isValidPosition(position: Vector): boolean {
         if (this._movementBounds) {
             const [min, max] = this._movementBounds
-            const currentPosition = this._body.position;
-            if (min.x > currentPosition.x || min.y > currentPosition.y ||
-                max.x < currentPosition.x || max.y < currentPosition.y ||
-                isNaN(currentPosition.x) || isNaN(currentPosition.y))
-                this.setPosition(this._lastValidPosition);
-            else {
-                this._lastValidPosition = Vector.fromMatter(currentPosition);
-            }
+            return !(min.x > position.x || min.y > position.y || max.x < position.x || max.y < position.y || isNaN(position.x) || isNaN(position.y))
+        }
+        return !(isNaN(position.x) || isNaN(position.y))
+    }
+
+    _checkForWrongPositions(): void {
+        const currentPosition = Vector.fromMatter(this._body.position);
+        if (!this._isValidPosition(currentPosition)) {
+            this.setPosition(this._lastValidPosition)
+        }
+        else {
+            this._lastValidPosition = Vector.fromMatter(currentPosition);
         }
     }
 
@@ -129,7 +133,9 @@ export class Collideable {
     }
 
     setPosition(position: Vector): void {
-        Body.setPosition(this._body, position);
+        if (this._isValidPosition(position)) {
+            Body.setPosition(this._body, position);
+        }
     }
 
     update(dt: number): void {

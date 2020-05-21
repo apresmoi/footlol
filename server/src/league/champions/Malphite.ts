@@ -26,10 +26,12 @@ export default class Malphite extends Champion {
                     return new Promise((resolve, _reject) => {
                         const facingVector = (this._owner as Player)._facingVector.normalize()
                         const targetPosition = this._owner.getPosition().add(facingVector.multiply(300))
+                        let runs = 0
                         const interval = setInterval(() => {
                             const current = this._owner.getPosition()
                             const distance = targetPosition.substract(current).module()
-                            if (distance > 10) {
+                            if (distance > 10 && runs < 100) {
+                                runs++;
                                 this._owner.setPosition(
                                     current
                                         .setX(current.x + (targetPosition.x - current.x) / 10)
