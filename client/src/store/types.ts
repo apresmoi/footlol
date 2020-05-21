@@ -37,6 +37,11 @@ export interface PlayerMessage {
     message: string
 }
 
+
+export interface GoalPayload {
+    side: 'LEFT' | 'RIGHT'
+}
+
 export interface PlayerReadyPayload {
     player: Player
     ready: boolean
@@ -98,6 +103,7 @@ export interface UpdatePayload {
     time: number
     stage: RoomStage
     effects: Array<CircleEffect | RectEffect | CompoundEffect>
+    kick: boolean
 }
 
 export interface LoginSuccessPayload extends UpdatePayload {

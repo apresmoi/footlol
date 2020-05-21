@@ -35,7 +35,9 @@ export class Room extends Field {
                 });
                 socket.on('request_key_press', function (binary) {
                     const payload = binaryToObject(binary)
-                    self.playerKeyPress(playerId, payload.code)
+                    self.playerKeyPress(playerId, payload.code).then(kick => {
+                        if (kick) socket.emit('ball_kicked', { kicked: true })
+                    })
                 });
             } else {
                 socket.emit('login_success', objectToBinary({ self: null, ...self.serialize(), }));
@@ -79,6 +81,10 @@ export class Room extends Field {
                 self._emit()
             })
         });
+    }
+
+    onGoal = (side: TeamSide, player: Player) => {
+        this._socket.emit('goal', objectToBinary({ side, player: player._name }))
     }
 
     _emit = () => {

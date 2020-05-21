@@ -270,21 +270,20 @@ export class Field {
         if (this._players[id]) this._players[id].changeDirection(new Vector(x, y));
     }
 
-    playerKeyPress(id: string, code: string) {
+    async playerKeyPress(id: string, code: string): Promise<boolean> {
         switch (code) {
             case 'Space':
-                this._players[id].kick(this._ball)
-                break;
+                return this._players[id].kick(this._ball)
             case 'KeyQ':
-                this._players[id].requestAbility('Q').then(qResult => {
+                return this._players[id].requestAbility('Q').then(qResult => {
                     if (qResult) this._addEffect(qResult)
+                    return false
                 })
-                break
             case 'KeyW':
-                this._players[id].requestAbility('W').then(wResult => {
+                return this._players[id].requestAbility('W').then(wResult => {
                     if (wResult) this._addEffect(wResult)
+                    return false
                 })
-                break
             default:
                 break;
         }
@@ -304,6 +303,8 @@ export class Field {
         })
     }
 
+    onGoal = (side: TeamSide, player: Player) => { }
+
     _handleBallInsideGoal(sensor: Goal): void {
         if (this._goal) return // this avoids double goal in one turn
 
@@ -313,11 +314,13 @@ export class Field {
             this._goal = true
             this._score.addGoal('RIGHT', lastKicker.player, this.__seconds)
             this._reset('GOAL')
+            this.onGoal('RIGHT', lastKicker.player)
         } else if (this._sensors.RIGHT_GOAL === sensor) {
             //if the ball gets inside the right side,  the goal is for the left team
             this._goal = true
             this._score.addGoal('LEFT', lastKicker.player, this.__seconds)
             this._reset('GOAL')
+            this.onGoal('LEFT', lastKicker.player)
         }
     }
 

@@ -7,6 +7,7 @@ import { BallCategory } from "./categories";
 export type BallKicker = { player: Player, seconds: number }
 export default class Ball extends CircleCollideable {
     _kickers: BallKicker[] = []
+    _kicked: boolean = false
 
     constructor(position: Vector) {
         super(ballMass, position, ballRadius, {

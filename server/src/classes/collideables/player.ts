@@ -100,19 +100,21 @@ export default class Player extends CompoundCollideable {
         return this._canKick = canKick
     }
 
-    kick(ball: Ball): void {
+    kick(ball: Ball): boolean {
         clearTimeout(this._kickTimeout)
         this._kicking = true;
+        this._kickTimeout = setTimeout(() => {
+            this._kicking = false;
+        }, 100);
         if (this._canKick) {
             const point = this.getPosition().add(
                 this.getPosition().substract(ball.getPosition()).normalize().multiply(ball._body.circleRadius)//.rotate(Math.PI / 4)
             )
             const force = this.getPosition().substract(ball.getPosition()).normalize().multiply(this._force)
             Body.applyForce(ball._body, point, force)
+            return true
         }
-        this._kickTimeout = setTimeout(() => {
-            this._kicking = false;
-        }, 100);
+        return false
     }
 
     async requestAbility(ability: 'Q' | 'W'): Promise<Collideable> {

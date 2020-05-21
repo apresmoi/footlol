@@ -1,6 +1,7 @@
-import { Player, PlayerMessage, MessageSubscribers, UpdatePayload, Vector, PlayerReadyPayload, StageChangePayload, LoginSuccessPayload } from "./types"
+import { Player, PlayerMessage, MessageSubscribers, UpdatePayload, Vector, GoalPayload, PlayerReadyPayload, StageChangePayload, LoginSuccessPayload } from "./types"
 import io from 'socket.io-client';
 import { objectToBinary, binaryToObject } from '../utils/conversion'
+import { playSound } from './sounds'
 
 const REQUEST_DIRECTION_CHANGE = 'request_direction_change'
 const REQUEST_KEY_PRESS = 'request_key_press'
@@ -20,6 +21,11 @@ const STAGE_CHANGE = 'stage_change'
 const PLAYER_KICKED = 'player_kicked'
 const UPDATE = 'update'
 
+//effects
+const BALL_KICKED = 'ball_kicked'
+const GOAL = 'goal'
+
+
 class RoomSocket {
     _chatSocket: SocketIOClient.Socket
     _onMessageSubscribers: MessageSubscribers = {}
@@ -37,18 +43,21 @@ class RoomSocket {
         });
 
         this._chatSocket.on(PLAYER_JOIN, (binary) => {
+            playSound(PLAYER_JOIN)
             const payload: Player = binaryToObject(binary)
             // console.log('player_join', payload)
             if (this._onMessageSubscribers.player_join) this._onMessageSubscribers.player_join(payload)
         });
 
         this._chatSocket.on(PLAYER_LEAVE, (binary) => {
+            playSound(PLAYER_LEAVE)
             const payload: Player = binaryToObject(binary)
             // console.log('player_leave', payload)
             if (this._onMessageSubscribers.player_leave) this._onMessageSubscribers.player_leave(payload)
         });
 
         this._chatSocket.on(PLAYER_READY, (binary) => {
+            playSound(PLAYER_READY)
             const payload: PlayerReadyPayload = binaryToObject(binary)
             // console.log('player_ready', payload)
             if (this._onMessageSubscribers.player_ready) this._onMessageSubscribers.player_ready(payload)
@@ -60,6 +69,7 @@ class RoomSocket {
         });
 
         this._chatSocket.on(STAGE_CHANGE, (binary) => {
+            playSound(STAGE_CHANGE)
             const payload: StageChangePayload = binaryToObject(binary)
             if (this._onMessageSubscribers.stage_change) this._onMessageSubscribers.stage_change(payload)
         });
@@ -67,6 +77,7 @@ class RoomSocket {
         //chat
 
         this._chatSocket.on(MESSAGE_SENT, (binary) => {
+            playSound(MESSAGE_SENT)
             const payload: PlayerMessage = binaryToObject(binary)
             // console.log('send_message', payload)
             if (this._onMessageSubscribers.message_sent) this._onMessageSubscribers.message_sent(payload)
@@ -84,6 +95,15 @@ class RoomSocket {
             // console.log('update', payload)
             if (this._onMessageSubscribers.update) this._onMessageSubscribers.update(payload)
         });
+
+        //effects
+        this._chatSocket.on(BALL_KICKED, () => {
+            playSound(BALL_KICKED)
+        })
+        this._chatSocket.on(GOAL, (binary) => {
+            const payload: GoalPayload = binaryToObject(binary)
+            playSound(GOAL)
+        })
     }
 
     connect = () => {
