@@ -53,10 +53,11 @@ export default class Lucian extends Champion {
                         const facingVector = (this._owner as Player)._facingVector.normalize()
                         let shoots = 20
                         const interval = setInterval(() => {
-                            this._owner._facingVector = facingVector
+                            // this._owner._facingVector = facingVector
                             const origin = this._owner.getPosition()
                             dispatcher(new LucianQ(this.spells.Q, this._owner._side, this._owner,
-                                origin.add(facingVector.normalize().rotate(Math.PI / 2).multiply((shoots % 2 ? 1 : -1) * 10))
+                                origin.add(facingVector.normalize().rotate(Math.PI / 2).multiply((shoots % 2 ? 1 : -1) * 10)),
+                                facingVector.multiply(15 + this._owner._body.plugin.owner.getVelocity().module())
                             ))
                             shoots--
                             if (shoots === 0) {
@@ -73,7 +74,7 @@ export default class Lucian extends Champion {
 }
 
 export class LucianQ extends CircleCollideable {
-    constructor(spell: ChampionSpell, side: TeamSide, owner: Player, position: Vector) {
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player, position: Vector, velocity: Vector) {
         super(5, position, 5, {
             collisionFilter: {
                 category: AbilityProjectileCategory,
@@ -83,9 +84,10 @@ export class LucianQ extends CircleCollideable {
                 owner: owner,
                 id: spell.id,
                 duration: 500,
-                velocity: 15,
+                velocity: 0,
             }
         })
         this._body.plugin.drawer = this
+        this.setVelocity(velocity)
     }
 }

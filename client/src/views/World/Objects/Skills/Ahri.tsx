@@ -16,7 +16,7 @@ const AhriQ = (props: { effect: CircleEffect }) => {
 
   return <g
     className="ahri-q"
-    transform={`translate(${position.x}, ${position.y}) rotate(${rotate})`}
+    transform={`translate(${position.x}, ${position.y}) rotate(${-rotate})`}
   >
     <defs>
       <radialGradient id="ahri-q" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
