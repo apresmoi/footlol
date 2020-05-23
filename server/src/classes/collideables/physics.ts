@@ -35,6 +35,11 @@ export class Collideable {
         this._lastValidPosition = position;
     }
 
+    reinit = (position: Vector): Collideable => {
+        const copy = new Collideable(position);
+        return copy
+    }
+
     on = (event: string, callback: (payload?: any) => void) => {
         if (!this._triggers[event]) this._triggers[event] = []
         this._triggers[event].push(callback);
@@ -62,7 +67,10 @@ export class Collideable {
     _checkForWrongPositions(): void {
         const currentPosition = Vector.fromMatter(this._body.position);
         if (!this._isValidPosition(currentPosition)) {
-            this.setPosition(this._lastValidPosition)
+            this.dematerialize()
+            this._body = this.reinit(this._lastValidPosition)._body
+            this.materialize(this._world)
+            console.log("not valid position", this.getPosition(), this._lastValidPosition)
         }
         else {
             this._lastValidPosition = Vector.fromMatter(currentPosition);

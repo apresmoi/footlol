@@ -205,7 +205,7 @@ export class Room extends Field {
             countdown: this.__countdown > seconds ? this.__countdown - seconds : 0,
             victory: this._gameEnded === true ? this._victorySide : null,
             effects: this._serializeEffects(),
-            debug: DEBUG ?  this._getAllObjects() : []
+            // debug: DEBUG ?  this._getAllObjects() : []
         }
     }
 }

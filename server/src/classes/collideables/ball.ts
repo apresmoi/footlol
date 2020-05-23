@@ -21,6 +21,12 @@ export default class Ball extends CircleCollideable {
         this._movementBounds = [new Vector(0, 0), new Vector(mapSize.width, mapSize.height)]
     }
 
+    reinit = (position: Vector): Ball => {
+        const copy = new Ball(position);
+        copy._body.plugin.owner = this
+        return copy
+    }
+
     clearKickers(): void {
         this._kickers = []
     }

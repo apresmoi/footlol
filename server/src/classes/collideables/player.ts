@@ -75,6 +75,13 @@ export default class Player extends CompoundCollideable {
         this._movementBounds = [new Vector(0, 0), new Vector(mapSize.width, mapSize.height)]
     }
 
+    reinit = (position: Vector): Player => {
+        const copy = new Player(this._id, this._name, this._champion.name, position, this._side, this._admin)
+        copy._body.plugin.owner = this
+        copy._body.parts.forEach(part => { part.plugin.owner = this })
+        return copy
+    }
+
     _backupCollision
     disableCollisions(disabled: boolean): void {
         if (disabled) {
