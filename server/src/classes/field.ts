@@ -274,16 +274,17 @@ export class Field {
     }
 
     async playerKeyPress(id: string, code: string): Promise<boolean> {
+        const dispatcher = (collideable: Collideable) => this._addEffect(collideable)
         switch (code) {
             case 'Space':
                 return this._players[id].kick(this._ball)
             case 'KeyQ':
-                return this._players[id].requestAbility('Q').then(qResult => {
+                return this._players[id].requestAbility('Q', dispatcher).then(qResult => {
                     if (qResult) this._addEffect(qResult)
                     return false
                 })
             case 'KeyW':
-                return this._players[id].requestAbility('W').then(wResult => {
+                return this._players[id].requestAbility('W', dispatcher).then(wResult => {
                     if (wResult) this._addEffect(wResult)
                     return false
                 })
@@ -475,12 +476,11 @@ export class Field {
             } else {
                 if (!collideable._mounted) {
                     if (collideable._body.plugin.velocity)
-                        collideable.setVelocity((collideable._body.plugin.owner as Player)
-                            ._facingVector.normalize()
-                            .multiply(collideable._body.plugin.velocity + collideable._body.plugin.owner.getVelocity().module()), collideable._body.plugin.angularVelocity)
+                        collideable.setVelocity((collideable._body.plugin.owner as Player)._facingVector.normalize().multiply(collideable._body.plugin.velocity + collideable._body.plugin.owner.getVelocity().module()), collideable._body.plugin.angularVelocity)
                     else if (collideable._body.plugin.angularVelocity)
                         collideable.setVelocity(new Vector(0, 0), collideable._body.plugin.angularVelocity)
-                    collideable.setPosition(collideable._body.plugin.owner.getPosition())
+                    if (collideable.getPosition().module() === 0)
+                        collideable.setPosition(collideable._body.plugin.owner.getPosition())
                     collideable.materialize(this._world)
                 }
                 collideable.update(timeConstant)
@@ -530,6 +530,8 @@ export class Field {
                     return 'rect'
                 else if (body.plugin.owner instanceof PolygonCollideable)
                     return 'polygon'
+                else if (body.plugin.owner instanceof Player)
+                    return 'player'
                 else
                     return 'circle'
             })()

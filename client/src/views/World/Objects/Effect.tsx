@@ -37,12 +37,16 @@ const EffectComponent = (props: { effect, self, players }) => {
   else if (effect.id) {
   }
 
+
   return <g
-    transform={effect.type !== 'polygon' ? `translate(${effect.position.x}, ${effect.position.y})` : ""}
+    transform={effect.type !== 'polygon' && effect.type !== 'player' ? `translate(${effect.position.x}, ${effect.position.y})` : ""}
   >
     {(effect.type === 'circle' || !effect.type) && <circle cx={0} cy={0} r={effect.radius || 10} />}
     {effect.type === 'rect' && <rect transform={`rotate(${effect.angle * 180 / Math.PI})`} x={-effect.width / 2} y={-effect.height / 2} width={effect.width} height={effect.height} />}
     {effect.type === 'polygon' && <polygon x={0} y={0} points={effect.points.map(point => point[0] + "," + point[1]).join(' ')} />}
+
+    {effect.type === 'player' ? effect.points.map(point => <circle r={10} cx={point[0]} cy={point[1]} />) : null}
+
   </g >
 }
 

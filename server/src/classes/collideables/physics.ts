@@ -26,11 +26,25 @@ export class Collideable {
 
     _movementBounds: [Vector, Vector]
 
+    _triggers: { [key: string]: ((payload?: any) => void)[] } = {}
+
     constructor(position: Vector) {
         this._direction = new Vector(0, 0);
         this._acceleration = 0;
         this._startPosition = position
         this._lastValidPosition = position;
+    }
+
+    on = (event: string, callback: (payload?: any) => void) => {
+        if (!this._triggers[event]) this._triggers[event] = []
+        this._triggers[event].push(callback);
+    }
+
+    triggerEvent = (event: string, payload) => {
+        if (this._triggers[event]) {
+            for (let key in this._triggers[event])
+                this._triggers[event][key](payload);
+        }
     }
 
     setStartPosition(position: Vector): void {
@@ -71,6 +85,7 @@ export class Collideable {
             this._mounted = true;
             this._mountedTS = new Date()
             World.add(world, this._body);
+            this.triggerEvent('materialize', this);
         }
     }
 
@@ -79,6 +94,7 @@ export class Collideable {
             this._mounted = false;
             this._mountedTS = null
             World.remove(this._world, this._body);
+            this.triggerEvent('dematerialize', this);
         }
     }
 
@@ -142,6 +158,7 @@ export class Collideable {
         if (this._body.speed > 0 && this._body.speed < 0.01) {
             this.setVelocity(new Vector(0, 0));
         }
+        this.triggerEvent('update', dt)
     }
 
     getPoints() {

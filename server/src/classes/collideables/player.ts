@@ -117,8 +117,8 @@ export default class Player extends CompoundCollideable {
         return false
     }
 
-    async requestAbility(ability: 'Q' | 'W'): Promise<Collideable> {
-        return this._champion.getAbility(ability)
+    async requestAbility(ability: 'Q' | 'W', dispatcher: (collideable: Collideable) => void): Promise<Collideable> {
+        return this._champion.getAbility(ability, dispatcher)
     }
 
     update(dt: number) {

@@ -4,7 +4,8 @@ import { TeamSide } from "../types"
 import { Collideable } from "../classes/collideables/physics"
 import { elapsedSeconds } from "../utilities/dates"
 
-export type ChampionName = 'Veigar' | 'Ashe' | 'Amumu' | 'LeeSin' | 'Thresh' | 'Shaco' | 'Yasuo' | 'Garen' | 'Anivia' | 'Malphite'
+export type ChampionName = 'Veigar' | 'Ashe' | 'Amumu' | 'LeeSin' | 'Thresh' | 'Shaco' |
+    'Yasuo' | 'Garen' | 'Anivia' | 'Malphite' | 'Ahri' | 'Blitzcrank' | 'Kassadin' | 'Lucian'
 
 export type ChampionList = {
     'Ashe': (side: TeamSide, owner: Player) => Champion,
@@ -17,6 +18,11 @@ export type ChampionList = {
     'Anivia': (side: TeamSide, owner: Player) => Champion,
     'Yasuo': (side: TeamSide, owner: Player) => Champion,
     'Malphite': (side: TeamSide, owner: Player) => Champion,
+    'Ahri': (side: TeamSide, owner: Player) => Champion,
+    'Lucian': (side: TeamSide, owner: Player) => Champion,
+    // 'AurelionSol': (side: TeamSide, owner: Player) => Champion,
+    // 'Blitzcrank': (side: TeamSide, owner: Player) => Champion,
+    // 'Kassadin': (side: TeamSide, owner: Player) => Champion,
 }
 
 export class ChampionSourceStats {
@@ -157,7 +163,7 @@ export class Champion {
         }
     }
 
-    async getAbility(ability: 'Q' | 'W'): Promise<Collideable> {
+    async getAbility(ability: 'Q' | 'W', dispatcher: (Collideable) => void): Promise<Collideable> {
         return null
     }
 
