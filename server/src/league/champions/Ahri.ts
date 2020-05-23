@@ -77,12 +77,16 @@ export class AhriQ extends CircleCollideable {
                 velocity: 10,
                 handleCollision: (target: Collideable) => {
                     if (!target._body.isSensor) {
-                        const current = target.getPosition()
-                        const direction = this._body.plugin.owner.getPosition().substract(current).normalize()
                         target.setStun(1500)
                         let iterations = 0
                         const interval = setInterval(() => {
-                            if (iterations < 1500) {
+                            const current = target.getPosition()
+                            const ownerPosition = this._body.plugin.owner.getPosition()
+                            const direction = ownerPosition.substract(current).normalize()
+                            if (target.getPosition().substract(ownerPosition).module() < playerRadius * 2) {
+                                clearInterval(interval)
+                            }
+                            else if (iterations < 1500) {
                                 iterations += 20
                                 target.setPosition(target.getPosition().add(direction.multiply(1)))
                             } else {
