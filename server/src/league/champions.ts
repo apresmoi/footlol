@@ -14,7 +14,6 @@ import Yasuo from './champions/Yasuo'
 import Malphite from './champions/Malphite'
 import Ahri from './champions/Ahri'
 import Lucian from './champions/Lucian'
-// import AurelionSol from './champions/AurelionSol'
 
 
 
@@ -31,5 +30,4 @@ export const champions: ChampionList = {
     'Malphite': (side: TeamSide, owner: Player) => new Malphite(side, owner),
     'Ahri': (side: TeamSide, owner: Player) => new Ahri(side, owner),
     'Lucian': (side: TeamSide, owner: Player) => new Lucian(side, owner),
-    // 'AurelionSol': (side: TeamSide, owner: Player) => new AurelionSol(side, owner),
 }

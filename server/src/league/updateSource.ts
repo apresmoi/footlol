@@ -1,5 +1,5 @@
 const champions = ['Veigar', 'Ashe', 'Amumu', 'LeeSin', 'Thresh', 'Shaco',
-    'Yasuo', 'Garen', 'Anivia', 'Malphite', 'Ahri', 'Blitzcrank', 'Kassadin', 'Lucian'
+    'Yasuo', 'Garen', 'Anivia', 'Malphite', 'Ahri', 'Lucian'
 ]
 
 fetch(`http://ddragon.leagueoflegends.com/cdn/10.9.1/data/en_US/champion.json`).then(response => response.json()).then(async data => {
