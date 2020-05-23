@@ -11,7 +11,7 @@ import { playerRadius, DEBUG } from '../../globals';
 export default class Ahri extends Champion {
     constructor(side: TeamSide, owner: Player) {
         super('Ahri', source.Ahri, owner);
-        this.spells.Q = deepCopy({ ...this.spells.W, cooldown: DEBUG ? 0 : 5 })
+        this.spells.Q = deepCopy({ ...this.spells.E, cooldown: DEBUG ? 0 : 5 })
         this.spells.W = deepCopy({ ...this.spells.R, cooldown: DEBUG ? 0 : 20 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
@@ -31,6 +31,8 @@ export default class Ahri extends Champion {
                         this._wUses++;
                         if (this._wUses !== 3) {
                             this._tsW = null;
+                        } else {
+                            this._wUses = 0
                         }
                         const interval = setInterval(() => {
                             const current = this._owner.getPosition()

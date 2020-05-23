@@ -11,8 +11,8 @@ import { DEBUG } from '../../globals';
 export default class Lucian extends Champion {
     constructor(side: TeamSide, owner: Player) {
         super('Lucian', source.Lucian, owner);
-        this.spells.Q = deepCopy({ ...this.spells.R, cooldown: DEBUG ? 0 : 5 })
-        this.spells.W = deepCopy({ ...this.spells.E, cooldown: DEBUG ? 0 : 20 })
+        this.spells.Q = deepCopy({ ...this.spells.E, cooldown: DEBUG ? 0 : 5 })
+        this.spells.W = deepCopy({ ...this.spells.R, cooldown: DEBUG ? 0 : 20 })
         this._spellQ = this.spells.Q
         this._spellW = this.spells.W
     }
@@ -21,23 +21,6 @@ export default class Lucian extends Champion {
         if (this._canUseAbility(ability))
             switch (ability) {
                 case 'Q':
-                    return new Promise((resolve, _reject) => {
-                        const facingVector = (this._owner as Player)._facingVector.normalize()
-                        let shoots = 20
-                        const interval = setInterval(() => {
-                            this._owner._facingVector = facingVector
-                            const origin = this._owner.getPosition()
-                            dispatcher(new LucianQ(this.spells.Q, this._owner._side, this._owner,
-                                origin.add(facingVector.normalize().rotate(Math.PI / 2).multiply((shoots % 2 ? 1 : -1) * 10))
-                            ))
-                            shoots--
-                            if (shoots === 0) {
-                                clearInterval(interval)
-                                resolve(null)
-                            }
-                        }, 100);
-                    })
-                case 'W':
                     return new Promise((resolve, _reject) => {
                         const facingVector = (this._owner as Player)._facingVector.normalize()
                         const targetPosition = this._owner.getPosition().add(facingVector.multiply(150))
@@ -64,6 +47,23 @@ export default class Lucian extends Champion {
                                 resolve(null)
                             }
                         }, 10);
+                    })
+                case 'W':
+                    return new Promise((resolve, _reject) => {
+                        const facingVector = (this._owner as Player)._facingVector.normalize()
+                        let shoots = 20
+                        const interval = setInterval(() => {
+                            this._owner._facingVector = facingVector
+                            const origin = this._owner.getPosition()
+                            dispatcher(new LucianQ(this.spells.Q, this._owner._side, this._owner,
+                                origin.add(facingVector.normalize().rotate(Math.PI / 2).multiply((shoots % 2 ? 1 : -1) * 10))
+                            ))
+                            shoots--
+                            if (shoots === 0) {
+                                clearInterval(interval)
+                                resolve(null)
+                            }
+                        }, 100);
                     })
                 default:
                     break;

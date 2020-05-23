@@ -9,6 +9,8 @@ import { GarenW } from './Skills/Garen';
 import { AniviaW, AniviaQ } from './Skills/Anivia';
 import { YasuoW, YasuoQ } from './Skills/Yasuo';
 import { MalphiteW, MalphiteQ } from './Skills/Malphite';
+import { LucianW } from './Skills/Lucian';
+import { AhriQ } from './Skills/Ahri';
 
 
 const EffectComponent = (props: { effect, self, players }) => {
@@ -34,7 +36,10 @@ const EffectComponent = (props: { effect, self, players }) => {
   else if (effect.id === "YasuoW") return <YasuoW effect={effect} />
   else if (effect.id === "UFSlash") return <MalphiteW effect={effect} />
   else if (effect.id === "Obduracy") return <MalphiteQ effect={effect} />
+  else if (effect.id === "LucianE") return <LucianW effect={effect} />
+  else if (effect.id === "AhriTumble") return <AhriQ effect={effect} />
   else if (effect.id) {
+    console.log(effect.id)
   }
 
 

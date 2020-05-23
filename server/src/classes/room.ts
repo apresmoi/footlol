@@ -3,6 +3,7 @@ import { RoomStage, IChatMessage, ResetType, TeamSide } from "../types"
 import { Field } from "./field"
 import { ChampionName } from "../league/classes"
 import { objectToBinary, binaryToObject } from '../utilities/conversion'
+import { DEBUG } from "../globals"
 
 export class Room extends Field {
     _socket: SocketIO.Namespace
@@ -204,7 +205,7 @@ export class Room extends Field {
             countdown: this.__countdown > seconds ? this.__countdown - seconds : 0,
             victory: this._gameEnded === true ? this._victorySide : null,
             effects: this._serializeEffects(),
-            debug: this._getAllObjects()
+            debug: DEBUG ?  this._getAllObjects() : []
         }
     }
 }
