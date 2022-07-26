@@ -202,7 +202,7 @@ export const ApplicationContextProvider = ({ children }) => {
   }
 
   const updateRooms = () => {
-    fetch(window.location.protocol + '//' + window.location.host.replace(':8000', '') + ':8081' + '/api/rooms')
+    fetch(window.location.protocol + '//' + window.location.host.replace(':8000', ':8081') + '/api/rooms')
       .then(response => response.json())
       .then(rooms => {
         setState({ ...state, rooms })
@@ -210,7 +210,7 @@ export const ApplicationContextProvider = ({ children }) => {
   }
 
   const updateChampionPool = () => {
-    fetch(window.location.protocol + '//' + window.location.host.replace(':8000', '') + ':8081' + '/api/champions')
+    fetch(window.location.protocol + '//' + window.location.host.replace(':8000', ':8081') + '/api/champions')
       .then(response => response.json())
       .then(champions => {
         setState({ ...state, champions })
@@ -219,7 +219,7 @@ export const ApplicationContextProvider = ({ children }) => {
 
   const createRoom = (name: string) => {
     fetch(
-      window.location.protocol + '//' + window.location.host.replace(':8000', '') + ':8081' + '/api/rooms',
+      window.location.protocol + '//' + window.location.host.replace(':8000', ':8081') + '/api/rooms',
       {
         'method': 'POST',
         'body': JSON.stringify({ name: name }),

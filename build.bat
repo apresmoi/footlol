@@ -1,1 +1,1 @@
-cd client & npm run build & cd .. & del .\nginx\public\* /s /q & xcopy .\client\build .\nginx\public\ /s /e /y & python build.py
+cd client & npm run build & cd .. & rm -rf ./nginx/public/* & cp ./client/build ./nginx/public/ & python build.py
