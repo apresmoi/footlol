@@ -7,6 +7,10 @@
     background: rgb(8, 16, 23);
     background: radial-gradient(circle, rgba(8, 16, 23, 1) 0%, rgba(40, 60, 80, 1) 11%, rgba(8, 16, 23, 1) 75%);
     display: flex;
+
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
 }
 
 * {
