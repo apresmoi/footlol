@@ -21,7 +21,7 @@ const Login = () => {
       <div className="bgvideo-container">
         <iframe id="video" frameBorder="0" allowFullScreen={true} allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
         title="YouTube video player" width="640" height="360"
-         src="https://www.youtube.com/embed/dGM7MqzeA7s?mute=1&amp;autoplay=1&amp;loop=1&amp;controls=0&amp;showinfo=0&amp;autohide=0&amp;enablejsapi=1&amp;modestbranding=1&amp;vq=hd1080&amp;origin=https%3A%2F%2Fwww.haxball.com&amp;widgetid=1"></iframe>
+         src="https://www.youtube.com/embed/JkAptaaFSrE?mute=1&autoplay=1&loop=1&controls=0&showinfo=0&autohide=0&enablejsapi=1&modestbranding=1&playlist=JkAptaaFSrE&vq=hd1080&origin=https%3A%2F%2Fwww.haxball.com&widgetid=1"></iframe>
       </div>
       <Wrapper>
         <Header>
