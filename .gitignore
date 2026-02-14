@@ -1,22 +1,27 @@
-gadm/migrations
-gadm/venv
-gadm/temp
-gadm/output
-gadm/downloads
-gadm/geojson
+# Unpack temporary files (created and consumed by skills)
+snapshot.md
+conversation.md
+conversation-*.md
 
-api/venv
-api/db.json
-api/db.sqlite3
+# OS
+.DS_Store
+Thumbs.db
 
-mysql/data
-mysql/game.sql
-mysql/db_dump.zip
+# Editor
+*.swp
+*.swo
+*~
 
+# TLS/certificate artifacts (must stay out of VCS)
+letsencrypt/
+nginx/cert/
+server/cert/
+*.pem
+*.key
+
+# Node project outputs
 client/node_modules
-client/build
 server/node_modules
-
-.vscode
-*.pyc
-
+client/build
+client/dist
+server/build
