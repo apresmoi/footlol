@@ -66,7 +66,13 @@ export default class Ball extends CircleCollideable {
             return
         }
 
-        if (abilityId === 'Obduracy' || abilityId === 'UFSlash') {
+        if (
+            abilityId === 'Obduracy'
+            || abilityId === 'UFSlash'
+            || abilityId === 'VeigarEventHorizon'
+            || abilityId === 'BandageToss'
+            || abilityId === 'CurseoftheSadMummy'
+        ) {
             this.applyState('stunned', durationMs)
         }
     }

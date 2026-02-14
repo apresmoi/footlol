@@ -2,11 +2,12 @@ import { source } from '../source'
 import { Champion, ChampionSpell } from '../classes'
 import { TeamSide } from '../../types'
 import Player from '../../classes/collideables/player'
+import Ball from '../../classes/collideables/ball'
 import { Collideable, CircleCollideable } from '../../classes/collideables/physics';
 import { deepCopy } from '../../utilities/objects';
 import { Vector } from '../../classes/math';
 import { PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityStunCategory, AbilityEffectCategory } from '../../classes/collideables/categories';
-import { playerRadius, DEBUG } from '../../globals';
+import { playerRadius, ballRadius, DEBUG } from '../../globals';
 import VectorCollideable from '../../classes/collideables/vector'
 
 export default class Amumu extends Champion {
@@ -37,7 +38,15 @@ export default class Amumu extends Champion {
 }
 
 export class AmumuQ extends VectorCollideable {
-    _targetPosition: Vector
+    _target: Collideable
+    _targetDistance: number = playerRadius
+
+    _distanceToStopBeforeTarget(target: Collideable): number {
+        if (target instanceof Player) return playerRadius * 2 + 2
+        if (target instanceof Ball) return playerRadius + ballRadius + 2
+        return playerRadius + target.getBounds().module() / 2 + 2
+    }
+
     constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
         super(0, new Vector(0, 0), 10, {
             restitution: 0,
@@ -50,14 +59,22 @@ export class AmumuQ extends VectorCollideable {
                 owner: owner,
                 id: spell.id,
                 duration: 1000,
+                effectDuration: 500,
                 velocity: 7,
                 handleCollision: (target: Collideable) => {
-                    if (!target._body.isSensor && !this._targetPosition) {
+                    if (!target._body.isSensor && !this._target) {
                         this.setVelocity(new Vector(0, 0))
-                        this._body.plugin.duration = 1000
-                        const current = this._body.plugin.owner.getPosition()
-                        const distance = target.getPosition().substract(current)
-                        this._targetPosition = current.add(distance.substract(distance.normalize().multiply(target.getBounds().module())))
+                        this._body.plugin.duration = 1200
+                        const stunDuration = typeof this._body.plugin.effectDuration === 'number' ? this._body.plugin.effectDuration : 0
+                        if (stunDuration > 0) {
+                            target.setVelocity(new Vector(0, 0), 0)
+                            target.setStun(stunDuration)
+                            if (target instanceof Player || target instanceof Ball) {
+                                target.applyStateFromAbility(spell.id, stunDuration)
+                            }
+                        }
+                        this._target = target
+                        this._targetDistance = this._distanceToStopBeforeTarget(target)
                     }
                 }
             }
@@ -66,21 +83,30 @@ export class AmumuQ extends VectorCollideable {
     }
 
     update(dt: number) {
-        if (this._targetPosition) {
-            const current = this._body.plugin.owner.getPosition()
-            const distance = this._targetPosition.substract(current).module()
-            if (distance > 0) {
-                this._body.plugin.owner.setPosition(
-                    current
-                        .setX(current.x + (this._targetPosition.x - current.x) / 10)
-                        .setY(current.y + (this._targetPosition.y - current.y) / 10)
-                )
+        if (!this._target) return
 
-            } else {
-                this._expired = true
-                this.dematerialize()
-            }
+        const owner = this._body.plugin.owner as Player
+        const current = owner.getPosition()
+        const targetPosition = this._target.getPosition()
+        const toTarget = targetPosition.substract(current)
+        const toTargetDistance = toTarget.module()
+        const direction = toTargetDistance > 0 ? toTarget.normalize() : owner._facingVector.normalize()
+        const desiredPosition = targetPosition.substract(direction.multiply(this._targetDistance))
+        const remaining = desiredPosition.substract(current)
+        const remainingDistance = remaining.module()
+
+        if (remainingDistance <= 3) {
+            owner.setPosition(desiredPosition)
+            owner.setVelocity(new Vector(0, 0), 0)
+            this._expired = true
+            this.dematerialize()
+            return
         }
+
+        const step = Math.min(remainingDistance, Math.max(8, toTargetDistance * 0.35))
+        const nextPosition = current.add(remaining.normalize().multiply(step))
+        owner.setPosition(nextPosition)
+        owner.setVelocity(new Vector(0, 0), 0)
     }
 }
 
@@ -104,5 +130,3 @@ export class AmumuW extends CircleCollideable {
         this._body.plugin.drawer = this
     }
 }
-
-
