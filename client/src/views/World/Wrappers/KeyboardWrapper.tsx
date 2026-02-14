@@ -16,6 +16,7 @@ interface KeyboardWrapperState {
   actionKeysPressed: string[]
   directionKeysPressed: string[]
   reportKeyboardInput: boolean
+  tabPressed: boolean
 }
 
 const allowedDirectionKeys = ['ArrowLeft', 'ArrowDown', 'ArrowUp', 'ArrowRight']
@@ -27,7 +28,8 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
     this.state = {
       actionKeysPressed: [],
       directionKeysPressed: [],
-      reportKeyboardInput: true
+      reportKeyboardInput: true,
+      tabPressed: false
     }
   }
 
@@ -46,17 +48,32 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
 
   handleKeyUp = (e) => {
     const { code } = e
-    if (this.state.reportKeyboardInput)
+    if (this.state.reportKeyboardInput) {
+      if (code === 'Tab') {
+        e.preventDefault()
+        if (this.state.tabPressed) {
+          this.setState({ tabPressed: false })
+        }
+        return
+      }
       if (allowedDirectionKeys.includes(code) || allowedActionKeys.includes(code)) {
         this.setState(state => ({
           actionKeysPressed: state.actionKeysPressed.filter(key => key !== code),
           directionKeysPressed: state.directionKeysPressed.filter(key => key !== code),
         }), this.handleDirectionChanged)
       }
+    }
   }
   handleKeyDown = (e) => {
     const { code } = e
-    if (this.state.reportKeyboardInput)
+    if (this.state.reportKeyboardInput) {
+      if (code === 'Tab') {
+        e.preventDefault()
+        if (!this.state.tabPressed) {
+          this.setState({ tabPressed: true })
+        }
+        return
+      }
       if (allowedDirectionKeys.includes(code)) {
         const { directionKeysPressed } = this.state
         if (!directionKeysPressed.includes(code)) {
@@ -74,6 +91,7 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
           })
         }
       }
+    }
   }
 
   componentDidMount() {
@@ -91,7 +109,12 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
   }
 
   disableKeyboardInput = () => {
-    this.setState({ reportKeyboardInput: false })
+    this.setState({
+      reportKeyboardInput: false,
+      tabPressed: false,
+      actionKeysPressed: [],
+      directionKeysPressed: []
+    }, this.handleDirectionChanged)
   }
 
   render() {
@@ -103,6 +126,7 @@ class KeyboardWrapper extends React.Component<KeyboardWrapperProps, KeyboardWrap
             ...child.props,
             actionKeysPressed: this.state.actionKeysPressed,
             directionKeysPressed: this.state.directionKeysPressed,
+            tabPressed: this.state.tabPressed,
             width: this.props['width'],
             height: this.props['height'],
             disableKeyboardInput: this.disableKeyboardInput,

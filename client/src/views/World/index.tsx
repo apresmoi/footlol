@@ -8,6 +8,7 @@ import ActionBar from './UI/ActionBar';
 import Victory from './UI/Victory';
 import Defeat from './UI/Defeat';
 import GameChat from './Chat';
+import Scoreboard from './UI/Scoreboard';
 
 const World = () => {
   return (
@@ -23,6 +24,7 @@ const World = () => {
           <KeyboardWrapper>
             <GameChat />
             <ActionBar />
+            <Scoreboard />
             <Defeat />
             <Victory />
           </KeyboardWrapper>

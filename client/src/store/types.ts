@@ -36,6 +36,14 @@ export interface Ball {
 export interface Score {
     left: number
     right: number
+    goals?: ScoreGoal[]
+}
+
+export interface ScoreGoal {
+    side: 'LEFT' | 'RIGHT'
+    playerId: string
+    playerName: string
+    seconds: number
 }
 
 export type RoomStage = 'TEAM_SELECT' | 'CHAMPION_SELECT' | 'FIELD' | 'END'
