@@ -30,3 +30,4 @@ server/build
 guide/ec2-cli-deploy.md
 guide/logs/
 ec2-cli-deploy.local.md
+AGENTS.md
