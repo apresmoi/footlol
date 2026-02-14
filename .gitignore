@@ -25,3 +25,8 @@ server/node_modules
 client/build
 client/dist
 server/build
+
+# Local deployment runbooks/logs
+guide/ec2-cli-deploy.md
+guide/logs/
+ec2-cli-deploy.local.md
