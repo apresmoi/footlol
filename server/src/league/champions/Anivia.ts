@@ -43,8 +43,8 @@ export class AniviaQ extends CircleCollideable {
             plugin: {
                 owner: owner,
                 id: spell.id,
-                duration: 1200,
-                velocity: 7,
+                duration: 1500,
+                velocity: 6,
                 effectDuration: 500,
                 handleCollision: (target) => {
                     this._expired = true

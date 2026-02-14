@@ -80,6 +80,9 @@ export class AhriQ extends CircleCollideable {
                 handleCollision: (target: Collideable) => {
                     if (!target._body.isSensor) {
                         target.setStun(1500)
+                        if (target._body.plugin.owner instanceof Player) {
+                            target._body.plugin.owner.applyStateFromAbility(spell.id, 1500)
+                        }
                         let iterations = 0
                         const interval = setInterval(() => {
                             const current = target.getPosition()

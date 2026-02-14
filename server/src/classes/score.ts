@@ -23,13 +23,13 @@ export class Score {
         this._goals = []
     }
 
-    addGoal(side: TeamSide, player: Player, seconds: number) {
+    addGoal(side: TeamSide, player: Player | null, seconds: number) {
         //if there is a goal for the RIGHT side team, the goal goes to them etc
         if (side === 'RIGHT') this._right += 1
         else if (side === 'LEFT') this._left += 1
         this._goals.push({
-            playerId: player._id,
-            playerName: player._name,
+            playerId: player ? player._id : 'unknown',
+            playerName: player ? player._name : 'Unknown',
             seconds,
             side,
         })

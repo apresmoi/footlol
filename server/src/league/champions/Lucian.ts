@@ -5,7 +5,7 @@ import Player from '../../classes/collideables/player'
 import { Collideable, CircleCollideable } from '../../classes/collideables/physics';
 import { deepCopy } from '../../utilities/objects';
 import { Vector } from '../../classes/math';
-import { PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityStunCategory, AbilityEffectCategory, AbilityProjectileCategory } from '../../classes/collideables/categories';
+import { PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityProjectileCategory } from '../../classes/collideables/categories';
 import { DEBUG } from '../../globals';
 
 export default class Lucian extends Champion {
@@ -76,6 +76,7 @@ export default class Lucian extends Champion {
 export class LucianQ extends CircleCollideable {
     constructor(spell: ChampionSpell, side: TeamSide, owner: Player, position: Vector, velocity: Vector) {
         super(5, position, 5, {
+            isSensor: true,
             collisionFilter: {
                 category: AbilityProjectileCategory,
                 mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
@@ -85,6 +86,17 @@ export class LucianQ extends CircleCollideable {
                 id: spell.id,
                 duration: 500,
                 velocity: 0,
+                handleCollision: (target: Collideable) => {
+                    if (this._expired || !target || target._body.isSensor) return
+
+                    if (target._body.collisionFilter.category === BallCategory) {
+                        const boostedVelocity = target.getVelocity().add(this.getVelocity().multiply(0.65))
+                        target.setVelocity(boostedVelocity, target._body.angularVelocity || 0)
+                    }
+
+                    this._expired = true
+                    this.dematerialize()
+                }
             }
         })
         this._body.plugin.drawer = this

@@ -7,8 +7,11 @@ import { ICollideableBody } from '../../types'
 //https://en.wikipedia.org/wiki/Elastic_collision
 //https://github.com/liabru/matter-js/
 
+let collideableSequence = 0
+
 export class Collideable {
     _id: string = null
+    _instanceId: number
     _body: ICollideableBody
     _direction: Vector
     _acceleration: number
@@ -26,9 +29,13 @@ export class Collideable {
 
     _movementBounds: [Vector, Vector]
 
+    _slowUntil: number = 0
+    _slowMultiplier: number = 1
+
     _triggers: { [key: string]: ((payload?: any) => void)[] } = {}
 
     constructor(position: Vector) {
+        this._instanceId = ++collideableSequence
         this._direction = new Vector(0, 0);
         this._acceleration = 0;
         this._startPosition = position
@@ -147,6 +154,39 @@ export class Collideable {
         }
     }
 
+    setSlow(timeout: number, multiplier: number = 0.5): void {
+        if (!timeout || timeout <= 0) return
+
+        const clampedMultiplier = Math.max(0.1, Math.min(1, multiplier))
+        const slowUntil = Date.now() + timeout
+        this._slowUntil = Math.max(this._slowUntil, slowUntil)
+        this._slowMultiplier = Math.min(this._slowMultiplier, clampedMultiplier)
+
+        // Immediate impact so the effect is noticeable on already-moving targets.
+        this.setVelocity(this.getVelocity().multiply(clampedMultiplier), this._body.angularVelocity || 0)
+    }
+
+    clearSlow(): void {
+        this._slowUntil = 0
+        this._slowMultiplier = 1
+    }
+
+    getSlowRemainingMs(): number {
+        if (this._slowUntil && Date.now() < this._slowUntil) {
+            return Math.max(0, this._slowUntil - Date.now())
+        }
+
+        this.clearSlow()
+        return 0
+    }
+
+    getSlowMultiplier(): number {
+        if (this.getSlowRemainingMs() > 0) {
+            return this._slowMultiplier
+        }
+        return 1
+    }
+
     setVelocity(velocity: Vector, angularVelocity: number = 0): void {
         Body.setVelocity(this._body, velocity);
         Body.setAngularVelocity(this._body, angularVelocity);
@@ -180,7 +220,7 @@ export class Collideable {
     }
 
     applyForce(force: Vector, position: Vector) {
-        Body.applyForce(this._body, position, force)
+        Body.applyForce(this._body, position, force.multiply(this.getSlowMultiplier()))
     }
 
     serialize(): any {

@@ -8,6 +8,9 @@ import Ball from "./ball";
 import { TeamSide } from "../../types";
 import { PlayerLeftSideCategory, PlayerRightSideCategory, WallCategory, GoalCategory, BallCategory } from "./categories";
 
+export type PlayerStateType = 'frozen' | 'stunned' | 'feared' | 'slowed'
+export type SerializedPlayerState = { type: PlayerStateType, remainingMs: number }
+
 export default class Player extends CompoundCollideable {
     _id: string
     _name: string
@@ -29,6 +32,13 @@ export default class Player extends CompoundCollideable {
     _facingVector: Vector
 
     _visible: boolean
+
+    _stateUntil: Record<PlayerStateType, number> = {
+        frozen: 0,
+        stunned: 0,
+        feared: 0,
+        slowed: 0,
+    }
 
     constructor(id: string, name: string, championName: ChampionName, position: Vector, side: TeamSide, admin: boolean) {
         super(position)
@@ -75,6 +85,61 @@ export default class Player extends CompoundCollideable {
         this._movementBounds = [new Vector(0, 0), new Vector(mapSize.width, mapSize.height)]
     }
 
+    _pruneStates(): void {
+        const now = Date.now()
+        ; (Object.keys(this._stateUntil) as PlayerStateType[]).forEach((state) => {
+            if (this._stateUntil[state] <= now) this._stateUntil[state] = 0
+        })
+    }
+
+    clearStates(): void {
+        this._stateUntil.frozen = 0
+        this._stateUntil.stunned = 0
+        this._stateUntil.feared = 0
+        this._stateUntil.slowed = 0
+        this.clearSlow()
+    }
+
+    applyState(state: PlayerStateType, durationMs: number): void {
+        if (!durationMs || durationMs <= 0) return
+        const until = Date.now() + durationMs
+        this._stateUntil[state] = Math.max(this._stateUntil[state], until)
+    }
+
+    applyStateFromAbility(abilityId: string, durationMs: number): void {
+        if (!abilityId || !durationMs || durationMs <= 0) return
+
+        if (abilityId === 'FlashFrost' || abilityId === 'EnchantedCrystalArrow') {
+            this.applyState('frozen', durationMs)
+            return
+        }
+
+        if (abilityId === 'JackInTheBox') {
+            this.applyState('feared', durationMs)
+            return
+        }
+
+        this.applyState('stunned', durationMs)
+    }
+
+    getStates(): SerializedPlayerState[] {
+        this._pruneStates()
+        const now = Date.now()
+        const states = (Object.keys(this._stateUntil) as PlayerStateType[])
+            .filter((state) => this._stateUntil[state] > now)
+            .map((state) => ({
+                type: state,
+                remainingMs: Math.max(0, this._stateUntil[state] - now)
+            }))
+
+        const slowRemaining = this.getSlowRemainingMs()
+        if (slowRemaining > 0) {
+            states.push({ type: 'slowed', remainingMs: slowRemaining })
+        }
+
+        return states
+    }
+
     reinit = (position: Vector): Player => {
         const copy = new Player(this._id, this._name, this._champion.name, position, this._side, this._admin)
         copy._body.plugin.owner = this
@@ -118,7 +183,7 @@ export default class Player extends CompoundCollideable {
                 this.getPosition().substract(ball.getPosition()).normalize().multiply(ball._body.circleRadius)//.rotate(Math.PI / 4)
             )
             const force = this.getPosition().substract(ball.getPosition()).normalize().multiply(this._force)
-            Body.applyForce(ball._body, point, force)
+            ball.applyForce(force, point)
             return true
         }
         return false
@@ -129,8 +194,9 @@ export default class Player extends CompoundCollideable {
     }
 
     update(dt: number) {
+        this._pruneStates()
         if (this._direction.module()) {
-            Body.applyForce(this._body, this._body.position, this._direction.normalize().multiply(this._acceleration));
+            this.applyForce(this._direction.normalize().multiply(this._acceleration), Vector.fromMatter(this._body.position));
         }
         super.update(dt);
     }
@@ -183,7 +249,8 @@ export default class Player extends CompoundCollideable {
             cooldown: this._champion ? this._champion.getCooldowns() : { W: 0, Q: 0 },
             visible: this._visible,
             admin: this._admin,
-            direction: this._direction.serialize()
+            direction: this._direction.serialize(),
+            states: this.getStates()
         }
     }
 }

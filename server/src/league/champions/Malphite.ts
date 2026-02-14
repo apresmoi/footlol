@@ -26,22 +26,39 @@ export default class Malphite extends Champion {
                     return new Promise((resolve, _reject) => {
                         const facingVector = (this._owner as Player)._facingVector.normalize()
                         const targetPosition = this._owner.getPosition().add(facingVector.multiply(300))
+                        const impactThreshold = 10
                         let runs = 0
-                        const interval = setInterval(() => {
+                        let completed = false
+                        let interval: NodeJS.Timeout = null
+
+                        const finishSlam = () => {
+                            if (completed) return
+                            completed = true
+                            clearInterval(interval)
+                            this._owner.setPosition(targetPosition)
+                            this._owner.setStun(200)
+                            resolve(new MalphiteW(this._spellW, this._owner._side, this._owner))
+                        }
+
+                        interval = setInterval(() => {
                             const current = this._owner.getPosition()
-                            const distance = targetPosition.substract(current).module()
-                            if (distance > 10 && runs < 100) {
-                                runs++;
-                                this._owner.setPosition(
-                                    current
-                                        .setX(current.x + (targetPosition.x - current.x) / 10)
-                                        .setY(current.y + (targetPosition.y - current.y) / 10)
-                                )
-                            } else {
-                                clearInterval(interval)
-                                this._owner.setPosition(targetPosition)
-                                this._owner.setStun(200)
-                                resolve(new MalphiteW(this._spellW, this._owner._side, this._owner))
+                            const remaining = targetPosition.substract(current)
+                            const distance = remaining.module()
+
+                            if (distance <= impactThreshold || runs >= 100) {
+                                finishSlam()
+                                return
+                            }
+
+                            runs++;
+                            const nextPosition = current
+                                .setX(current.x + remaining.x / 10)
+                                .setY(current.y + remaining.y / 10)
+                            this._owner.setPosition(nextPosition)
+
+                            const postMoveDistance = targetPosition.substract(nextPosition).module()
+                            if (postMoveDistance <= impactThreshold || runs >= 100) {
+                                finishSlam()
                             }
                         }, 10);
                     })

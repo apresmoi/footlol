@@ -61,6 +61,9 @@ export class ShacoW extends CircleCollideable {
                         const current = target.getPosition()
                         const direction = current.substract(this.getPosition()).normalize()
                         target.setStun(1500)
+                        if (target._body.plugin.owner instanceof Player) {
+                            target._body.plugin.owner.applyStateFromAbility(spell.id, 1500)
+                        }
                         let iterations = 0
                         const interval = setInterval(() => {
                             if (iterations < 1500) {
@@ -92,4 +95,3 @@ export class ShacoW extends CircleCollideable {
         }
     }
 }
-

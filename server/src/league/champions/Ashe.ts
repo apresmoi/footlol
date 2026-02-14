@@ -6,8 +6,6 @@ import { Collideable, CircleCollideable } from '../../classes/collideables/physi
 import { deepCopy } from '../../utilities/objects';
 import { Vector } from '../../classes/math';
 import { AbilityProjectileCategory, PlayerRightSideCategory, PlayerLeftSideCategory, BallCategory, AbilityStunCategory } from '../../classes/collideables/categories';
-import Cone from '../../classes/collideables/cone'
-import { Body } from 'matter-js'
 import { DEBUG } from '../../globals';
 
 export default class Ashe extends Champion {
@@ -23,11 +21,25 @@ export default class Ashe extends Champion {
         this._spellW = this.spells.W
     }
 
-    async getAbility(ability: 'Q' | 'W'): Promise<Collideable> {
+    async getAbility(ability: 'Q' | 'W', dispatcher: (collideable: Collideable) => void): Promise<Collideable> {
         if (this._canUseAbility(ability))
             switch (ability) {
                 case 'Q':
-                    return new AsheQ(this._spellQ, this._owner._side, this._owner)
+                    const facingVector = this._owner._facingVector.normalize()
+                    const spreadAngles = [-0.24, -0.16, -0.08, 0, 0.08, 0.16, 0.24]
+                    const baseSpeed = 7.4
+                    const baseOrigin = this._owner.getPosition()
+
+                    spreadAngles.forEach((angle) => {
+                        // Use explicit 2D rotation here (y-down world) to keep the volley cone aligned.
+                        const direction = new Vector(
+                            facingVector.x * Math.cos(angle) - facingVector.y * Math.sin(angle),
+                            facingVector.x * Math.sin(angle) + facingVector.y * Math.cos(angle)
+                        ).normalize()
+                        const origin = baseOrigin
+                        dispatcher(new AsheQ(this._spellQ, this._owner._side, this._owner, origin, direction.multiply(baseSpeed)))
+                    })
+                    return null
                 case 'W':
                     return new AsheW(this._spellW, this._owner._side, this._owner)
                 default:
@@ -37,39 +49,48 @@ export default class Ashe extends Champion {
     }
 }
 
-export class AsheQ extends Cone {
-    constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
-        super(20, new Vector(0, 0), 50, Math.PI, {
+export class AsheQ extends CircleCollideable {
+    _travelDirection: Vector
+
+    constructor(spell: ChampionSpell, side: TeamSide, owner: Player, position: Vector, velocity: Vector) {
+        super(4, position, 7, {
+            isSensor: true,
             collisionFilter: {
                 category: AbilityProjectileCategory,
                 mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
             },
-            restitution: 0,
-            mass: 99999999999,
-            inertia: 99999999999,
             plugin: {
                 owner: owner,
                 id: spell.id,
-                duration: 500,
-                velocity: 6,
+                duration: 620,
+                velocity: 0,
+                handleCollision: (target: Collideable) => {
+                    if (this._expired || !target || target._body.isSensor) return
+                    target.setSlow(1400, 0.5)
+
+                    this._expired = true
+                    this.dematerialize()
+                }
             }
         })
         this._body.plugin.drawer = this
+        this._travelDirection = velocity.normalize()
+        this.setVelocity(velocity)
     }
 
-    _scale = new Vector(1, 1)
-    update(dt: number) {
-        const f = dt / 2000
-        Body.scale(this._body, 1 / this._scale.x, 1 / this._scale.y)
-        this._scale = this._scale.add(new Vector(f, f))
-        Body.scale(this._body, this._scale.x, this._scale.y)
-        super.update(dt)
+    serialize(): any {
+        return {
+            ...super.serialize(),
+            // Keep render direction perfectly aligned with projectile trajectory.
+            direction: this._travelDirection.serialize()
+        }
     }
 }
 
 export class AsheW extends CircleCollideable {
     constructor(spell: ChampionSpell, side: TeamSide, owner: Player) {
         super(99999999, new Vector(0, 0), 25, {
+            isSensor: true,
             collisionFilter: {
                 category: AbilityStunCategory,
                 mask: (side === 'LEFT' ? PlayerRightSideCategory : PlayerLeftSideCategory) | BallCategory
@@ -95,4 +116,3 @@ export class AsheW extends CircleCollideable {
         this._body.plugin.drawer = this
     }
 }
-

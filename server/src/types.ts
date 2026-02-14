@@ -1,4 +1,4 @@
-import { IEventCollision, Engine, IPair, Body } from "matter-js"
+import { IEventCollision, Engine, Pair, Body } from "matter-js"
 import { Collideable } from "./classes/collideables/physics"
 import Player from "./classes/collideables/player"
 
@@ -21,7 +21,7 @@ export interface ICollideableBody extends Body {
     }
 }
 
-export interface ICollideablePair extends IPair {
+export type ICollideablePair = Pair & {
     bodyA: ICollideableBody;
     bodyB: ICollideableBody;
 }

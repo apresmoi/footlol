@@ -4,12 +4,19 @@ import { Field } from "./field"
 import { ChampionName } from "../league/classes"
 import { objectToBinary, binaryToObject } from '../utilities/conversion'
 import { DEBUG } from "../globals"
+import { Namespace, Socket } from "socket.io";
+
+const MAX_NAME_LENGTH = 12
+const sanitizeName = (raw: string): string => {
+    const safe = String(raw || "").replace(/\s+/g, " ").trim().slice(0, MAX_NAME_LENGTH)
+    return safe || "Summoner"
+}
 
 export class Room extends Field {
-    _socket: SocketIO.Namespace
+    _socket: Namespace
     _stage: RoomStage = 'TEAM_SELECT'
 
-    constructor(id: string, name: string, socket: SocketIO.Namespace) {
+    constructor(id: string, name: string, socket: Namespace) {
         super(id, name);
         this._handleSocket(socket)
         this._socket = socket;
@@ -17,14 +24,19 @@ export class Room extends Field {
 
     allPlayersDisconnected: () => void = null
 
-    _handleSocket(socket: SocketIO.Namespace) {
+    _handleSocket(socketNamespace: Namespace) {
         const self = this
-        socket.on('connection', function (socket) {
+        socketNamespace.on('connection', function (socket: Socket) {
             const playerId = socket.id
 
             console.log(playerId + ' connected');
 
-            const { name } = socket.handshake.query
+            const queryName = socket.handshake.query.name
+            const name = sanitizeName(typeof queryName === 'string'
+                ? queryName
+                : Array.isArray(queryName) && queryName.length
+                    ? queryName[0]
+                    : "")
 
             if (self.addPlayer(playerId, name, null)) {
                 socket.emit('login_success', objectToBinary({ self: self._players[playerId].serialize(), ...self.serialize(), }));
@@ -44,9 +56,8 @@ export class Room extends Field {
                 socket.emit('login_success', objectToBinary({ self: null, ...self.serialize(), }));
             }
 
-            socket.on('disconnect', function (ff) {
+            socket.on('disconnect', function () {
                 console.log(playerId + ' disconnected');
-                const isAdmin = self._players[playerId] && self._players[playerId]._admin
                 self.removePlayer(playerId);
                 socket.broadcast.emit('player_leave', objectToBinary({ id: playerId }))
 
@@ -60,7 +71,10 @@ export class Room extends Field {
             });
             socket.on('request_send_message', function (binary) {
                 const payload = binaryToObject(binary)
-                self.playerSendMessage(socket, payload.message)
+                const message = payload && typeof payload.message === 'string'
+                    ? payload.message
+                    : ""
+                self.playerSendMessage(socket, message)
             });
             socket.on('request_player_ready', function (binary) {
                 const payload = binaryToObject(binary)
@@ -84,8 +98,8 @@ export class Room extends Field {
         });
     }
 
-    onGoal = (side: TeamSide, player: Player) => {
-        this._socket.emit('goal', objectToBinary({ side, player: player._name }))
+    onGoal = (side: TeamSide, player: Player | null) => {
+        this._socket.emit('goal', objectToBinary({ side, player: player ? player._name : 'Unknown' }))
     }
 
     _emit = () => {
@@ -146,12 +160,14 @@ export class Room extends Field {
         return false
     }
 
-    playerSendMessage(client: SocketIO.Socket, { message }: { message: string }) {
+    playerSendMessage(client: Socket, message: string) {
         const player = this._players[client.id]
-        this._socket.emit('message_sent', objectToBinary({ name: player._name, message }));
+        const safeMessage = String(message || "").replace(/\s+/g, " ").trim().slice(0, 140)
+        if (!player || !safeMessage) return
+        this._socket.emit('message_sent', objectToBinary({ name: player._name, message: safeMessage }));
     }
 
-    playerReady(client: SocketIO.Socket, ready: boolean) {
+    playerReady(client: Socket, ready: boolean) {
         const player = this._players[client.id]
         if (player && this._stage === "TEAM_SELECT" || (player._champion && this._stage === "CHAMPION_SELECT")) {
             player.setReady(ready)
@@ -159,14 +175,14 @@ export class Room extends Field {
         }
     }
 
-    tryChangeChampion(client: SocketIO.Socket, champion: ChampionName) {
+    tryChangeChampion(client: Socket, champion: ChampionName) {
         if (!this._connectedPlayers().some(x => x._champion?.name === champion)) {
             const player = this._players[client.id]
             player.setChampion(champion)
         }
     }
 
-    tryKickPlayer(client: SocketIO.Socket, id: string) {
+    tryKickPlayer(client: Socket, id: string) {
         const admin = this._players[client.id]
         if (admin && admin._admin && this._connectedPlayers().find(x => x._id === id)) {
             this.removePlayer(id)
@@ -174,18 +190,17 @@ export class Room extends Field {
         }
     }
 
-    tryChangeSide(client: SocketIO.Socket, side: TeamSide) {
+    tryChangeSide(client: Socket, side: TeamSide) {
         this.playerChangeSide(client.id, side)
     }
 
     _connectedPlayers(): Player[] {
-        return Object.keys(this._players).reduce((r, key) => {
-            //@ts-ignore
-            if (this._socket.clients().connected[key])
-                r.push(this._players[key])
+        return Object.keys(this._players).reduce<Player[]>((result, key) => {
+            if (this._socket.sockets.has(key))
+                result.push(this._players[key])
             else
                 delete this._players[key]
-            return r;
+            return result;
         }, [])
     }
 
@@ -193,12 +208,11 @@ export class Room extends Field {
         const seconds = this.getSeconds()
         return {
             stage: this._stage,
-            players: Object.keys(this._players).reduce((r, key) => {
-                //@ts-ignore
-                if (this._socket.clients().connected[key])
-                    r[key] = this._players[key].serialize()
-                return r;
-            }, {}),
+            players: Object.keys(this._players).reduce((result, key) => {
+                if (this._socket.sockets.has(key))
+                    result[key] = this._players[key].serialize()
+                return result;
+            }, {} as { [id: string]: ReturnType<Player['serialize']> }),
             ball: this._ball._mounted ? this._ball.serialize() : null,
             score: this._score ? this._score.serialize() : null,
             time: this.__seconds_limit - seconds,
