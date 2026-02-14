@@ -1,6 +1,18 @@
 {
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "useDefineForClassFields": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "sourceMap": true,
-    "target": "ES2016"
-  }
+    "rootDir": "src",
+    "outDir": "build"
+  },
+  "include": ["src/**/*.ts"]
 }

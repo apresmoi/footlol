@@ -1,32 +1,35 @@
-import * as express from 'express';
-import * as body_parser from 'body-parser';
-import * as socketio from 'socket.io'
+import express from 'express';
+import { createServer as createHttpServer } from 'node:http';
+import { Server as SocketIOServer } from 'socket.io';
+import { Common } from 'matter-js';
 import { Room } from './classes/room';
 import { champions } from './league/champions';
 import { Champion } from './league/classes';
-import { readFileSync } from 'fs';
+
+const decomp = require('poly-decomp');
+Common.setDecomp(decomp);
 
 const ENV_DEVELOPMENT = process.env.NODE_ENV === "development";
-
 console.log(ENV_DEVELOPMENT ? "DEVELOPMENT ENVIRONMENT" : "PRODUCTION ENVIRONMENT");
 
 const app = express();
-app.use(body_parser.urlencoded({ extended: false }));
-app.use(body_parser.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-const https_options = {
-  key: readFileSync("cert/privkey.pem"),
-  cert: readFileSync("cert/fullchain.pem"),
-};
+const httpServer = createHttpServer(app);
+const socketServer = httpServer;
 
-const http = require('http').Server(app);
-const https = require('https').Server(https_options, app);
-const io = (() => {
-  return socketio(ENV_DEVELOPMENT ? http : https, { path: '/ws' });
-})()
+const io = new SocketIOServer(socketServer, {
+  path: '/ws',
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+  }
+});
+const port = Number(process.env.PORT ?? '3000');
 
 let roomId = '/ao'
-let matches = {
+const matches: { [id: string]: Room } = {
   [roomId]: new Room(roomId, "Always open", io.of(roomId))
 }
 
@@ -57,13 +60,12 @@ app.use((req, res, next) => {
 app.get('/api/rooms', function (req, res) {
   res.status(200)
     .send(Object
-      .keys(io.nsps)
-      .filter(id => matches[id])
+      .keys(matches)
       .map(id => {
         return {
           id,
           name: matches[id]._name,
-          players: Object.keys(io.nsps[id].connected).length
+          players: io.of(id).sockets.size
         }
       }));
 });
@@ -95,19 +97,11 @@ app.get('/api/champions', (req, res) => {
   }))
 })
 
-if (ENV_DEVELOPMENT) {
-  http.listen(3000, function () {
-    console.log('started on port 3000');
-    process.on("SIGINT", closeApp);
-    process.on("SIGTERM", closeApp);
-  });
-} else {
-  https.listen(3000, function () {
-    console.log('started on port 3000');
-    process.on("SIGINT", closeApp);
-    process.on("SIGTERM", closeApp);
-  })
-}
+socketServer.listen(port, function () {
+  console.log(`started on port ${port}`);
+  process.on("SIGINT", closeApp);
+  process.on("SIGTERM", closeApp);
+});
 
 function closeApp() {
   process.exit(0)
