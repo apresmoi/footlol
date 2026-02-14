@@ -1,5 +1,5 @@
 import { Player, PlayerMessage, MessageSubscribers, UpdatePayload, Vector, GoalPayload, PlayerReadyPayload, StageChangePayload, LoginSuccessPayload } from "./types"
-import io from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import { objectToBinary, binaryToObject } from '../utils/conversion'
 import { playSound } from './sounds'
 
@@ -27,13 +27,16 @@ const GOAL = 'goal'
 
 
 class RoomSocket {
-    _chatSocket: SocketIOClient.Socket
+    _chatSocket: Socket
     _onMessageSubscribers: MessageSubscribers = {}
 
-    constructor(roomId, name) {
-        this._chatSocket = io(window.location.protocol + '//' + window.location.host.replace(':8000', ':8081') + `${roomId}?name=${name}`, {
+    constructor(roomId: string, name: string) {
+        this._chatSocket = io(roomId, {
             path: `/ws`,
             autoConnect: false,
+            query: {
+                name
+            }
         });
 
         this._chatSocket.on(LOGIN_SUCCESS, (binary) => {
@@ -115,11 +118,11 @@ class RoomSocket {
         delete this._chatSocket
     }
 
-    _sendMessage = (type, payload) => this._chatSocket.emit(type, payload)
+    _sendMessage = (type: string, payload: ArrayBuffer) => this._chatSocket.emit(type, payload)
 
     requestDirectionChange = (direction: Vector) => this._sendMessage(REQUEST_DIRECTION_CHANGE, objectToBinary({ direction }))
     requestKeyPress = (code: string) => this._sendMessage(REQUEST_KEY_PRESS, objectToBinary({ code }))
-    requestSendMessage = (message) => this._sendMessage(REQUEST_SEND_MESSAGE, objectToBinary({ message }))
+    requestSendMessage = (payload: { message: string }) => this._sendMessage(REQUEST_SEND_MESSAGE, objectToBinary(payload))
     requestPlayerReady = (ready: boolean) => this._sendMessage(REQUEST_PLAYER_READY, objectToBinary({ ready }))
     requestChampionSelect = (champion: string) => this._sendMessage(REQUEST_CHAMPION_SELECT, objectToBinary({ champion }))
     requestKickPlayer = (id: string) => this._sendMessage(REQUEST_KICK_PLAYER, objectToBinary({ id }))

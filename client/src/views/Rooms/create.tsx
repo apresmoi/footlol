@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import { Container, Header, Wrapper } from '../../layout';
 import "./styles.scss"
 import { ApplicationContext } from '../../store';
-import { useHistory } from 'react-router-dom';
 
 const Login = () => {
   const context = useContext(ApplicationContext)

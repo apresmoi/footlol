@@ -1,6 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import ResizeObserver from 'resize-observer-polyfill';
-import debounce from 'lodash/debounce'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Player, Ball } from '../../../store/types';
 import { mapSize } from '../../../settings'
 import { ApplicationContext } from '../../../store';
@@ -10,40 +8,51 @@ interface CameraProps {
 }
 
 const Camera = (props: CameraProps) => {
-  const container = useRef();
+  const container = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     const currentContainer = container.current
-    const updateComputedStyles = () => {
-      if (container && container.current) {
-        const { width: strWidth, height: strHeight } = window.getComputedStyle(container.current)
-        const width = parseInt(strWidth.replace('px', ''))
-        const height = parseInt(strHeight.replace('px', ''))
-        if (size.width !== width || size.height !== height) {
-          setSize({ width, height })
-        }
-      }
+    if (!currentContainer) return
+
+    const updateSize = (width: number, height: number) => {
+      const nextWidth = Math.round(width)
+      const nextHeight = Math.round(height)
+      setSize((prev) => {
+        if (prev.width === nextWidth && prev.height === nextHeight) return prev
+        return { width: nextWidth, height: nextHeight }
+      })
     }
-    const observer = new ResizeObserver(debounce(updateComputedStyles, 100));
+
+    updateSize(currentContainer.clientWidth, currentContainer.clientHeight)
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (!entry) return
+      updateSize(entry.contentRect.width, entry.contentRect.height)
+    });
     observer.observe(currentContainer);
+
     return () => {
-      observer.unobserve(currentContainer);
+      observer.disconnect();
     }
-  })
+  }, [])
 
   return (
     <div className="world" ref={container}>
       <svg
-        width={size.width}
-        height={size.height}
+        width={size.width || 1}
+        height={size.height || 1}
       >
         {
           React.Children.map(
-            props.children, child => React.cloneElement(child, {
-              ...child.props,
-              ...size,
-            }))
+            props.children, child => {
+              if (!React.isValidElement(child)) return child
+              return React.cloneElement(child, {
+                ...child.props,
+                ...size,
+              })
+            })
         }
       </svg>
     </div>
@@ -61,40 +70,35 @@ interface CameraChildProps {
 }
 
 const CameraPosition = (props: CameraChildProps) => {
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-
   const { self, ball } = useContext(ApplicationContext)
 
-  const updatePosition = () => {
+  const position = useMemo(() => {
+    const width = props.width || 0
+    const height = props.height || 0
+
+    if (!width || !height) return { x: 0, y: 0 }
+
+    const minX = width - mapSize.width
+    const minY = height - mapSize.height
+    const clampX = (x: number) => Math.max(minX, Math.min(0, x))
+    const clampY = (y: number) => Math.max(minY, Math.min(0, y))
+
     if (self) {
-      const x = props.width * (self.side === 'LEFT' ? 1 : 3) / 4 - self.position.x
-      const y = props.height / 2 - self.position.y
-
-      const edgeX = self.position.x < mapSize.width - self.position.x ? 0 : props.width - mapSize.width
-      const edgeY = self.position.y < mapSize.height - self.position.y ? 0 : props.height - mapSize.height
-
-      const newX = x <= 0 && x >= props.width - mapSize.width ? x : edgeX
-      const newY = y <= 0 && y >= props.height - mapSize.height ? y : edgeY
-
-      if (newX !== position.x || newY !== position.y)
-        setPosition({ ...position, x: newX, y: newY })
-    } else if (ball) {
-      //spectator mode
-      const x = props.width / 2 - ball.position.x
-      const y = props.height / 2 - ball.position.y
-
-      const edgeX = ball.position.x < mapSize.width - ball.position.x ? 0 : props.width - mapSize.width
-      const edgeY = ball.position.y < mapSize.height - ball.position.y ? 0 : props.height - mapSize.height
-
-      const newX = x <= 0 && x >= props.width - mapSize.width ? x : edgeX
-      const newY = y <= 0 && y >= props.height - mapSize.height ? y : edgeY
-
-      if (newX !== position.x || newY !== position.y)
-        setPosition({ ...position, x: newX, y: newY })
+      return {
+        x: Math.round(clampX(width * (self.side === 'LEFT' ? 0.25 : 0.75) - self.position.x)),
+        y: Math.round(clampY(height / 2 - self.position.y))
+      }
     }
-  }
 
-  useEffect(updatePosition, [self ? self.position : (ball ? ball.position : null), props.width, props.height])
+    if (ball) {
+      return {
+        x: Math.round(clampX(width / 2 - ball.position.x)),
+        y: Math.round(clampY(height / 2 - ball.position.y))
+      }
+    }
+
+    return { x: 0, y: 0 }
+  }, [ball?.position.x, ball?.position.y, props.height, props.width, self?.position.x, self?.position.y, self?.side])
 
   return (
     <g transform={`translate(${position.x}, ${position.y})`}>

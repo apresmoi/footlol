@@ -1,5 +1,5 @@
 import React from 'react';
-import { PolygonEffect, CircleEffect, RectEffect } from '../../../../store/types';
+import { CircleEffect, RectEffect } from '../../../../store/types';
 import './styles.scss'
 
 const AmumuW = (props: { effect: CircleEffect }) => {
@@ -28,19 +28,19 @@ const AmumuQ = (props: { effect: RectEffect }) => {
   const { position, width, height, angle } = effect
 
   return <g
-    className="veigar-q"
+    className="amumu-q"
     transform={`translate(${position.x}, ${position.y}) rotate(${angle * 180 / Math.PI})`}
   >
     <defs>
       <linearGradient id="amumuq" x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor="#779677" stopOpacity={0.5} />
-        <stop offset="25%" stopColor="##4d6854" stopOpacity={0.7} />
+        <stop offset="25%" stopColor="#4d6854" stopOpacity={0.7} />
         <stop offset="50%" stopColor="#779677" stopOpacity={0.8} />
-        <stop offset="75%" stopColor="##4d6854" stopOpacity={0.7} />
+        <stop offset="75%" stopColor="#4d6854" stopOpacity={0.7} />
         <stop offset="100%" stopColor="#779677" stopOpacity={0.5} />
       </linearGradient>
     </defs>
-    <rect x={0} y={-height / 2} width={width} height={height} fill={`url(#amumuq)`} />
+    <rect x={0} y={-height / 2} width={width} height={height} fill={`url(#amumuq)`} stroke="#92ae92" strokeWidth={0.8} />
   </g >
 }
 

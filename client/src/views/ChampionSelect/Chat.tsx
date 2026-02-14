@@ -7,7 +7,7 @@ const Chat = () => {
       <ChatMessage player={{ name: "Lluvia de verano" }} message="hola" />
     </div>
     <div className="chat-input">
-      <input type="text" maxLength={140} />
+      <input type="text" maxLength={140} placeholder="Message your team..." />
       <button >Send</button>
     </div>
   </div>
@@ -15,7 +15,8 @@ const Chat = () => {
 
 const ChatMessage = ({ player, message }) => {
   return <div className="chat-message">
-    <span>{player.name}: </span> {message}
+    <span className="chat-name">{player.name}:</span>
+    <span className="chat-body">{message}</span>
   </div>
 }
 

@@ -9,7 +9,14 @@ const VeigarW = (props: { effect: RingEffect }) => {
     className="veigar-w"
     transform={`translate(${position.x}, ${position.y})`}
   >
-    <circle cx={0} cy={0} r={radius + thickness / 2} strokeWidth={thickness} fill='transparent' stroke="#1c0438" />
+    <defs>
+      <radialGradient id="veigar-w-core" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="#7436ae" stopOpacity={0.18} />
+        <stop offset="100%" stopColor="#18042f" stopOpacity={0.04} />
+      </radialGradient>
+    </defs>
+    <circle cx={0} cy={0} r={radius + thickness / 2} strokeWidth={thickness} fill='transparent' stroke="#31105d" />
+    <circle cx={0} cy={0} r={radius} fill="url(#veigar-w-core)" />
     <g className="veigar-w-spikes">
       {new Array(5).fill(0).map((x, i, ar) => <g key={i}
         transform={`
@@ -38,7 +45,7 @@ const VeigarQ = (props: { effect: CircleEffect }) => {
     className="veigar-q"
     transform={`translate(${position.x}, ${position.y})`}
   >
-    <circle cx={0} cy={0} r={radius} fill='#1c0438' strokeWidth={1.5} stroke="#572c7f" />
+    <circle cx={0} cy={0} r={radius} fill='#1c0438' strokeWidth={1.5} stroke="#7c46b4" />
     <circle cx={0} cy={0} r={radius * 0.3} fill='#d757c4' />
   </g >
 }

@@ -8,7 +8,7 @@ const ChampionPool = ({ champions, disabledChampions, onClick }) => {
       Select a Champion and press READY
     </div>
     <div className="champion-pool">
-      {champions.map(champion => <ChampionComponent onClick={onClick} champion={champion} disabled={disabledChampions.includes(champion.name)} />)}
+      {champions.map(champion => <ChampionComponent key={champion.name} onClick={onClick} champion={champion} disabled={disabledChampions.includes(champion.name)} />)}
     </div>
   </div>
 }

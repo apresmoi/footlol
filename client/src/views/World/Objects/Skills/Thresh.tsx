@@ -1,5 +1,5 @@
 import React from 'react';
-import { PolygonEffect, CircleEffect, RectEffect, VectorEffect } from '../../../../store/types';
+import { VectorEffect } from '../../../../store/types';
 import './styles.scss'
 
 const ThreshW = (props: { effect: VectorEffect }) => {
@@ -7,7 +7,7 @@ const ThreshW = (props: { effect: VectorEffect }) => {
   const { position, to, radius } = effect
 
   return <g
-    className="veigar-q"
+    className="thresh-w"
     transform={`translate(${to.x}, ${to.y})`}
   >
     <line x2={position.x - to.x} y2={position.y - to.y} stroke={'#55d7c1'} strokeWidth={2} />
@@ -29,7 +29,7 @@ const ThreshQ = (props: { effect: VectorEffect }) => {
   const { position, to, radius } = effect
 
   return <g
-    className="veigar-q"
+    className="thresh-q"
     transform={`translate(${to.x}, ${to.y})`}
   >
     <line x2={position.x - to.x} y2={position.y - to.y} stroke={'#43a49c'} strokeWidth={4} />

@@ -1,21 +1,39 @@
 .login {
     display: flex;
-    height: 80%;
-    width: 80%;
+    height: 100%;
+    width: 100%;
     margin: auto;
+    padding: 32px;
 
     .login-box {
         margin: auto;
-        height: 100%;
-        width: 100%;
-        max-width: 500px;
-        max-height: 300px;
-        background: #081017;
-        padding: 20px;
+        width: min(520px, 100%);
+        min-height: 310px;
+        background: linear-gradient(155deg, rgba(13, 22, 39, 0.92), rgba(18, 31, 54, 0.78));
+        border: 1px solid var(--line-soft);
+        border-radius: 18px;
+        box-shadow: var(--shadow-lg);
+        padding: 28px 24px;
 
         h1 {
             width: 100%;
             text-align: center;
+            margin: 2px 0 22px;
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #e5c787;
+            text-shadow: 0 1px 12px rgba(197, 150, 73, 0.3);
+        }
+
+        .login-description {
+            margin: 0 auto 16px;
+            max-width: 430px;
+            text-align: center;
+            color: #c9d6eb;
+            font-size: 0.98rem;
+            line-height: 1.42;
         }
 
         .login-content {
@@ -25,32 +43,58 @@
                 text-align: center;
                 display: block;
                 width: 100%;
-                margin-bottom: 10px;
+                margin-bottom: 14px;
+                color: var(--text-muted);
+                font-size: 1.06rem;
             }
 
             input {
                 display: block;
                 width: 100%;
-                max-width: 150px;
+                max-width: 260px;
                 margin: auto;
-                height: 20px;
-                font-size: 20px;
+                height: 44px;
+                border-radius: 11px;
+                border: 1px solid var(--line-soft);
+                padding: 0 12px;
+                text-align: center;
+                color: var(--text-main);
+                background: rgba(23, 35, 57, 0.95);
+                font-size: 1.15rem;
+                outline: none;
+
+                &:focus {
+                    border-color: var(--accent);
+                    box-shadow: 0 0 0 2px rgba(198, 166, 94, 0.26);
+                }
+            }
+
+            .name-limit {
+                margin-top: 8px;
+                font-size: 0.9rem;
+                color: #c6b594;
             }
 
             button {
                 margin: auto;
                 display: block;
-                width: 50%;
-                max-width: 100px;
-                margin-top: 20px;
-                background: #435870;
-                border: 0px;
-                padding: 10px;
-                color: white;
+                width: min(260px, 100%);
+                margin-top: 18px;
+                background: linear-gradient(180deg, #8f6f3a, #6d5028);
+                border: 1px solid rgba(214, 183, 118, 0.35);
+                border-radius: 11px;
+                padding: 10px 20px;
+                color: #f6e6c1;
+                font-size: 1.25rem;
+                font-family: 'Rajdhani', sans-serif;
+                font-weight: 700;
+                letter-spacing: 0.6px;
                 cursor: pointer;
+                transition: filter 0.2s ease, transform 0.2s ease;
 
                 &:hover {
-                    background: #8DAFD6;
+                    filter: brightness(1.12);
+                    transform: translateY(-1px);
                 }
             }
         }
@@ -59,27 +103,37 @@
 
 .bgvideo-container {
     position: fixed;
-    top: -100px;
+    top: 0;
     left: 0;
     width: 100vw;
-    height: 58vw;
-    pointer-events: none
+    height: 100vh;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0.24;
 }
 
-.bgvideo-container #video-cover {
-    background-size: contain
+.bgvideo-container iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 110vw;
+    height: 65vw;
+    min-height: 100vh;
+    min-width: 177.77vh;
+    transform: translate(-50%, -50%);
+    filter: saturate(0.74) contrast(1.14) brightness(0.6);
 }
 
 .bgvideo-container>* {
     position: absolute;
     top: 0;
     width: 100%;
-    height: 100%
+    height: 100%;
 }
 
 @media (max-aspect-ratio: 16 / 9) {
     .bgvideo-container {
-        width: 177.77vh;
-        height: 100vh
+        width: 100vw;
+        height: 100vh;
     }
 }

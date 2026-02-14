@@ -2,15 +2,15 @@ import React, { useContext, useEffect } from 'react';
 import { Container, Header, Wrapper } from '../../layout';
 import "./styles.scss"
 import { ApplicationContext } from '../../store';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Room } from '../../store/types';
 
 const Rooms = () => {
   const context = useContext(ApplicationContext)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const handleClick = () => {
-    history.push("/room-create");
+    navigate("/room-create");
   }
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const Rooms = () => {
 
   const handleRoomClick = (room: Room) => {
     context.connectSocket(room.id)
-    history.push("/game")
+    navigate("/game")
   }
 
   return (
@@ -46,7 +46,7 @@ const Rooms = () => {
                 </thead>
                 <tbody>
                   {context.rooms.map(room =>
-                    <tr onClick={() => handleRoomClick(room)}>
+                    <tr key={room.id} onClick={() => handleRoomClick(room)}>
                       <td>{room.name}</td>
                       <td>({room.players}/10)</td>
                     </tr>

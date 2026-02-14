@@ -1,115 +1,169 @@
 .team-select {
+    display: grid;
+    grid-template-columns: minmax(250px, 1fr) minmax(340px, 1.2fr) minmax(250px, 1fr);
+    gap: 16px;
+    width: min(1220px, 100%);
+    margin: 0 auto;
+    padding: 18px;
+    align-items: stretch;
 
-    display: flex;
-    height: 80%;
-    width: 80%;
-    margin: auto;
-
-    flex-wrap: wrap;
+    .chat,
+    .team {
+        border: 1px solid var(--line-soft);
+        border-radius: 14px;
+        background: linear-gradient(175deg, rgba(15, 24, 42, 0.9), rgba(11, 18, 32, 0.88));
+        box-shadow: var(--shadow-lg);
+    }
 
     .chat {
-        flex: 2;
-        background: #283C50;
-        max-height: 600px;
+        height: clamp(520px, 70vh, 720px);
+        max-height: none;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
 
         .chat-history {
-            padding: 10px;
-            padding-bottom: 0px;
-            overflow-y: scroll;
-            height: calc(100% - 20px);
-            max-height: calc(100% - 20px);
+            padding: 12px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+            color: var(--text-muted);
 
-            overscroll-behavior-y: contain;
-            scroll-snap-type: y mandatory;
+            .chat-message {
+                margin-bottom: 7px;
+                font-size: 0.98rem;
+                line-height: 1.25;
+                padding: 4px 8px;
+                border-left: 2px solid rgba(224, 193, 121, 0.44);
+                background: rgba(255, 255, 255, 0.02);
 
-            div.chat-message:last-child {
-                scroll-snap-align: end;
+                .chat-name {
+                    color: var(--accent-strong);
+                    font-family: 'Rajdhani', sans-serif;
+                    font-weight: 700;
+                    letter-spacing: 0.3px;
+                    margin-right: 6px;
+                }
+
+                .chat-body {
+                    color: #e2ebf6;
+                    font-weight: 500;
+                }
             }
         }
 
         .chat-input {
-            height: 30px;
-            width: 100%;
+            height: 42px;
+            display: flex;
+            gap: 8px;
+            padding: 5px;
+            border-top: 1px solid var(--line-soft);
 
             input {
-                display: inline-block;
-                width: calc(100% - 54px);
-                margin: 0px;
-                height: 30px;
-                margin: 0px;
-                padding: 0px;
-                font-size: 15px;
+                flex: 1;
+                margin: 0;
+                height: 100%;
+                border: 1px solid var(--line-soft);
+                border-radius: 8px;
+                font-size: 0.95rem;
+                padding: 0 10px;
+                color: var(--text-main);
+                background: rgba(20, 31, 53, 0.92);
+                outline: none;
+
+                &:focus {
+                    border-color: var(--accent);
+                    box-shadow: 0 0 0 2px rgba(77, 196, 255, 0.22);
+                }
             }
 
             button {
-                display: inline-block;
-                width: 50px;
-                background: #4C6F97;
-                border: 0px;
-                height: 34px;
+                width: 82px;
+                border: 1px solid rgba(108, 191, 255, 0.34);
+                border-radius: 8px;
+                background: linear-gradient(180deg, #2f8ced, #2364c7);
+                color: #e8f7ff;
+                font-family: 'Rajdhani', sans-serif;
+                font-weight: 700;
                 cursor: pointer;
-
-                transition: all 0.2s linear;
+                transition: filter 0.18s ease, transform 0.18s ease;
 
                 &:hover {
-                    background: #8DAFD6;
+                    filter: brightness(1.08);
+                    transform: translateY(-1px);
                 }
             }
         }
     }
 
     .team {
-        flex: 2;
-        max-width: 300px;
+        min-height: clamp(520px, 70vh, 720px);
+        padding-bottom: 10px;
 
         .team-title {
-            font-size: 20px;
-            padding: 5px;
+            font-size: 1.1rem;
+            padding: 10px;
             text-align: center;
-            background: #4C6F97;
-            color: white;
+            color: #e9f4ff;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--line-soft);
+            cursor: pointer;
+        }
+
+        &.left .team-title {
+            background: linear-gradient(180deg, rgba(35, 113, 197, 0.5), rgba(24, 80, 144, 0.28));
+        }
+
+        &.right .team-title {
+            background: linear-gradient(180deg, rgba(196, 89, 116, 0.42), rgba(142, 56, 78, 0.26));
         }
 
         .player {
-            width: 90%;
-            margin: auto;
-            margin-top: 5px;
+            width: calc(100% - 14px);
+            margin: 8px auto 0;
             display: flex;
-            font-size: 20px;
-
-            background: #172432;
-
-            box-shadow: 1px 1px 1px 1px #000;
-
-            border: 3px solid transparent;
+            align-items: center;
+            font-size: 1.02rem;
+            background: rgba(17, 26, 44, 0.9);
+            border: 1px solid var(--line-soft);
+            border-radius: 10px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.26);
 
             &.ready {
-                border: 3px solid #384522;
+                border-color: rgba(77, 201, 143, 0.8);
+                box-shadow: 0 0 0 1px rgba(77, 201, 143, 0.32), 0 10px 20px rgba(0, 0, 0, 0.24);
             }
 
             &.self {
-                border: 3px solid #FFFF0088;
+                border-color: rgba(247, 185, 84, 0.78);
+                box-shadow: 0 0 0 1px rgba(247, 185, 84, 0.34), 0 10px 20px rgba(0, 0, 0, 0.24);
             }
 
             &>div {
-                flex: 1;
-                padding: 10px;
-                margin: auto;
+                padding: 9px 8px;
+                margin: auto 0;
             }
 
             &>div:first-child {
-                max-width: 50px;
-                width: 50px;
-                height: 50px;
+                width: 48px;
+                height: 48px;
 
                 img {
-                    max-width: 100%;
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 8px;
+                    object-fit: cover;
                 }
             }
 
             .player-remove,
             .player-admin {
-                max-width: 25px;
+                width: 24px;
+                margin-left: auto;
+                margin-right: 6px;
             }
 
             .player-remove {
@@ -118,42 +172,68 @@
             }
 
             .player-admin {
-                content: url('data:image/svg+xml;charset=utf-8,<svg width="511px" height="511px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511 511"><path fill="yellow" d="M469.333,127.962c-23.564,0-42.667,19.103-42.667,42.667c0.009,4.473,0.729,8.916,2.133,13.163 l-34.603,21.995c-22.783,14.516-52.821,9.705-69.931-11.2l-33.92-41.493c5.398-7.267,8.316-16.078,8.32-25.131 c0-23.564-19.103-42.667-42.667-42.667s-42.667,19.103-42.667,42.667c0.004,9.053,2.922,17.864,8.32,25.131l-33.92,41.493 c-17.107,20.893-47.131,25.703-69.909,11.2L83.2,183.792c1.405-4.247,2.125-8.69,2.133-13.163 c0.004-23.564-19.095-42.67-42.66-42.674C19.11,127.951,0.004,147.051,0,170.615c-0.004,22.12,16.898,40.575,38.933,42.51 l25.216,151.253c0.855,5.143,5.303,8.915,10.517,8.917h362.667c5.214-0.002,9.662-3.774,10.517-8.917l25.216-151.253 c23.47-2.105,40.79-22.838,38.685-46.308C509.781,144.848,491.39,128.003,469.333,127.962z" /></svg>');
+                content: url('data:image/svg+xml;charset=utf-8,<svg width="511px" height="511px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 511 511"><path fill="%23F7B954" d="M469.333,127.962c-23.564,0-42.667,19.103-42.667,42.667c0.009,4.473,0.729,8.916,2.133,13.163 l-34.603,21.995c-22.783,14.516-52.821,9.705-69.931-11.2l-33.92-41.493c5.398-7.267,8.316-16.078,8.32-25.131 c0-23.564-19.103-42.667-42.667-42.667s-42.667,19.103-42.667,42.667c0.004,9.053,2.922,17.864,8.32,25.131l-33.92,41.493 c-17.107,20.893-47.131,25.703-69.909,11.2L83.2,183.792c1.405-4.247,2.125-8.69,2.133-13.163 c0.004-23.564-19.095-42.67-42.66-42.674C19.11,127.951,0.004,147.051,0,170.615c-0.004,22.12,16.898,40.575,38.933,42.51 l25.216,151.253c0.855,5.143,5.303,8.915,10.517,8.917h362.667c5.214-0.002,9.662-3.774,10.517-8.917l25.216-151.253 c23.47-2.105,40.79-22.838,38.685-46.308C509.781,144.848,491.39,128.003,469.333,127.962z" /></svg>');
             }
         }
     }
 }
 
 .team-select-ready {
-    width: 80%;
-    margin: auto;
-    margin-top: 50px;
+    width: min(1220px, 100%);
+    margin: 12px auto 0;
     text-align: center;
 
     a {
-        border: none;
-        width: 325px;
-        max-width: 300px;
-        padding: 20px 20px;
-        font-size: 30px;
-        background: #4C6F97;
+        display: inline-block;
+        border: 1px solid rgba(108, 191, 255, 0.35);
+        border-radius: 12px;
+        width: 320px;
+        max-width: 90%;
+        padding: 14px 18px;
+        font-size: 1.5rem;
+        line-height: 1;
+        background: linear-gradient(180deg, #2f8ced, #2364c7);
+        color: #f2fbff;
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 700;
+        letter-spacing: 1px;
         cursor: pointer;
-
-        transition: all 0.1s ease-in-out;
+        transition: filter 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 
         &:hover {
-            background: #8DAFD6;
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(27, 121, 230, 0.28);
         }
 
         &.ready {
-            background: #384522;
-            width: 325px;
+            background: linear-gradient(180deg, #2b9e66, #238053);
+            border-color: rgba(118, 255, 186, 0.34);
+            box-shadow: 0 10px 24px rgba(38, 140, 89, 0.32);
 
             &:before {
-                margin-right: 10px;
+                margin-right: 8px;
                 vertical-align: middle;
-                content: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 512 512"><ellipse fill="green" cx="256" cy="256" rx="256" ry="255.832" /><polygon fill="white" points="235.472,392.08 114.432,297.784 148.848,253.616 223.176,311.52 345.848,134.504 391.88,166.392 " /></svg>');
+                content: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="26px" height="26px" viewBox="0 0 512 512"><ellipse fill="%234DC98F" cx="256" cy="256" rx="256" ry="255.832" /><polygon fill="white" points="235.472,392.08 114.432,297.784 148.848,253.616 223.176,311.52 345.848,134.504 391.88,166.392 " /></svg>');
             }
+        }
+    }
+}
+
+@media (max-width: 1080px) {
+    .team-select {
+        grid-template-columns: 1fr;
+        padding: 14px;
+
+        .chat {
+            min-height: 320px;
+            height: auto;
+            order: 3;
+        }
+
+        .team {
+            min-height: 0;
+            max-width: none;
         }
     }
 }

@@ -1,35 +1,75 @@
 import React from 'react';
-import { PolygonEffect, CircleEffect, RectEffect } from '../../../../store/types';
+import { CircleEffect } from '../../../../store/types';
 import './styles.scss'
 
-//https://jxnblk.github.io/paths/?d=M0%2024%20L42%2026%20L46%2028%20L48%2032%20L64%2024%20L48%2016%20L46%2020%20L42%2022%20Z
+const effectId = (effect: CircleEffect, suffix: string) => {
+  const fallback = `${Math.round(effect.position.x)}-${Math.round(effect.position.y)}`
+  return `lucian-w-${suffix}-${effect.instanceId || fallback}`
+}
 
 const LucianW = (props: { effect: CircleEffect }) => {
   const { effect } = props
-  const { position, direction, radius } = effect
+  const { position, direction } = effect
+  const rotate = Math.atan2(direction.y, direction.x) * 180 / Math.PI
 
-  const rotate = (() => {
-    if (direction.x === 0)
-      return direction.y > 0 ? 90 : -90
-    return (Math.sign(direction.x) === -1 ? -180 : 0) + Math.atan(direction.y / direction.x) * 180 / Math.PI
-  })()
+  const shellGradientId = effectId(effect, 'shell')
+  const coreGradientId = effectId(effect, 'core')
+  const flareGradientId = effectId(effect, 'flare')
+
+  const beamLength = 88
+  const outerHalfWidth = 10
+  const coreHalfWidth = 4.5
 
   return <g
     className="lucian-w"
     transform={`translate(${position.x}, ${position.y}) rotate(${rotate})`}
   >
     <defs>
-      <linearGradient id="lucian-w" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor="#0559ce" stopOpacity={0.1} />
-        <stop offset="50%" stopColor="#0559ce" stopOpacity={0.3} />
-        <stop offset="70%" stopColor="#9ed4f7" stopOpacity={1} />
-        <stop offset="95%" stopColor="#fffeff" stopOpacity={1} />
-        <stop offset="100%" stopColor="#dedeaa" stopOpacity={1} />
+      <linearGradient id={shellGradientId} x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#0f4ca8" stopOpacity={0.05} />
+        <stop offset="45%" stopColor="#1f78dd" stopOpacity={0.35} />
+        <stop offset="78%" stopColor="#7bc6ff" stopOpacity={0.9} />
+        <stop offset="100%" stopColor="#ecfbff" stopOpacity={0.98} />
       </linearGradient>
+      <linearGradient id={coreGradientId} x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#a8e4ff" stopOpacity={0.16} />
+        <stop offset="52%" stopColor="#d8f5ff" stopOpacity={0.62} />
+        <stop offset="88%" stopColor="#ffffff" stopOpacity={1} />
+        <stop offset="100%" stopColor="#fffbe8" stopOpacity={1} />
+      </linearGradient>
+      <radialGradient id={flareGradientId} cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="#ceefff" stopOpacity={0.72} />
+        <stop offset="55%" stopColor="#88c9f8" stopOpacity={0.28} />
+        <stop offset="100%" stopColor="#2e77cf" stopOpacity={0} />
+      </radialGradient>
     </defs>
-    <g transform={`translate(${-64}, ${-24})`}>
-      <path d="M0 24 L42 26 L46 28 L48 32 L64 24 L48 16 L46 20 L42 22 Z" fill="url(#lucian-w)" />
-    </g>
+
+    <ellipse cx={-26} cy={0} rx={28} ry={12} fill={`url(#${flareGradientId})`} />
+
+    <path
+      d={`M-${beamLength} 0
+          C-${beamLength * 0.44} -${outerHalfWidth * 1.05}, -14 -${outerHalfWidth * 0.95}, 14 -${outerHalfWidth * 0.75}
+          L52 0
+          L14 ${outerHalfWidth * 0.75}
+          C-14 ${outerHalfWidth * 0.95}, -${beamLength * 0.44} ${outerHalfWidth * 1.05}, -${beamLength} 0 Z`}
+      fill={`url(#${shellGradientId})`}
+      stroke="rgba(206, 244, 255, 0.34)"
+      strokeWidth={0.8}
+    />
+
+    <path
+      d={`M-${beamLength * 0.95} 0
+          C-${beamLength * 0.5} -${coreHalfWidth}, -10 -${coreHalfWidth * 0.75}, 20 -${coreHalfWidth * 0.66}
+          L58 0
+          L20 ${coreHalfWidth * 0.66}
+          C-10 ${coreHalfWidth * 0.75}, -${beamLength * 0.5} ${coreHalfWidth}, -${beamLength * 0.95} 0 Z`}
+      fill={`url(#${coreGradientId})`}
+      opacity={0.96}
+    />
+
+    <path d="M-14 -6 C4 -11, 22 -8, 44 -3" fill="none" stroke="rgba(205, 238, 255, 0.52)" strokeWidth={1.2} strokeLinecap="round" />
+    <path d="M-14 6 C4 11, 22 8, 44 3" fill="none" stroke="rgba(205, 238, 255, 0.52)" strokeWidth={1.2} strokeLinecap="round" />
+    <circle cx={56} cy={0} r={2.6} fill="rgba(255, 255, 255, 0.95)" />
   </g >
 }
 

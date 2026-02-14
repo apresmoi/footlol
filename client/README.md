@@ -1,5 +1,21 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## SEO + Analytics configuration
+
+This app is currently configured with:
+
+- Canonical and social metadata in `/Users/apresmoi/Documents/footlol/client/index.html`
+- Route-aware title/description updates in `/Users/apresmoi/Documents/footlol/client/src/seo.js`
+- GA4 page-view tracking in `/Users/apresmoi/Documents/footlol/client/src/analytics.js`
+- Crawler files in `/Users/apresmoi/Documents/footlol/client/public/robots.txt` and `/Users/apresmoi/Documents/footlol/client/public/sitemap.xml`
+
+Environment variables:
+
+- `VITE_SITE_URL` (default production URL)
+- `VITE_GA_MEASUREMENT_ID` (Google Analytics 4 measurement ID)
+
+See `/Users/apresmoi/Documents/footlol/client/.env.example` for expected keys.
+
 ## Available Scripts
 
 In the project directory, you can run:

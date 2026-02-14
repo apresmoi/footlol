@@ -1,17 +1,28 @@
-import React, { useState, useEffect } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ApplicationContext } from '.'
-import RoomSocket from './socket'
-import { Vector, RoomStage, ApplicationContextProviderState, Champion, Player } from './types';
-import { useHistory } from 'react-router-dom';
 import { mapSize } from '../settings';
+import RoomSocket from './socket'
+import { Vector, RoomStage, ApplicationContextProviderState, Player } from './types';
+
+const MAX_NAME_LENGTH = 12
+const sanitizeName = (value: string) => value.replace(/\s+/g, ' ').trim().slice(0, MAX_NAME_LENGTH)
 
 const localStorageData: {
   name: string
-} = localStorage.getItem('game') ? JSON.parse(localStorage.getItem('game')) : { 'name': "" }
+} = (() => {
+  const value = localStorage.getItem('game');
+  if (!value) return { name: "" };
 
-let socket: RoomSocket = null;
+  try {
+    const parsed = JSON.parse(value);
+    return { name: sanitizeName(parsed?.name || "") };
+  } catch (error) {
+    return { name: "" };
+  }
+})();
 
-const defaultState = {
+const resetState = {
   champion: null,
   roomId: null,
   rooms: [],
@@ -21,7 +32,12 @@ const defaultState = {
   ball: null,
   score: null,
   time: null,
-  players: {}
+  countdown: null,
+  victory: null,
+  players: {},
+  effects: [],
+  debug: [],
+  messages: [],
 }
 
 const DEBUG = false
@@ -37,9 +53,11 @@ const defaultSelf: Player = DEBUG ? {
 } : null
 
 export const ApplicationContextProvider = ({ children }) => {
-  const history = useHistory()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const socketRef = useRef<RoomSocket>(null)
 
-  const name: string = localStorageData && localStorageData.name ? localStorageData.name : ""
+  const name: string = localStorageData?.name ? localStorageData.name : ""
   const [state, setState] = useState<ApplicationContextProviderState>({
     name: name,
     champion: champion,
@@ -57,173 +75,205 @@ export const ApplicationContextProvider = ({ children }) => {
     debug: [],
   })
 
-  const changeName = (name: string) => {
-    localStorage.setItem('game', JSON.stringify({ name }))
-    setState({ ...state, name })
-  }
-
-  const changeChampion = (champion: string) => {
-    setState({ ...state, champion })
-  }
-
-  const connectSocket = (roomId: string) => {
-    socket = new RoomSocket(roomId, state.name);
-    setState({ ...state, roomId })
-    socket.connect()
-  }
-
-  const disconnectSocket = () => {
-    if (socket) {
-      setState({ ...state, roomId: null })
-      socket.disconnect()
-      socket = null
-    }
-  }
-
-  useEffect(() => {
-    history.listen((location, action) => {
-      if (action === "POP" || location.pathname.includes('/room-select'))
-        disconnectSocket()
-      else if (location.pathname === "/game" && !socket) {
-        history.push("/room-select")
-      }
+  const disconnectSocket = useCallback(() => {
+    if (!socketRef.current) return;
+    socketRef.current.disconnect()
+    socketRef.current = null
+    setState((prev) => {
+      if (prev.roomId === null) return prev
+      return { ...prev, roomId: null }
     })
-  })
-
-  useEffect(() => {
-    updateChampionPool();
   }, [])
 
-  if (socket) {
-    socket.subscribeLoginSuccess((payload) => {
-      setState({
-        ...state,
+  const handleSocketReset = useCallback((activeSocket: RoomSocket) => {
+    if (socketRef.current !== activeSocket) return
+    activeSocket.disconnect()
+    socketRef.current = null
+  }, [])
+
+  const bindSocketSubscribers = useCallback((activeSocket: RoomSocket) => {
+    activeSocket.subscribeLoginSuccess((payload) => {
+      setState((prev) => ({
+        ...prev,
         ...payload,
-      })
+      }))
     })
-    socket.subscribePlayerJoin((player) => {
-      setState({
-        ...state,
-        players: { ...state.players, [player.id]: player },
-        messages: [...state.messages, {
+    activeSocket.subscribePlayerJoin((player) => {
+      setState((prev) => ({
+        ...prev,
+        players: { ...prev.players, [player.id]: player },
+        messages: [...prev.messages, {
           name: "GameServer",
           message: `Player ${player.name} has joined.`
         }]
-      })
+      }))
     })
-    socket.subscribePositionChange((player) => {
-      setState({
-        ...state,
-        players: { ...state.players, [player.id]: player }
-      })
+    activeSocket.subscribePositionChange((player) => {
+      setState((prev) => ({
+        ...prev,
+        players: { ...prev.players, [player.id]: player }
+      }))
     })
-    socket.subscribePlayerLeave((player) => {
-      const newMessages = state.players[player.id] ? [...state.messages, {
-        name: "GameServer",
-        message: `Player ${state.players[player.id].name} left.`
-      }] : state.messages
-      setState({
-        ...state,
-        players: Object.keys(state.players).reduce((result, id) => {
-          if (id !== player.id && state.players[id]) result[id] = state.players[id]
-          return result
-        }, {}),
-        messages: newMessages
+    activeSocket.subscribePlayerLeave((player) => {
+      setState((prev) => {
+        const leavingPlayer = prev.players[player.id]
+        const nextPlayers = { ...prev.players }
+        delete nextPlayers[player.id]
+
+        return {
+          ...prev,
+          players: nextPlayers,
+          messages: leavingPlayer
+            ? [...prev.messages, {
+              name: "GameServer",
+              message: `Player ${leavingPlayer.name} left.`
+            }]
+            : prev.messages
+        }
       })
     })
 
-    socket.subscribePlayerKicked(() => {
-      history.push("/room-select")
+    activeSocket.subscribePlayerKicked(() => {
+      navigate("/room-select")
     })
 
-    socket.subscribeUpdate((payload) => {
-      if (payload.stage === 'TEAM_SELECT' && !state.self) {
-        socket.disconnect()
-        socket = null
-        setState({ ...state, ...defaultState })
-      }
-      else {
-        setState({
-          ...state,
+    activeSocket.subscribeUpdate((payload) => {
+      setState((prev) => {
+        if (payload.stage === 'TEAM_SELECT' && !prev.self) {
+          handleSocketReset(activeSocket)
+          return { ...prev, ...resetState }
+        }
+
+        const nextSelf = prev.self && payload.players[prev.self.id]
+          ? { ...payload.players[prev.self.id] }
+          : prev.self
+
+        return {
+          ...prev,
           ...payload,
-          self: state.self ? { ...payload.players[state.self.id] } : state.self
-        })
-      }
-    })
-
-    socket.subscribeMessageSent((payload) => {
-      setState({
-        ...state,
-        messages: [...state.messages, payload]
+          self: nextSelf
+        }
       })
     })
 
-    socket.subscribeStageChange((payload) => {
-      if (payload.stage === 'TEAM_SELECT' && !state.self) {
-        socket.disconnect()
-        socket = null
-        setState({ ...state, ...defaultState })
-      }
-      else {
-        setState({
-          ...state,
-          stage: payload.stage
-        })
-      }
+    activeSocket.subscribeMessageSent((payload) => {
+      setState((prev) => ({
+        ...prev,
+        messages: [...prev.messages, payload]
+      }))
     })
-  }
 
-  const requestPlayerReady = (ready: boolean) => {
-    socket.requestPlayerReady(ready)
-  }
+    activeSocket.subscribeStageChange((payload) => {
+      setState((prev) => {
+        if (payload.stage === 'TEAM_SELECT' && !prev.self) {
+          handleSocketReset(activeSocket)
+          return { ...prev, ...resetState }
+        }
 
-  const requestKeyPress = (code: string) => {
-    socket.requestKeyPress(code)
-  }
+        return {
+          ...prev,
+          stage: payload.stage
+        }
+      })
+    })
+  }, [handleSocketReset, navigate])
 
-  const requestDirectionChange = (direction: Vector) => {
-    socket.requestDirectionChange(direction)
-  }
+  const changeName = useCallback((nextName: string) => {
+    const safeName = sanitizeName(nextName)
+    localStorage.setItem('game', JSON.stringify({ name: safeName }))
+    setState((prev) => ({ ...prev, name: safeName }))
+  }, [])
 
-  const requestSendMessage = (payload: { message: string }) => {
-    socket.requestSendMessage(payload)
-  }
+  const changeChampion = useCallback((nextChampion: string) => {
+    setState((prev) => ({ ...prev, champion: nextChampion }))
+  }, [])
 
-  const requestChampionSelect = (champion: string) => {
-    socket.requestChampionSelect(champion)
-  }
+  const connectSocket = useCallback((roomId: string) => {
+    if (socketRef.current) {
+      socketRef.current.disconnect()
+      socketRef.current = null
+    }
 
-  const requestKickPlayer = (id: string) => {
-    socket.requestKickPlayer(id)
-  }
+    const activeSocket = new RoomSocket(roomId, sanitizeName(state.name));
+    socketRef.current = activeSocket
+    bindSocketSubscribers(activeSocket)
 
-  const requestChangeSide = (side: string) => {
-    socket.requestChangeSide(side)
-  }
+    setState((prev) => ({ ...prev, roomId }))
+    activeSocket.connect()
+  }, [bindSocketSubscribers, state.name])
 
-  const updateRooms = () => {
-    fetch(window.location.protocol + '//' + window.location.host.replace(':8000', ':8081') + '/api/rooms')
-      .then(response => response.json())
-      .then(rooms => {
-        setState({ ...state, rooms })
-      }).catch(err => { console.log(err) })
-  }
+  useEffect(() => {
+    if (location.pathname.includes('/room-select')) {
+      disconnectSocket()
+      return
+    }
 
-  const updateChampionPool = () => {
-    fetch(window.location.protocol + '//' + window.location.host.replace(':8000', ':8081') + '/api/champions')
+    if (location.pathname === "/game" && !socketRef.current) {
+      navigate("/room-select", { replace: true })
+    }
+  }, [disconnectSocket, location.pathname, navigate])
+
+  useEffect(() => () => {
+    if (socketRef.current) {
+      socketRef.current.disconnect()
+      socketRef.current = null
+    }
+  }, [])
+
+  const updateChampionPool = useCallback(() => {
+    fetch('/api/champions')
       .then(response => response.json())
       .then(champions => {
-        setState({ ...state, champions })
+        setState((prev) => ({ ...prev, champions }))
       }).catch(err => { console.log(err) })
-  }
+  }, [])
 
-  const createRoom = (name: string) => {
-    fetch(
-      window.location.protocol + '//' + window.location.host.replace(':8000', ':8081') + '/api/rooms',
+  useEffect(() => {
+    updateChampionPool();
+  }, [updateChampionPool])
+
+  const requestPlayerReady = useCallback((ready: boolean) => {
+    socketRef.current?.requestPlayerReady(ready)
+  }, [])
+
+  const requestKeyPress = useCallback((code: string) => {
+    socketRef.current?.requestKeyPress(code)
+  }, [])
+
+  const requestDirectionChange = useCallback((direction: Vector) => {
+    socketRef.current?.requestDirectionChange(direction)
+  }, [])
+
+  const requestSendMessage = useCallback((payload: { message: string }) => {
+    socketRef.current?.requestSendMessage(payload)
+  }, [])
+
+  const requestChampionSelect = useCallback((nextChampion: string) => {
+    socketRef.current?.requestChampionSelect(nextChampion)
+  }, [])
+
+  const requestKickPlayer = useCallback((id: string) => {
+    socketRef.current?.requestKickPlayer(id)
+  }, [])
+
+  const requestChangeSide = useCallback((side: string) => {
+    socketRef.current?.requestChangeSide(side)
+  }, [])
+
+  const updateRooms = useCallback(() => {
+    fetch('/api/rooms')
+      .then(response => response.json())
+      .then(rooms => {
+        setState((prev) => ({ ...prev, rooms }))
+      }).catch(err => { console.log(err) })
+  }, [])
+
+  const createRoom = useCallback((roomName: string) => {
+    fetch('/api/rooms',
       {
-        'method': 'POST',
-        'body': JSON.stringify({ name: name }),
-        'headers': {
+        method: 'POST',
+        body: JSON.stringify({ name: roomName }),
+        headers: {
           'content-type': 'application/json'
         }
       }
@@ -232,10 +282,10 @@ export const ApplicationContextProvider = ({ children }) => {
       .then(room => {
         if (room.id) {
           connectSocket(room.id)
-          history.push("/game")
+          navigate("/game")
         }
       }).catch(err => { console.log(err) })
-  }
+  }, [connectSocket, navigate])
 
 
   return (<ApplicationContext.Provider value={{
@@ -243,7 +293,6 @@ export const ApplicationContextProvider = ({ children }) => {
     changeName, changeChampion,
     connectSocket,
     updateRooms, updateChampionPool, createRoom,
-
     requestPlayerReady,
     requestKeyPress,
     requestDirectionChange,

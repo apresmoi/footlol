@@ -1,7 +1,11 @@
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+
 export function objectToBinary(object) {
-    return new Uint8Array(JSON.stringify(object).split('').map(c => c.charCodeAt(0))).buffer;
+    return encoder.encode(JSON.stringify(object)).buffer;
 }
 
 export function binaryToObject(ab) {
-    return JSON.parse(new Uint8Array(ab).reduce((p, c) => p + String.fromCharCode(c), ''));
+    const bytes = ab instanceof Uint8Array ? ab : new Uint8Array(ab);
+    return JSON.parse(decoder.decode(bytes));
 }

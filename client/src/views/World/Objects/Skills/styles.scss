@@ -1,57 +1,560 @@
 .veigar-w {
-    animation-name: fadeInE;
     opacity: 0;
-    animation-duration: 0.5s;
-    animation-timing-function: ease-out;
-    animation-delay: 0s;
-    animation-direction: alternate;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
-    animation-play-state: running;
+    animation: effectFadeIn 0.45s ease-out forwards;
+    filter: drop-shadow(0 0 10px rgba(130, 74, 221, 0.38));
 
     .veigar-w-spikes {
-        animation-name: fadeInE;
-        animation-delay: 0.5s;
         opacity: 0;
-        animation-duration: 0.5s;
-        animation-timing-function: ease-out;
-        animation-direction: alternate;
-        animation-iteration-count: 1;
-        animation-fill-mode: forwards;
-        animation-play-state: running;
+        animation: effectFadeIn 0.35s ease-out 0.35s forwards;
     }
+}
+
+.veigar-q {
+    filter: drop-shadow(0 0 8px rgba(215, 87, 196, 0.55));
 }
 
 .amumu-w {
     opacity: 0;
-    animation-duration: 0.5s;
-    animation-timing-function: ease-out;
-    animation-delay: 0s;
-    animation-direction: alternate;
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
-    animation-play-state: running;
-    animation-name: fadeInE;
+    animation: effectFadeIn 0.4s ease-out forwards;
+    filter: drop-shadow(0 0 10px rgba(130, 152, 44, 0.45));
+}
+
+.amumu-q {
+    filter: drop-shadow(0 0 8px rgba(133, 163, 117, 0.45));
+}
+
+.ashe-q {
+    opacity: 0.94;
+    filter: drop-shadow(0 0 9px rgba(122, 212, 255, 0.55)) drop-shadow(0 0 18px rgba(198, 244, 255, 0.42));
+    animation: asheVolleyFlash 0.1s ease-out forwards;
+}
+
+.ashe-w {
+    opacity: 0.95;
+    filter: drop-shadow(0 0 10px rgba(117, 208, 255, 0.58)) drop-shadow(0 0 18px rgba(193, 243, 255, 0.36));
+    animation: asheWAppear 0.12s ease-out forwards;
+
+    .ashe-w-trail {
+        animation: asheWFlow 0.42s ease-in-out infinite alternate;
+    }
+
+    .ashe-w-body {
+        animation: asheWFlow 0.46s ease-in-out infinite alternate;
+    }
+
+    .ashe-w-core {
+        animation: asheWCore 0.26s ease-in-out infinite alternate;
+    }
+
+    .ashe-w-edge {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        animation: asheWEdge 0.3s ease-in-out infinite alternate;
+    }
+
+    .ashe-w-rune,
+    .ashe-w-head {
+        animation: asheWRunePulse 0.22s ease-in-out infinite alternate;
+    }
+
+    .ashe-w-rune-core,
+    .ashe-w-head-core {
+        animation: asheWCore 0.2s ease-in-out infinite alternate;
+    }
+
+    .ashe-w-flare {
+        animation: asheWFlare 0.2s ease-in-out infinite alternate;
+    }
+}
+
+.thresh-q,
+.thresh-w {
+    filter: drop-shadow(0 0 10px rgba(83, 226, 196, 0.55));
+}
+
+.lucian-w {
+    opacity: 0.92;
+    filter: drop-shadow(0 0 8px rgba(92, 169, 239, 0.58)) drop-shadow(0 0 14px rgba(147, 214, 255, 0.44));
+    animation: lucianWFlash 0.1s ease-out forwards;
+}
+
+.anivia-q {
+    opacity: 0.96;
+    filter: drop-shadow(0 0 10px rgba(94, 181, 255, 0.62)) drop-shadow(0 0 16px rgba(160, 226, 255, 0.35));
+
+    .anivia-q-shell {
+        animation: aniviaQPulse 0.9s ease-in-out infinite alternate;
+    }
+
+    .anivia-q-spikes {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: aniviaQSpin 1.35s linear infinite;
+    }
+}
+
+.anivia-w {
+    opacity: 0.95;
+    filter: drop-shadow(0 0 10px rgba(94, 181, 255, 0.62)) drop-shadow(0 0 14px rgba(191, 237, 255, 0.3));
+
+    .anivia-w-shards {
+        animation: aniviaWallShimmer 1.2s ease-in-out infinite alternate;
+    }
+}
+
+.yasuo-q {
+    filter: drop-shadow(0 0 8px rgba(156, 216, 242, 0.72)) drop-shadow(0 0 15px rgba(213, 247, 255, 0.45));
+
+    .yasuo-q-aura {
+        animation: yasuoQAura 0.2s ease-in-out infinite alternate;
+    }
+
+    .yasuo-q-orbit {
+        stroke-linecap: round;
+        animation: yasuoQOrbit 0.24s ease-in-out infinite alternate;
+    }
+
+    .yasuo-q-gust-core {
+        animation: yasuoQGust 0.22s ease-in-out infinite alternate;
+    }
+
+    .yasuo-q-gust-edge {
+        stroke-linecap: round;
+        animation: yasuoQEdge 0.24s ease-in-out infinite alternate;
+    }
+
+    .yasuo-q-flare {
+        animation: yasuoQFlare 0.18s ease-in-out infinite alternate;
+    }
+}
+
+.yasuo-q-connect {
+    opacity: 0.96;
+}
+
+.yasuo-w {
+    opacity: 0;
+    animation: yasuoWallAppear 0.18s ease-out forwards;
+    filter: drop-shadow(0 0 9px rgba(139, 215, 246, 0.6)) drop-shadow(0 0 16px rgba(177, 233, 255, 0.36));
+
+    .yasuo-w-shell {
+        animation: yasuoWallShell 1.25s ease-in-out infinite alternate;
+    }
+
+    .yasuo-w-core {
+        animation: yasuoWallPulse 0.95s ease-in-out infinite alternate;
+    }
+
+    .yasuo-w-inner-haze {
+        animation: yasuoWallHaze 1.05s ease-in-out infinite alternate;
+    }
+
+    .yasuo-w-stream {
+        stroke-linecap: round;
+    }
+
+    .yasuo-w-rim {
+        stroke-linecap: round;
+        animation: yasuoWallRim 0.95s ease-in-out infinite alternate;
+    }
+
+    .yasuo-w-gust {
+        animation: yasuoWallGust 1.15s ease-in-out infinite alternate;
+    }
+}
+
+.malphite-w {
+    filter: drop-shadow(0 0 7px rgba(120, 88, 55, 0.4));
+    opacity: 0.9;
+    animation: malphiteImpactFade 0.12s ease-out forwards;
+}
+
+.malphite-q {
+    filter: drop-shadow(0 0 5px rgba(112, 80, 50, 0.3));
+    opacity: 0.88;
+    animation: malphiteImpactFade 0.1s ease-out forwards;
+}
+
+.ahri-q {
+    filter: drop-shadow(0 0 10px rgba(244, 174, 255, 0.62));
+}
+
+.leesin-q,
+.leesin-w {
+    filter: drop-shadow(0 0 8px rgba(118, 205, 239, 0.56));
+}
+
+.garen-w {
+    filter: drop-shadow(0 0 7px rgba(223, 186, 95, 0.5));
 }
 
 .shaco-w {
     opacity: 0;
+    transition: opacity 0.22s linear;
+    filter: drop-shadow(0 0 8px rgba(150, 74, 100, 0.38));
 
     &.self {
-        opacity: 0.5;
+        opacity: 0.54;
     }
 
     &.visible {
         opacity: 1;
     }
+
+    .jack-zone-ring {
+        transform-box: fill-box;
+        transform-origin: center;
+        transition: stroke-opacity 0.2s ease, stroke-width 0.2s ease;
+    }
+
+    .jack-lid {
+        transform-box: fill-box;
+        transform-origin: center bottom;
+    }
+
+    .jack-pop {
+        transform-box: fill-box;
+        transform-origin: center bottom;
+        opacity: 0;
+        transform: translateY(7px) scale(0.42);
+    }
+
+    .jack-head {
+        transform-box: fill-box;
+        transform-origin: center;
+    }
+
+    &.armed {
+        filter: drop-shadow(0 0 9px rgba(176, 97, 128, 0.44)) drop-shadow(0 0 16px rgba(229, 149, 76, 0.28));
+    }
+
+    &.armed .jack-zone-ring {
+        stroke-opacity: 0.9;
+        stroke-width: 1.55;
+        animation: shacoRingPulse 1s ease-out infinite;
+    }
+
+    &.armed .jack-lid {
+        animation: shacoLidOpen 0.24s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
+    }
+
+    &.armed .jack-pop {
+        animation: shacoJackPop 0.32s 0.1s cubic-bezier(0.16, 0.92, 0.2, 1) forwards;
+    }
+
+    &.armed .jack-head {
+        filter: drop-shadow(0 0 6px rgba(255, 182, 94, 0.78));
+        animation: shacoHeadIdle 0.42s 0.35s ease-in-out infinite alternate;
+    }
+
+    &.armed .jack-crank {
+        animation: shacoCrankSpin 0.55s ease-out;
+    }
 }
 
-@keyframes fadeInE {
+@keyframes malphiteImpactFade {
+    from {
+        opacity: 0.5;
+    }
+
+    to {
+        opacity: 0.9;
+    }
+}
+
+@keyframes lucianWFlash {
+    from {
+        opacity: 0.58;
+    }
+
+    to {
+        opacity: 0.96;
+    }
+}
+
+@keyframes asheVolleyFlash {
+    from {
+        opacity: 0.62;
+    }
+
+    to {
+        opacity: 0.96;
+    }
+}
+
+@keyframes asheWAppear {
+    from {
+        opacity: 0.62;
+    }
+
+    to {
+        opacity: 0.98;
+    }
+}
+
+@keyframes asheWFlow {
+    from {
+        opacity: 0.7;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes asheWCore {
+    from {
+        opacity: 0.58;
+    }
+
+    to {
+        opacity: 0.96;
+    }
+}
+
+@keyframes asheWEdge {
+    from {
+        opacity: 0.48;
+    }
+
+    to {
+        opacity: 0.92;
+    }
+}
+
+@keyframes asheWRunePulse {
+    from {
+        opacity: 0.68;
+        transform: scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.03);
+    }
+}
+
+@keyframes asheWFlare {
+    from {
+        opacity: 0.66;
+        transform: scale(0.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.06);
+    }
+}
+
+@keyframes aniviaQSpin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes aniviaQPulse {
+    from {
+        opacity: 0.78;
+    }
+
+    to {
+        opacity: 0.98;
+    }
+}
+
+@keyframes aniviaWallShimmer {
+    from {
+        opacity: 0.72;
+    }
+
+    to {
+        opacity: 0.94;
+    }
+}
+
+@keyframes yasuoWallAppear {
+    from {
+        opacity: 0.25;
+    }
+
+    to {
+        opacity: 0.98;
+    }
+}
+
+@keyframes yasuoQAura {
+    from {
+        opacity: 0.36;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 0.8;
+        transform: scale(1.04);
+    }
+}
+
+@keyframes yasuoQOrbit {
+    from {
+        opacity: 0.46;
+    }
+
+    to {
+        opacity: 0.92;
+    }
+}
+
+@keyframes yasuoQGust {
+    from {
+        opacity: 0.62;
+    }
+
+    to {
+        opacity: 0.98;
+    }
+}
+
+@keyframes yasuoQEdge {
+    from {
+        opacity: 0.38;
+    }
+
+    to {
+        opacity: 0.86;
+    }
+}
+
+@keyframes yasuoQFlare {
+    from {
+        opacity: 0.62;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.06);
+    }
+}
+
+@keyframes yasuoWallShell {
+    from {
+        opacity: 0.74;
+    }
+
+    to {
+        opacity: 0.98;
+    }
+}
+
+@keyframes yasuoWallPulse {
+    from {
+        opacity: 0.52;
+    }
+
+    to {
+        opacity: 0.86;
+    }
+}
+
+@keyframes yasuoWallHaze {
+    from {
+        opacity: 0.38;
+    }
+
+    to {
+        opacity: 0.78;
+    }
+}
+
+@keyframes yasuoWallRim {
+    from {
+        opacity: 0.34;
+    }
+
+    to {
+        opacity: 0.82;
+    }
+}
+
+@keyframes yasuoWallGust {
+    from {
+        opacity: 0.35;
+    }
+
+    to {
+        opacity: 0.88;
+    }
+}
+
+@keyframes shacoRingPulse {
     0% {
-        opacity: 0;
+        transform: scale(0.97);
+        opacity: 0.68;
+    }
+
+    70% {
+        transform: scale(1.01);
+        opacity: 1;
     }
 
     100% {
-        opacity: 0.8;
+        transform: scale(1.04);
+        opacity: 0.18;
+    }
+}
+
+@keyframes shacoLidOpen {
+    0% {
+        transform: rotate(0deg) translateY(0px);
+    }
+
+    100% {
+        transform: rotate(-72deg) translateY(-1px);
+    }
+}
+
+@keyframes shacoJackPop {
+    0% {
+        opacity: 0;
+        transform: translateY(7px) scale(0.42);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0px) scale(1);
+    }
+}
+
+@keyframes shacoHeadIdle {
+    0% {
+        transform: translateY(0px) rotate(-1deg);
+    }
+
+    100% {
+        transform: translateY(-1px) rotate(1deg);
+    }
+}
+
+@keyframes shacoCrankSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes effectFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 0.88;
     }
 }

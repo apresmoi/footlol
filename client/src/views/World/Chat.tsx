@@ -1,13 +1,20 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { ApplicationContext } from '../../store'
-import { mapSize } from '../../settings'
 
 
 const Chat = (props) => {
   const context = useContext(ApplicationContext)
   const [message, setMessage] = useState("")
+  const historyRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const history = historyRef.current
+    if (!history) return
+    history.scrollTop = history.scrollHeight
+  }, [context.messages.length])
+
   const handleKeyDown = (e) => {
-    if (e.keyCode === 13) {
+    if (e.key === 'Enter') {
       e.preventDefault();
       sendMessage()
     }
@@ -32,7 +39,7 @@ const Chat = (props) => {
 
   return <foreignObject y={props.height - 200} width={300} height={200}>
     <div className="game-chat">
-      <div className="chat-history">
+      <div className="chat-history" ref={historyRef}>
         {context.messages.map((msg, i) =>
           <ChatMessage key={i} player={{ name: msg.name }} message={msg.message} />
         )}
@@ -41,7 +48,13 @@ const Chat = (props) => {
         <div className="chat-input">
           <input onFocus={() => handleFocus()}
             onBlur={() => handleInvalid()}
-            type="text" maxLength={140} onKeyDown={handleKeyDown} value={message} onChange={handleChange} />
+            type="text"
+            placeholder="Type message..."
+            maxLength={140}
+            onKeyDown={handleKeyDown}
+            value={message}
+            onChange={handleChange}
+          />
           <button onClick={() => sendMessage()} >Send</button>
         </div>
       }
@@ -51,7 +64,8 @@ const Chat = (props) => {
 
 const ChatMessage = ({ player, message }) => {
   return <div className="chat-message">
-    <span>{player.name}: </span> {message}
+    <span className="chat-name">{player.name}:</span>
+    <span className="chat-body">{message}</span>
   </div>
 }
 

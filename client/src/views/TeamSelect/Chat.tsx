@@ -1,12 +1,20 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { ApplicationContext } from '../../store'
 
 
 const Chat = () => {
   const context = useContext(ApplicationContext)
   const [message, setMessage] = useState("")
+  const historyRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const history = historyRef.current
+    if (!history) return
+    history.scrollTop = history.scrollHeight
+  }, [context.messages.length])
+
   const handleKeyDown = (e) => {
-    if (e.keyCode === 13) {
+    if (e.key === 'Enter') {
       e.preventDefault();
       sendMessage()
     }
@@ -21,13 +29,13 @@ const Chat = () => {
     setMessage(e.target.value);
   }
   return <div className="chat">
-    <div className="chat-history">
+    <div className="chat-history" ref={historyRef}>
       {context.messages.map((msg, i) =>
         <ChatMessage key={i} player={{ name: msg.name }} message={msg.message} />
       )}
     </div>
     <div className="chat-input">
-      <input type="text" maxLength={140} onKeyDown={handleKeyDown} value={message} onChange={handleChange} />
+      <input type="text" maxLength={140} placeholder="Message your team..." onKeyDown={handleKeyDown} value={message} onChange={handleChange} />
       <button onClick={() => sendMessage()} >Send</button>
     </div>
   </div>
@@ -35,7 +43,8 @@ const Chat = () => {
 
 const ChatMessage = ({ player, message }) => {
   return <div className="chat-message">
-    <span>{player.name}: </span> {message}
+    <span className="chat-name">{player.name}:</span>
+    <span className="chat-body">{message}</span>
   </div>
 }
 

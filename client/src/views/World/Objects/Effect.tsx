@@ -38,9 +38,6 @@ const EffectComponent = (props: { effect, self, players }) => {
   else if (effect.id === "Obduracy") return <MalphiteQ effect={effect} />
   else if (effect.id === "LucianE") return <LucianW effect={effect} />
   else if (effect.id === "AhriTumble") return <AhriQ effect={effect} />
-  else if (effect.id) {
-    console.log(effect.id)
-  }
 
 
   return <g
@@ -50,7 +47,7 @@ const EffectComponent = (props: { effect, self, players }) => {
     {effect.type === 'rect' && <rect transform={`rotate(${effect.angle * 180 / Math.PI})`} x={-effect.width / 2} y={-effect.height / 2} width={effect.width} height={effect.height} />}
     {effect.type === 'polygon' && <polygon x={0} y={0} points={effect.points.map(point => point[0] + "," + point[1]).join(' ')} />}
 
-    {effect.type === 'player' ? effect.points.map(point => <circle r={10} cx={point[0]} cy={point[1]} />) : null}
+    {effect.type === 'player' ? effect.points.map((point, index) => <circle key={index} r={10} cx={point[0]} cy={point[1]} />) : null}
 
   </g >
 }

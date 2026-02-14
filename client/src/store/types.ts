@@ -18,11 +18,19 @@ export interface Player {
     side: 'LEFT' | 'RIGHT',
     visible: boolean
     admin: boolean
+    states?: Array<{
+        type: 'frozen' | 'stunned' | 'feared' | 'slowed'
+        remainingMs: number
+    }>
 }
 
 export interface Ball {
     position: Vector
     angle: number
+    states?: Array<{
+        type: 'frozen' | 'stunned' | 'slowed'
+        remainingMs: number
+    }>
 }
 
 export interface Score {
@@ -61,12 +69,15 @@ export interface EffectImage {
 
 export interface Effect {
     id: string
+    instanceId?: number
     type: 'circle' | 'rect' | 'compound' | 'ring' | 'polygon' | 'vector'
     position: Vector
     image: EffectImage
     direction: Vector
     angle: number
     visible?: boolean
+    connected?: boolean
+    windDirection?: Vector
 }
 export interface CircleEffect extends Effect {
     type: 'circle'

@@ -1,8 +1,6 @@
-FROM node:10.19
+FROM node:22-alpine
 WORKDIR /client
-COPY package.json .
-RUN npm set strict-ssl false
-RUN npm install
-RUN npm rebuild node-sass
+COPY package*.json ./
+RUN npm ci
 COPY . /client
 CMD ["npm", "run", "start"]

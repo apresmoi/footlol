@@ -1,18 +1,13 @@
 import React from 'react';
-import { PolygonEffect, CircleEffect, RectEffect } from '../../../../store/types';
+import { CircleEffect } from '../../../../store/types';
 import './styles.scss'
 
 //https://jxnblk.github.io/paths/?d=M22%2016%20L24%2022%20L28%2028%20L32%2032%20L36%2028%20L40%2022%20L42%2016%20L40%2012%20L36%2012%20L32%2018%20L28%2012%20L24%2012%20Z
 
 const AhriQ = (props: { effect: CircleEffect }) => {
   const { effect } = props
-  const { position, direction, radius } = effect
-
-  const rotate = (() => {
-    if (direction.x === 0)
-      return direction.y > 0 ? 90 : -90
-    return (Math.sign(direction.x) === -1 ? -180 : 0) + Math.atan(direction.y / direction.x) * 180 / Math.PI
-  })()
+  const { position, direction } = effect
+  const rotate = Math.atan2(direction.y, direction.x) * 180 / Math.PI
 
   return <g
     className="ahri-q"
