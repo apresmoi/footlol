@@ -1,0 +1,10 @@
+{$DOMAIN:localhost}, www.{$DOMAIN:localhost} {
+    encode gzip zstd
+
+    @www host www.{$DOMAIN}
+    redir @www https://{$DOMAIN}{uri} permanent
+
+    @api path /api* /ws*
+    reverse_proxy @api http://game-server:3000
+    reverse_proxy game-client:80
+}

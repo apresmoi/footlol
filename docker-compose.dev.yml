@@ -1,29 +1,36 @@
-version: "3"
+name: footlol-dev
+
 services:
   game-client:
     build:
       context: ./client
       dockerfile: ./Dockerfile
     image: game-client
-    container_name: game-client
     command: >
-      bash -c "npm run start"
+      sh -c "npm run start"
+    environment:
+      - VITE_API_PROXY_TARGET=http://game-server:3000
     volumes:
       - ./client:/client
       - /client/node_modules
     ports:
-      - "8000:3000"
+      - "5000:3000"
     depends_on:
-      - game-server
-    restart: always
+      game-server:
+        condition: service_started
+    restart: unless-stopped
+
   game-server:
     build:
       context: ./server
       dockerfile: ./Dockerfile.dev
     image: game-server
-    container_name: game-server
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
     volumes:
       - ./server:/server
+      - /server/node_modules
     ports:
-      - "8081:3000"
-    restart: always
+      - "5001:3000"
+    restart: unless-stopped

@@ -1,0 +1,43 @@
+name: footlol-prod
+
+services:
+  game-server:
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+    image: footlol-game-server
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    expose:
+      - "3000"
+    restart: unless-stopped
+
+  game-client:
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile.prod
+    image: footlol-game-client
+    expose:
+      - "80"
+    restart: unless-stopped
+
+  edge:
+    image: caddy:2-alpine
+    depends_on:
+      - game-client
+      - game-server
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN=${DOMAIN:-localhost}
+    volumes:
+      - ./ops/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:
