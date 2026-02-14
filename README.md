@@ -7,8 +7,6 @@ Real-time multiplayer football arena game with champion-inspired abilities.
 Footlol is a browser game where players join rooms, pick teams/champions, and play live matches over Socket.IO.
 
 - Live app (primary URL): <https://footlol.com>
-- Repository: <https://github.com/apresmoi/footlol>
-- Maintainer: Juan Cruz Fortunatti (<https://ledeluge.me>)
 
 ## Features
 
@@ -141,6 +139,4 @@ npm run build
 - License: MIT (`LICENSE`)
 - Contributions: see `CONTRIBUTING.md`
 
-## Credits
-
-Built and maintained by Juan Cruz Fortunatti.
+Made by <https://ledeluge.me> with <3 during the pandemic.
