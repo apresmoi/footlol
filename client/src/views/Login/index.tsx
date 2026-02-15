@@ -31,7 +31,8 @@ const Login = () => {
         <Container>
           <div className="login">
             <div className="login-box">
-              <h1>FootLol Game</h1>
+              <h1>FOOTLOL</h1>
+              <div className="login-kicker">League Football Arena</div>
               <p className="login-description">
                 Footlol is a real-time multiplayer football arena where champion-style abilities decide every match.
               </p>

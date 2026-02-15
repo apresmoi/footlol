@@ -1,6 +1,8 @@
 import React from 'react'
 import { mapSize } from "../../../settings"
 
+const FIELD_BRAND_FONT = "'Beaufort for LOL', 'Cinzel', serif"
+
 const Field = () => {
   return (
     <>
@@ -53,7 +55,7 @@ const Field = () => {
           x={mapSize.center.x + 8}
           y={mapSize.center.y + 54}
           textAnchor="middle"
-          fontFamily="'Rajdhani', sans-serif"
+          fontFamily={FIELD_BRAND_FONT}
           fontSize={176}
           fontWeight={700}
           letterSpacing={10}
@@ -66,7 +68,7 @@ const Field = () => {
           x={mapSize.center.x}
           y={mapSize.center.y + 46}
           textAnchor="middle"
-          fontFamily="'Rajdhani', sans-serif"
+          fontFamily={FIELD_BRAND_FONT}
           fontSize={172}
           fontWeight={700}
           letterSpacing={10}

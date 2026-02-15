@@ -1,6 +1,9 @@
 import React, { useContext } from 'react'
 import { ApplicationContext } from '../../../store'
 
+const DISPLAY_FONT = "Beaufort for LOL, Cinzel, serif"
+const UI_FONT = "Spiegel, Alegreya Sans, sans-serif"
+
 interface ActionBarProps {
   width?: number
   height?: number
@@ -126,14 +129,14 @@ const SkillSlot = ({ id, x, y, pressed, cooldown, hotkey, isKick = false }: Skil
     <g transform={`translate(${x}, ${y})`}>
       <rect x={0} y={0} width={56} height={56} rx={6} fill="rgba(7, 14, 24, 0.95)" stroke="rgba(236, 213, 157, 0.45)" />
       {isKick
-        ? <text x={28} y={34} textAnchor="middle" fontFamily="Cinzel, serif" fontWeight={700} fontSize={14} fill="#e5c88b">KICK</text>
+        ? <text x={28} y={34} textAnchor="middle" fontFamily={DISPLAY_FONT} fontWeight={700} fontSize={14} fill="#e5c88b">KICK</text>
         : <rect x={4} y={4} width={48} height={48} rx={4} fill={`url(#${id})`} />}
 
       <rect x={4} y={4} width={48} height={48} rx={4} fill="transparent" stroke="rgba(160, 202, 234, 0.42)" />
       {pressed && <rect x={2.5} y={2.5} width={51} height={51} rx={6} fill="transparent" stroke="#e7c982" strokeWidth={2} />}
 
       <rect x={4} y={4} width={22} height={13} rx={3} fill="rgba(5, 11, 19, 0.88)" />
-      <text x={15} y={13} textAnchor="middle" fontFamily="Rajdhani, sans-serif" fontSize={9} fontWeight={700} fill="#d4b97a">
+      <text x={15} y={13} textAnchor="middle" fontFamily={UI_FONT} fontSize={9} fontWeight={700} fill="#d4b97a">
         {hotkey}
       </text>
 
@@ -144,7 +147,7 @@ const SkillSlot = ({ id, x, y, pressed, cooldown, hotkey, isKick = false }: Skil
             x={28}
             y={33}
             textAnchor="middle"
-            fontFamily="Rajdhani, sans-serif"
+            fontFamily={UI_FONT}
             fontWeight={700}
             fontSize={20}
             fill="#eaf6ff"

@@ -14,10 +14,10 @@ afterEach(() => {
 });
 
 test('renders game title on login screen', async () => {
-  let getByText;
+  let getByRole;
   await act(async () => {
-    ({ getByText } = render(<App />));
+    ({ getByRole } = render(<App />));
   });
-  const titleElement = getByText(/FootLol Game/i);
+  const titleElement = getByRole('heading', { name: /FOOTLOL/i });
   expect(titleElement).toBeInTheDocument();
 });

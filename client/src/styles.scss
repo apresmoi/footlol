@@ -1,4 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=Cinzel:wght@500;600;700&family=Rajdhani:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=Cinzel:wght@500;600;700&display=swap');
+
+@font-face {
+    font-family: 'Beaufort for LOL';
+    src: url('/fonts/lol/BeaufortforLOL-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Beaufort for LOL';
+    src: url('/fonts/lol/BeaufortforLOL-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Beaufort for LOL';
+    src: url('/fonts/lol/BeaufortforLOL-Heavy.otf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Spiegel';
+    src: url('/fonts/lol/Spiegel_TT_Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Spiegel';
+    src: url('/fonts/lol/Spiegel_TT_SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
 
 :root {
     color-scheme: dark;
@@ -12,11 +52,29 @@
     --line-strong: rgba(226, 197, 132, 0.38);
     --text-main: #e9f4ff;
     --text-muted: #aebbd0;
+    --text-soft: #c9d6eb;
+    --text-accent-soft: #c8b184;
     --accent: #c6a65e;
     --accent-strong: #e0c179;
     --accent-warm: #f7b954;
     --ok: #4dc98f;
     --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.45);
+    --panel-bg: linear-gradient(160deg, rgba(13, 22, 39, 0.95), rgba(19, 31, 53, 0.82));
+    --panel-bg-elevated: linear-gradient(175deg, rgba(15, 24, 42, 0.9), rgba(11, 18, 32, 0.88));
+    --panel-fill: rgba(12, 20, 35, 0.7);
+    --input-bg: rgba(20, 31, 53, 0.92);
+    --btn-primary: linear-gradient(180deg, #8f6f3a, #6d5028);
+    --btn-primary-border: rgba(214, 183, 118, 0.35);
+    --btn-primary-text: #f6e6c1;
+    --btn-success: linear-gradient(180deg, #2b9e66, #238053);
+    --btn-success-border: rgba(118, 255, 186, 0.34);
+    --team-left-header: linear-gradient(180deg, rgba(35, 113, 197, 0.5), rgba(24, 80, 144, 0.28));
+    --team-right-header: linear-gradient(180deg, rgba(196, 89, 116, 0.42), rgba(142, 56, 78, 0.26));
+    --team-player-bg: rgba(17, 26, 44, 0.9);
+    --team-player-shadow: 0 8px 18px rgba(0, 0, 0, 0.26);
+    --font-display: 'Beaufort for LOL', 'Cinzel', serif;
+    --font-body: 'Spiegel', 'Alegreya Sans', sans-serif;
+    --font-ui: 'Spiegel', 'Alegreya Sans', sans-serif;
 }
 
 * {
@@ -32,7 +90,7 @@
     margin: 0;
     overflow: hidden;
     color: var(--text-main);
-    font-family: 'Alegreya Sans', sans-serif;
+    font-family: var(--font-body);
     background:
         radial-gradient(circle at 18% 20%, rgba(176, 141, 72, 0.2) 0%, rgba(176, 141, 72, 0) 36%),
         radial-gradient(circle at 80% 12%, rgba(62, 126, 190, 0.14) 0%, rgba(62, 126, 190, 0) 30%),
@@ -96,14 +154,14 @@ svg {
 
                 .chat-name {
                     color: var(--accent-strong);
-                    font-family: 'Rajdhani', sans-serif;
+                    font-family: var(--font-ui);
                     font-weight: 700;
                     margin-right: 6px;
                     letter-spacing: 0.2px;
                 }
 
                 .chat-body {
-                    color: #e2ebf6;
+                    color: var(--text-soft);
                     font-weight: 500;
                 }
             }
@@ -134,11 +192,11 @@ svg {
 
             button {
                 min-width: 72px;
-                border: 1px solid rgba(214, 183, 118, 0.62);
+                border: 1px solid var(--btn-primary-border);
                 border-radius: 8px;
-                background: linear-gradient(180deg, #866530, #6f5126);
-                color: #f6e6c1;
-                font-family: 'Rajdhani', sans-serif;
+                background: var(--btn-primary);
+                color: var(--btn-primary-text);
+                font-family: var(--font-ui);
                 font-weight: 700;
                 cursor: pointer;
                 transition: filter 0.16s ease, transform 0.16s ease;

@@ -1,6 +1,9 @@
 import React, { useContext } from 'react'
 import { ApplicationContext } from '../../../store'
 
+const DISPLAY_FONT = "Beaufort for LOL, Cinzel, serif"
+const UI_FONT = "Spiegel, Alegreya Sans, sans-serif"
+
 interface ScoreProps {
   width?: number
   height?: number
@@ -50,7 +53,7 @@ const Score = (props: ScoreProps) => {
         x={leftScoreX}
         y={32}
         textAnchor="middle"
-        fontFamily="Cinzel, serif"
+        fontFamily={DISPLAY_FONT}
         fontSize={29}
         fontWeight={700}
         fill="#78c6ff"
@@ -62,7 +65,7 @@ const Score = (props: ScoreProps) => {
         x={0}
         y={32}
         textAnchor="middle"
-        fontFamily="Rajdhani, sans-serif"
+        fontFamily={UI_FONT}
         fontSize={18}
         fontWeight={700}
         fill="#e2bf77"
@@ -74,7 +77,7 @@ const Score = (props: ScoreProps) => {
         x={rightScoreX}
         y={32}
         textAnchor="middle"
-        fontFamily="Cinzel, serif"
+        fontFamily={DISPLAY_FONT}
         fontSize={29}
         fontWeight={700}
         fill="#ff8ea8"

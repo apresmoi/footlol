@@ -2,6 +2,9 @@ import React, { useContext, useMemo } from 'react'
 import { ApplicationContext } from '../../../store'
 import { Player, ScoreGoal } from '../../../store/types'
 
+const DISPLAY_FONT = "Beaufort for LOL, Cinzel, serif"
+const UI_FONT = "Spiegel, Alegreya Sans, sans-serif"
+
 interface ScoreboardProps {
   width?: number
   height?: number
@@ -78,10 +81,10 @@ const Scoreboard = (props: ScoreboardProps) => {
   const renderSide = (side: 'LEFT' | 'RIGHT', rows: ScoreboardRow[], offsetX: number, accent: string) => (
     <g transform={`translate(${offsetX}, ${headerY})`}>
       <rect x={0} y={0} width={columnWidth} height={rowHeight} fill="rgba(12, 19, 33, 0.94)" stroke={accent} strokeOpacity={0.45} />
-      <text x={16} y={24} fill={accent} fontFamily="Rajdhani, sans-serif" fontSize={17} fontWeight={700}>
+      <text x={16} y={24} fill={accent} fontFamily={UI_FONT} fontSize={17} fontWeight={700}>
         {side === 'LEFT' ? 'Blue Team' : 'Red Team'}
       </text>
-      <text x={columnWidth - 16} y={24} fill="#d8e6f3" textAnchor="end" fontFamily="Rajdhani, sans-serif" fontSize={17} fontWeight={700}>
+      <text x={columnWidth - 16} y={24} fill="#d8e6f3" textAnchor="end" fontFamily={UI_FONT} fontSize={17} fontWeight={700}>
         Goals
       </text>
       {rows.map((row, index) => {
@@ -96,7 +99,7 @@ const Scoreboard = (props: ScoreboardProps) => {
               fill={index % 2 === 0 ? 'rgba(8, 13, 23, 0.9)' : 'rgba(9, 16, 28, 0.95)'}
               stroke="rgba(166, 188, 210, 0.11)"
             />
-            <text x={16} y={rowY + 24} fill="#e7f2ff" fontFamily="Alegreya Sans, sans-serif" fontSize={18} fontWeight={600}>
+            <text x={16} y={rowY + 24} fill="#e7f2ff" fontFamily={UI_FONT} fontSize={18} fontWeight={600}>
               {row.name}
             </text>
             <text
@@ -104,7 +107,7 @@ const Scoreboard = (props: ScoreboardProps) => {
               y={rowY + 24}
               fill="#f0d08d"
               textAnchor="end"
-              fontFamily="Cinzel, serif"
+              fontFamily={DISPLAY_FONT}
               fontSize={20}
               fontWeight={700}
             >
@@ -133,17 +136,17 @@ const Scoreboard = (props: ScoreboardProps) => {
         </defs>
 
         <rect x={0} y={0} width={panelWidth} height={panelHeight} fill="url(#scoreboard-bg)" stroke="url(#scoreboard-border)" strokeWidth={2.5} rx={8} />
-        <text x={panelWidth / 2} y={38} textAnchor="middle" fill="#f3d498" fontFamily="Cinzel, serif" fontSize={24} fontWeight={700}>
+        <text x={panelWidth / 2} y={38} textAnchor="middle" fill="#f3d498" fontFamily={DISPLAY_FONT} fontSize={24} fontWeight={700}>
           Scoreboard
         </text>
         <line x1={columnGap} y1={84} x2={panelWidth - columnGap} y2={84} stroke="rgba(194, 169, 113, 0.35)" strokeWidth={1} />
-        <text x={panelWidth / 2 - 30} y={74} textAnchor="end" fill="#78c6ff" fontFamily="Cinzel, serif" fontSize={31} fontWeight={700}>
+        <text x={panelWidth / 2 - 30} y={74} textAnchor="end" fill="#78c6ff" fontFamily={DISPLAY_FONT} fontSize={31} fontWeight={700}>
           {score.left}
         </text>
-        <text x={panelWidth / 2} y={74} textAnchor="middle" fill="#d6b777" fontFamily="Rajdhani, sans-serif" fontSize={19} fontWeight={700}>
+        <text x={panelWidth / 2} y={74} textAnchor="middle" fill="#d6b777" fontFamily={UI_FONT} fontSize={19} fontWeight={700}>
           :
         </text>
-        <text x={panelWidth / 2 + 30} y={74} textAnchor="start" fill="#ff8ea8" fontFamily="Cinzel, serif" fontSize={31} fontWeight={700}>
+        <text x={panelWidth / 2 + 30} y={74} textAnchor="start" fill="#ff8ea8" fontFamily={DISPLAY_FONT} fontSize={31} fontWeight={700}>
           {score.right}
         </text>
 
