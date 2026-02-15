@@ -166,9 +166,63 @@
     }
 }
 
-.thresh-q,
+.thresh-q {
+    filter: drop-shadow(0 0 10px rgba(89, 235, 204, 0.52)) drop-shadow(0 0 16px rgba(69, 162, 150, 0.32));
+
+    .thresh-q-chain-outer {
+        animation: threshQChainOuter 0.24s ease-in-out infinite alternate;
+    }
+
+    .thresh-q-chain-inner {
+        animation: threshQChainInner 0.22s ease-in-out infinite alternate;
+    }
+
+    .thresh-q-link {
+        animation: threshQLink 0.3s ease-in-out infinite alternate;
+    }
+
+    .thresh-q-hook {
+        animation: threshQHook 0.3s ease-in-out infinite alternate;
+    }
+
+    .thresh-q-hook-core {
+        animation: threshQHookCore 0.24s ease-in-out infinite alternate;
+    }
+
+    .thresh-q-tip-glow {
+        animation: threshQTipGlow 0.24s ease-in-out infinite alternate;
+    }
+}
+
 .thresh-w {
-    filter: drop-shadow(0 0 10px rgba(83, 226, 196, 0.55));
+    filter: drop-shadow(0 0 9px rgba(115, 223, 255, 0.42)) drop-shadow(0 0 14px rgba(104, 168, 248, 0.24));
+    opacity: 0.82;
+
+    .thresh-w-beam-outer {
+        animation: threshWBeamOuter 0.3s ease-in-out infinite alternate;
+    }
+
+    .thresh-w-beam-inner {
+        animation: threshWBeamInner 0.24s ease-in-out infinite alternate;
+    }
+
+    .thresh-w-bubble-fill {
+        animation: threshWBubbleFill 0.72s ease-in-out infinite alternate;
+    }
+
+    .thresh-w-bubble-edge,
+    .thresh-w-bubble-inner {
+        animation: threshWBubbleEdge 0.8s ease-in-out infinite alternate;
+    }
+
+    .thresh-w-lantern-glow {
+        animation: threshWLanternGlow 0.5s ease-in-out infinite alternate;
+    }
+
+    .thresh-w-particle {
+        fill: rgba(196, 250, 255, 0.92);
+        animation: threshWParticle 0.7s ease-in-out infinite alternate;
+    }
 }
 
 .lucian-w {
@@ -284,7 +338,69 @@
 }
 
 .garen-w {
-    filter: drop-shadow(0 0 7px rgba(223, 186, 95, 0.5));
+    opacity: 0;
+    animation: effectFadeIn 0.16s ease-out forwards;
+    filter: drop-shadow(0 0 10px rgba(239, 194, 96, 0.56)) drop-shadow(0 0 18px rgba(181, 127, 38, 0.34));
+
+    .garen-w-ground {
+        animation: garenWGround 0.92s ease-in-out infinite alternate;
+    }
+
+    .garen-w-ring-outer {
+        animation: garenWOuterPulse 0.92s ease-in-out infinite alternate;
+    }
+
+    .garen-w-ring-core,
+    .garen-w-ring-inner {
+        animation: garenWInnerPulse 0.96s ease-in-out infinite alternate;
+    }
+
+    .garen-w-trail {
+        stroke-linecap: round;
+    }
+
+    .garen-w-trail-major {
+        opacity: 0.9;
+    }
+
+    .garen-w-trail-mid {
+        opacity: 0.78;
+    }
+
+    .garen-w-trail-small {
+        opacity: 0.66;
+    }
+
+    .garen-w-sword-wash,
+    .garen-w-sword-wash-back {
+        opacity: 0.54;
+    }
+
+    .garen-w-weapon {
+        filter: drop-shadow(0 0 7px rgba(255, 229, 141, 0.52));
+    }
+
+    .garen-w-wind-primary,
+    .garen-w-wind-secondary {
+        opacity: 0.78;
+    }
+
+    .garen-w-blade-core {
+        fill: none;
+        stroke-linecap: round;
+    }
+
+    .garen-w-blade-sheen {
+        animation: garenWBladeSheen 0.9s ease-in-out infinite alternate;
+    }
+
+    .garen-w-spiral-line {
+        animation: garenWSpiralPulse 0.64s ease-in-out infinite alternate;
+    }
+
+    .garen-w-center-glow {
+        animation: garenWCenter 0.78s ease-in-out infinite alternate;
+    }
 }
 
 .shaco-w {
@@ -920,6 +1036,198 @@
     to {
         opacity: 0.84;
         transform: scale(1);
+    }
+}
+
+@keyframes threshWBeamOuter {
+    from {
+        opacity: 0.4;
+    }
+
+    to {
+        opacity: 0.68;
+    }
+}
+
+@keyframes threshWBeamInner {
+    from {
+        opacity: 0.45;
+    }
+
+    to {
+        opacity: 0.8;
+    }
+}
+
+@keyframes threshWBubbleFill {
+    from {
+        opacity: 0.58;
+        transform: scale(0.96);
+    }
+
+    to {
+        opacity: 0.9;
+        transform: scale(1.02);
+    }
+}
+
+@keyframes threshWBubbleEdge {
+    from {
+        opacity: 0.62;
+    }
+
+    to {
+        opacity: 0.96;
+    }
+}
+
+@keyframes threshWLanternGlow {
+    from {
+        opacity: 0.42;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 0.95;
+        transform: scale(1.08);
+    }
+}
+
+@keyframes threshWParticle {
+    from {
+        opacity: 0.35;
+        transform: scale(0.76);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+}
+
+@keyframes threshQChainOuter {
+    from {
+        opacity: 0.66;
+    }
+
+    to {
+        opacity: 0.94;
+    }
+}
+
+@keyframes threshQChainInner {
+    from {
+        opacity: 0.6;
+    }
+
+    to {
+        opacity: 0.98;
+    }
+}
+
+@keyframes threshQLink {
+    from {
+        opacity: 0.72;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes threshQHook {
+    from {
+        opacity: 0.78;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes threshQHookCore {
+    from {
+        opacity: 0.2;
+    }
+
+    to {
+        opacity: 0.58;
+    }
+}
+
+@keyframes threshQTipGlow {
+    from {
+        opacity: 0.5;
+        transform: scale(0.92);
+    }
+
+    to {
+        opacity: 0.92;
+        transform: scale(1.06);
+    }
+}
+
+@keyframes garenWGround {
+    from {
+        opacity: 0.68;
+        transform: scale(0.96);
+    }
+
+    to {
+        opacity: 0.94;
+        transform: scale(1.03);
+    }
+}
+
+@keyframes garenWOuterPulse {
+    from {
+        opacity: 0.66;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 0.96;
+        transform: scale(1.02);
+    }
+}
+
+@keyframes garenWInnerPulse {
+    from {
+        opacity: 0.58;
+    }
+
+    to {
+        opacity: 0.9;
+    }
+}
+
+@keyframes garenWSpiralPulse {
+    from {
+        opacity: 0.36;
+    }
+
+    to {
+        opacity: 0.82;
+    }
+}
+
+@keyframes garenWBladeSheen {
+    from {
+        opacity: 0.38;
+    }
+
+    to {
+        opacity: 0.9;
+    }
+}
+
+@keyframes garenWCenter {
+    from {
+        opacity: 0.36;
+    }
+
+    to {
+        opacity: 0.72;
     }
 }
 

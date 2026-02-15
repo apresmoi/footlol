@@ -64,5 +64,3 @@ export class GarenW extends RectCollideable {
         this.setVelocity(this._body.plugin.owner.getVelocity(), this._body.plugin.angularVelocity)
     }
 }
-
-
