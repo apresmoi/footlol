@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /room-select
+Disallow: /room-create
+Disallow: /game
 
 Sitemap: https://footlol.com/sitemap.xml

@@ -1,6 +1,6 @@
 {
   "short_name": "Footlol",
-  "name": "Footlol Multiplayer Football Arena",
+  "name": "Footlol — Multiplayer Football Arena",
   "description": "A browser multiplayer football game with champion-inspired abilities and live team matches.",
   "icons": [
     {
@@ -11,12 +11,16 @@
     {
       "src": "/index.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "landscape",
   "theme_color": "#0e1626",
-  "background_color": "#0e1626"
+  "background_color": "#0e1626",
+  "categories": ["games", "sports", "entertainment"],
+  "lang": "en"
 }

@@ -8,13 +8,21 @@
       name="description"
       content="Footlol is a real-time multiplayer football arena game where champion-inspired abilities and team play decide every match."
     />
+    <meta
+      name="keywords"
+      content="football game, multiplayer game, browser game, champion abilities, online football, arena game, team game, free to play, real-time multiplayer, esports"
+    />
+    <meta name="author" content="Juan Cruz Fortunatti" />
     <meta name="robots" content="index,follow" />
 
     <link rel="canonical" href="https://footlol.com/" />
     <link rel="icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/index.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/index.png" />
     <link rel="manifest" href="/manifest.json" />
+
     <title>Footlol | Multiplayer Football Arena with Champion Abilities</title>
+
+    <!-- Open Graph -->
     <meta property="og:title" content="Footlol | Multiplayer Football Arena" />
     <meta
       property="og:description"
@@ -23,7 +31,13 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://footlol.com/" />
     <meta property="og:image" content="https://footlol.com/index.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="Footlol — Multiplayer Football Arena" />
     <meta property="og:site_name" content="Footlol" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Footlol | Multiplayer Football Arena" />
     <meta
@@ -31,17 +45,58 @@
       content="A browser multiplayer football game where every champion ability can turn the match."
     />
     <meta name="twitter:image" content="https://footlol.com/index.png" />
+    <meta name="twitter:image:alt" content="Footlol — Multiplayer Football Arena" />
+    <meta name="twitter:creator" content="@jcfortunatti" />
 
+    <!-- Structured Data -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": ["WebSite", "VideoGame"],
+        "@type": "VideoGame",
         "name": "Footlol",
         "url": "https://footlol.com/",
         "description": "Footlol is a real-time multiplayer football arena game where champion-inspired abilities and team play decide every match.",
-        "genre": ["Sports game", "Multiplayer online game"],
+        "genre": ["Sports game", "Multiplayer online game", "Arena game"],
         "playMode": "MultiPlayer",
-        "applicationCategory": "Game"
+        "applicationCategory": "Game",
+        "gamePlatform": ["Web Browser"],
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        "numberOfPlayers": {
+          "@type": "QuantitativeValue",
+          "minValue": 2,
+          "maxValue": 10
+        },
+        "inLanguage": "en",
+        "isFamilyFriendly": true,
+        "author": {
+          "@type": "Person",
+          "name": "Juan Cruz Fortunatti",
+          "url": "https://ledeluge.me",
+          "sameAs": [
+            "https://github.com/juancfortunatti",
+            "https://linkedin.com/in/juancfortunatti",
+            "https://x.com/jcfortunatti"
+          ]
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Footlol",
+        "url": "https://footlol.com/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://footlol.com/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
       }
     </script>
   </head>

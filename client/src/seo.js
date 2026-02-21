@@ -3,12 +3,16 @@ const SITE_URL = (import.meta.env.VITE_SITE_URL || 'https://footlol.com').replac
 const DEFAULT_IMAGE = `${SITE_URL}/index.png`;
 const DEFAULT_DESCRIPTION =
   'Footlol is a real-time multiplayer football arena game where champion-inspired abilities and team play decide every match.';
+const DEFAULT_KEYWORDS =
+  'football game, multiplayer game, browser game, champion abilities, online football, arena game, team game, free to play, real-time multiplayer, esports';
 
 const ROUTE_META = {
   '/': {
     title: 'Footlol | Multiplayer Football Arena with Champion Abilities',
     description:
       'Play Footlol in your browser: join rooms, pick a team, and win matches with champion-style skills and tight teamwork.',
+    keywords:
+      'play footlol, browser football, multiplayer arena, champion skills, team play, online match, free browser game',
     robots: 'index,follow',
   },
   '/room-select': {
@@ -32,9 +36,7 @@ const ROUTE_META = {
 };
 
 const setMetaTag = (attr, key, content) => {
-  if (!content) {
-    return;
-  }
+  if (!content) return;
 
   let tag = document.head.querySelector(`meta[${attr}="${key}"]`);
   if (!tag) {
@@ -42,7 +44,6 @@ const setMetaTag = (attr, key, content) => {
     tag.setAttribute(attr, key);
     document.head.appendChild(tag);
   }
-
   tag.setAttribute('content', content);
 };
 
@@ -57,9 +58,7 @@ const setCanonical = (url) => {
 };
 
 export const applySeo = (pathname) => {
-  if (typeof document === 'undefined') {
-    return;
-  }
+  if (typeof document === 'undefined') return;
 
   const metadata = ROUTE_META[pathname] || {
     title: 'Footlol',
@@ -71,17 +70,29 @@ export const applySeo = (pathname) => {
 
   document.title = metadata.title;
 
+  // Standard meta
   setMetaTag('name', 'description', metadata.description);
+  setMetaTag('name', 'keywords', metadata.keywords || DEFAULT_KEYWORDS);
   setMetaTag('name', 'robots', metadata.robots || 'index,follow');
+
+  // Open Graph
   setMetaTag('property', 'og:title', metadata.title);
   setMetaTag('property', 'og:description', metadata.description);
   setMetaTag('property', 'og:type', 'website');
   setMetaTag('property', 'og:url', canonicalUrl);
   setMetaTag('property', 'og:image', DEFAULT_IMAGE);
+  setMetaTag('property', 'og:image:width', '512');
+  setMetaTag('property', 'og:image:height', '512');
+  setMetaTag('property', 'og:image:alt', `${SITE_NAME} — Multiplayer Football Arena`);
   setMetaTag('property', 'og:site_name', SITE_NAME);
+  setMetaTag('property', 'og:locale', 'en_US');
+
+  // Twitter Card
   setMetaTag('name', 'twitter:card', 'summary_large_image');
   setMetaTag('name', 'twitter:title', metadata.title);
   setMetaTag('name', 'twitter:description', metadata.description);
   setMetaTag('name', 'twitter:image', DEFAULT_IMAGE);
+  setMetaTag('name', 'twitter:image:alt', `${SITE_NAME} — Multiplayer Football Arena`);
+
   setCanonical(canonicalUrl);
 };
