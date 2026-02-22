@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { ApplicationContext } from '../../../store'
+import { isTouchDevice } from '../../../utils/isTouchDevice'
 
 const DISPLAY_FONT = "Beaufort for LOL, Cinzel, serif"
 const UI_FONT = "Spiegel, Alegreya Sans, sans-serif"
@@ -12,6 +13,7 @@ interface ActionBarProps {
 
 const ActionBar = (props: ActionBarProps) => {
   const { champions, self } = useContext(ApplicationContext)
+  if (isTouchDevice) return null
   if (!self) return null
 
   const champion = champions.find((row) => row.name === self.champion)

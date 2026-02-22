@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { ApplicationContext } from '../../store'
+import { isTouchDevice } from '../../utils/isTouchDevice'
 
 
 const Chat = (props) => {
+  if (isTouchDevice) return null
   const context = useContext(ApplicationContext)
   const [message, setMessage] = useState("")
   const historyRef = useRef<HTMLDivElement>(null)

@@ -57,3 +57,28 @@
         opacity: 1;
     }
 }
+
+@media (max-width: 900px) and (pointer: coarse) {
+    .wrapper {
+        .header {
+            height: 0;
+            display: none;
+        }
+
+        .container {
+            height: 100%;
+
+            .world {
+                max-width: none;
+                border-radius: 0;
+                padding: 0;
+                background: none;
+                box-shadow: none;
+
+                svg {
+                    border-radius: 0;
+                }
+            }
+        }
+    }
+}

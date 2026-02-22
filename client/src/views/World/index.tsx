@@ -9,10 +9,12 @@ import MatchResult from './UI/MatchResult';
 import GameChat from './Chat';
 import Scoreboard from './UI/Scoreboard';
 import Countdown from './UI/Countdown';
+import RotateOverlay from './Mobile/RotateOverlay';
 
 const World = () => {
   return (
     <Wrapper>
+      <RotateOverlay />
       <Header>
       </Header>
       <Container>

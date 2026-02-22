@@ -1,0 +1,179 @@
+.mobile-controls {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  touch-action: none;
+}
+
+// ── Joystick ──
+
+.joystick {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  width: 130px;
+  height: 130px;
+  touch-action: none;
+
+  .joystick-base {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(10, 16, 28, 0.55);
+    border: 2px solid rgba(198, 166, 94, 0.3);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .joystick-knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    margin-left: -25px;
+    margin-top: -25px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 38%, rgba(224, 193, 121, 0.5), rgba(160, 130, 60, 0.35));
+    border: 2px solid rgba(224, 193, 121, 0.6);
+    box-shadow: 0 0 10px rgba(198, 166, 94, 0.2);
+    transition: transform 0.05s linear;
+  }
+}
+
+// ── Action Buttons ──
+
+.action-buttons {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 170px;
+  height: 150px;
+  touch-action: none;
+
+  .action-btn {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(10, 16, 28, 0.85);
+    border: 2px solid rgba(198, 166, 94, 0.45);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3), inset 0 0 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    touch-action: none;
+
+    // Q button — top center
+    &:nth-child(1) {
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    // W button — bottom right
+    &:nth-child(2) {
+      bottom: 0;
+      right: 0;
+    }
+
+    // Kick button — bottom left
+    &:nth-child(3) {
+      bottom: 0;
+      left: 0;
+    }
+
+    &--kick {
+      border-color: rgba(224, 193, 121, 0.6);
+    }
+
+    &--cooldown {
+      opacity: 0.7;
+    }
+
+    .action-btn-icon {
+      transform: scale(1.35);
+      border-radius: 50%;
+    }
+
+    .action-btn-label {
+      font-family: 'Beaufort for LOL', 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #e5c88b;
+      letter-spacing: 1px;
+    }
+
+    .action-btn-hotkey {
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Spiegel', 'Alegreya Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      color: rgba(212, 185, 122, 0.7);
+      pointer-events: none;
+    }
+
+    .action-btn-cooldown-overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      span {
+        font-family: 'Spiegel', 'Alegreya Sans', sans-serif;
+        font-weight: 700;
+        font-size: 20px;
+        color: #eaf6ff;
+      }
+    }
+
+    &:active {
+      border-color: #e7c982;
+      box-shadow: 0 0 15px rgba(198, 166, 94, 0.35), inset 0 0 8px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// ── Rotate Overlay ──
+
+.rotate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(6, 8, 15, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .rotate-overlay-content {
+    text-align: center;
+
+    svg {
+      margin-bottom: 20px;
+      animation: rotateHint 2s ease-in-out infinite;
+    }
+
+    p {
+      font-family: 'Beaufort for LOL', 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #c6a65e;
+      letter-spacing: 1px;
+    }
+  }
+}
+
+@keyframes rotateHint {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  50%, 75% { transform: rotate(90deg); }
+}

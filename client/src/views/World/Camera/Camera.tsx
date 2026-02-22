@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Player, Ball } from '../../../store/types';
 import { mapSize } from '../../../settings'
 import { ApplicationContext } from '../../../store';
+import MobileControls from '../Mobile/MobileControls';
 
 interface CameraProps {
   children: any
@@ -55,6 +56,7 @@ const Camera = (props: CameraProps) => {
             })
         }
       </svg>
+      <MobileControls />
     </div>
   );
 }

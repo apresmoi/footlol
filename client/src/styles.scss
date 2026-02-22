@@ -77,6 +77,11 @@
     --font-ui: 'Spiegel', 'Alegreya Sans', sans-serif;
 }
 
+html, body {
+    touch-action: manipulation;
+    overscroll-behavior: none;
+}
+
 * {
     box-sizing: border-box;
     user-select: none;
