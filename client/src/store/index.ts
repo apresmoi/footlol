@@ -13,6 +13,7 @@ export const ApplicationContext = React.createContext<IApplicationContext>(
         score: null,
         time: null,
         countdown: null,
+        wallsUp: false,
         players: {},
         champions: [],
         victory: null,

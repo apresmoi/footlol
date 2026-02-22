@@ -33,6 +33,7 @@ const resetState = {
   score: null,
   time: null,
   countdown: null,
+  wallsUp: false,
   victory: null,
   matchResults: null,
   players: {},

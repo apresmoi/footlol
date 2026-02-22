@@ -648,7 +648,8 @@ export class Field {
             victory: this._gameEnded ? this._victorySide : null,
             effects: this._serializeEffects(),
             matchResults: this._matchResults || null,
-            config: this._config
+            config: this._config,
+            wallsUp: this._startWalls['LEFT']._mounted || this._startWalls['RIGHT']._mounted
         }
     }
 }

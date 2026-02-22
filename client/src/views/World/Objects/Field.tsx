@@ -24,6 +24,30 @@ const Field = () => {
           <stop offset="0%" stopColor="rgba(110, 188, 255, 0.18)" />
           <stop offset="100%" stopColor="rgba(110, 188, 255, 0)" />
         </radialGradient>
+        <radialGradient id="atmosphereTL" cx="0%" cy="0%" r="70%">
+          <stop offset="0%" stopColor="rgba(200, 160, 60, 0.22)" />
+          <stop offset="100%" stopColor="rgba(200, 160, 60, 0)" />
+        </radialGradient>
+        <radialGradient id="atmosphereTR" cx="100%" cy="0%" r="70%">
+          <stop offset="0%" stopColor="rgba(200, 160, 60, 0.18)" />
+          <stop offset="100%" stopColor="rgba(200, 160, 60, 0)" />
+        </radialGradient>
+        <radialGradient id="atmosphereBL" cx="0%" cy="100%" r="70%">
+          <stop offset="0%" stopColor="rgba(210, 165, 55, 0.2)" />
+          <stop offset="100%" stopColor="rgba(210, 165, 55, 0)" />
+        </radialGradient>
+        <radialGradient id="atmosphereBR" cx="100%" cy="100%" r="70%">
+          <stop offset="0%" stopColor="rgba(210, 165, 55, 0.16)" />
+          <stop offset="100%" stopColor="rgba(210, 165, 55, 0)" />
+        </radialGradient>
+        <radialGradient id="atmosphereEdgeL" cx="0%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="rgba(190, 145, 50, 0.14)" />
+          <stop offset="100%" stopColor="rgba(190, 145, 50, 0)" />
+        </radialGradient>
+        <radialGradient id="atmosphereEdgeR" cx="100%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="rgba(190, 145, 50, 0.14)" />
+          <stop offset="100%" stopColor="rgba(190, 145, 50, 0)" />
+        </radialGradient>
         <linearGradient id="pitchBrand" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="rgba(183, 211, 236, 0.22)" />
           <stop offset="100%" stopColor="rgba(88, 143, 192, 0.14)" />
@@ -40,6 +64,14 @@ const Field = () => {
       </defs>
 
       <rect {...mapSize} fill="url(#fieldSky)" />
+
+      {/* Arena atmosphere — warm golden glows at corners and edges */}
+      <rect {...mapSize} fill="url(#atmosphereTL)" />
+      <rect {...mapSize} fill="url(#atmosphereTR)" />
+      <rect {...mapSize} fill="url(#atmosphereBL)" />
+      <rect {...mapSize} fill="url(#atmosphereBR)" />
+      <rect {...mapSize} fill="url(#atmosphereEdgeL)" />
+      <rect {...mapSize} fill="url(#atmosphereEdgeR)" />
 
       <rect {...mapSize.field} fill="url(#pitchGradient)" stroke="#163245" strokeWidth={4} rx={8} />
       <rect {...mapSize.field} fill="url(#pitchStripes)" opacity={0.75} />

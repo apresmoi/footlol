@@ -135,6 +135,8 @@ export interface UpdatePayload {
     effects: Array<CircleEffect | RectEffect | CompoundEffect>
     kick: boolean
     victory?: VictoryResult
+    countdown?: number
+    wallsUp?: boolean
     matchResults?: MatchResults
     config?: RoomConfig
 }
@@ -203,6 +205,7 @@ export interface ApplicationContextProviderState {
     players: { [x: string]: Player }
     victory?: VictoryResult
     countdown?: number
+    wallsUp?: boolean
     matchResults?: MatchResults
     config?: RoomConfig
 }

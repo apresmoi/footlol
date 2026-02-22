@@ -260,6 +260,7 @@ export class Room extends Field {
             effects: this._serializeEffects(),
             matchResults: this._matchResults || null,
             config: this._config,
+            wallsUp: this._startWalls['LEFT']._mounted || this._startWalls['RIGHT']._mounted,
             // debug: DEBUG ?  this._getAllObjects() : []
         }
     }

@@ -119,10 +119,12 @@ svg {
         height: 100%;
         display: flex;
         flex-direction: column;
-        border: 1px solid var(--line-soft);
-        background: linear-gradient(180deg, rgba(7, 11, 19, 0.85), rgba(11, 17, 30, 0.92));
+        border: 1.5px solid rgba(160, 130, 60, 0.35);
+        background: linear-gradient(180deg, rgba(7, 11, 19, 0.9), rgba(11, 17, 30, 0.94));
         backdrop-filter: blur(2px);
-        box-shadow: var(--shadow-lg);
+        box-shadow:
+            0 8px 30px rgba(0, 0, 0, 0.4),
+            0 0 1px rgba(160, 130, 60, 0.25);
         border-radius: 12px;
         overflow: hidden;
 
@@ -159,8 +161,8 @@ svg {
             display: flex;
             gap: 8px;
             padding: 8px;
-            border-top: 1px solid var(--line-soft);
-            background: rgba(2, 6, 14, 0.45);
+            border-top: 1px solid rgba(160, 130, 60, 0.2);
+            background: rgba(2, 6, 14, 0.5);
 
             input {
                 flex: 1;

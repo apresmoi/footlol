@@ -4,6 +4,7 @@ import EffectComponent from './Objects/Effect'
 import BallComponent from './Objects/Ball'
 import GoalComponent from './Objects/Goal'
 import FieldComponent from './Objects/Field';
+import CenterBarrier from './Objects/CenterBarrier';
 import { ApplicationContext } from '../../store';
 import { Effect, Player } from '../../store/types';
 
@@ -53,6 +54,7 @@ const Draw = () => {
       <FieldComponent />
       <GoalComponent side="LEFT" />
       <GoalComponent side="RIGHT" />
+      <CenterBarrier />
       <g>
         {debug.map((effect, i) => <EffectComponent key={`debug-${getEffectKey(effect, i)}`} effect={effect} self={self} players={playerList} />)}
         {effects.map((effect, i) => <EffectComponent key={`effect-${getEffectKey(effect, i)}`} effect={effect} self={self} players={playerList} />)}

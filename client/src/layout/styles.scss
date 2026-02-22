@@ -20,17 +20,30 @@
             height: 100%;
             max-width: 1300px;
             margin: auto;
-            border: 1px solid var(--line-soft);
-            border-radius: 14px;
+            padding: 2px;
+            border-radius: 16px;
+            background: linear-gradient(
+                160deg,
+                rgba(160, 130, 60, 0.5) 0%,
+                rgba(120, 95, 40, 0.25) 25%,
+                rgba(100, 80, 35, 0.15) 50%,
+                rgba(120, 95, 40, 0.25) 75%,
+                rgba(160, 130, 60, 0.5) 100%
+            );
+            box-shadow:
+                0 0 60px rgba(0, 0, 0, 0.5),
+                0 0 30px rgba(160, 130, 50, 0.1),
+                inset 0 0 20px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            box-shadow: var(--shadow-lg);
             opacity: 0;
+            animation: fadeInWorld 0.7s ease-out 0.12s forwards;
 
             svg {
+                display: block;
                 width: 100%;
                 height: 100%;
+                border-radius: 14px;
             }
-            animation: fadeInWorld 0.7s ease-out 0.12s forwards;
         }
     }
 }

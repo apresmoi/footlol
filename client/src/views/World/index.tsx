@@ -8,6 +8,7 @@ import ActionBar from './UI/ActionBar';
 import MatchResult from './UI/MatchResult';
 import GameChat from './Chat';
 import Scoreboard from './UI/Scoreboard';
+import Countdown from './UI/Countdown';
 
 const World = () => {
   return (
@@ -20,6 +21,7 @@ const World = () => {
             <Draw />
           </CameraPosition>
           <Score />
+          <Countdown />
           <KeyboardWrapper>
             <GameChat />
             <ActionBar />
