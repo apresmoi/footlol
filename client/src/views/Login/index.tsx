@@ -21,7 +21,7 @@ const Login = () => {
   return (
     <>
       <div className="bgvideo-container">
-        <iframe id="video" frameBorder="0" allowFullScreen={true} allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+        <iframe id="video" frameBorder="0" allowFullScreen={true} allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
         title="YouTube video player" width="640" height="360"
          src={`https://www.youtube.com/embed/${LANDING_VIDEO_ID}?autoplay=1&mute=1&loop=1&controls=0&modestbranding=1&rel=0&playsinline=1&disablekb=1&playlist=${LANDING_VIDEO_ID}`}></iframe>
       </div>
@@ -30,18 +30,25 @@ const Login = () => {
         </Header>
         <Container>
           <div className="login">
-            <div className="login-box">
-              <h1>FOOTLOL</h1>
-              <div className="login-kicker">League Football Arena</div>
-              <p className="login-description">
-                Footlol is a real-time multiplayer football arena where champion-style abilities decide every match.
-              </p>
-              <div className="login-content">
-                <div>Nickname</div>
-                <input value={context.name} onChange={handleChange} type="text" maxLength={12} />
-                <div className="name-limit">Max 12 characters</div>
-                <div></div>
-                <button onClick={handleClick}>Join</button>
+            <div className="login-glow login-glow--bl" />
+            <div className="login-glow login-glow--tr" />
+            <div className="login-card">
+              <div className="login-card-border">
+                <div className="login-card-inner">
+                  <div className="login-logo">
+                    <img src="/icon.png" alt="Footlol" />
+                  </div>
+                  <p className="login-description">
+                    Footlol is a real-time multiplayer football arena where
+                    champion-style abilities decide every match.
+                  </p>
+                  <div className="login-form">
+                    <div className="login-label">Nickname</div>
+                    <input value={context.name} onChange={handleChange} type="text" maxLength={12} />
+                    <div className="login-hint">Max 12 characters</div>
+                    <button onClick={handleClick}>Join</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

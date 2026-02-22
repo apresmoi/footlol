@@ -32,6 +32,8 @@ const TeamSelect = () => {
       <Header>
       </Header>
       <Container>
+        <div className="ts-glow ts-glow--bl" />
+        <div className="ts-glow ts-glow--tr" />
         <div className="team-select">
           <Team side="LEFT"
             onTeamChange={handleTeamChange}
@@ -47,7 +49,12 @@ const TeamSelect = () => {
               onTransferAdmin={handleTransferAdmin}
             />)}
           </Team>
-          <Chat />
+          <div className="chat-column">
+            <div className="chat-logo">
+              <img src="/icon.png" alt="Footlol" />
+            </div>
+            <Chat />
+          </div>
           <Team side="RIGHT"
             onTeamChange={handleTeamChange}
           >

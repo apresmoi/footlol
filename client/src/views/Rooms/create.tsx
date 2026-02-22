@@ -3,7 +3,7 @@ import { Container, Header, Wrapper } from '../../layout';
 import "./styles.scss"
 import { ApplicationContext } from '../../store';
 
-const Login = () => {
+const CreateRoom = () => {
   const context = useContext(ApplicationContext)
   const [roomName, setRoomName] = useState("")
 
@@ -21,13 +21,23 @@ const Login = () => {
       <Header>
       </Header>
       <Container>
-        <div className="login">
-          <div className="login-box">
-            <div className="login-content">
-              <div>Insert a name for your room (min length 6)</div>
-              <input value={roomName} onChange={handleChange} type="text" />
-              <div></div>
-              <button disabled={roomName.length < 5} onClick={handleClick}>Create</button>
+        <div className="rooms">
+          <div className="rooms-glow rooms-glow--bl" />
+          <div className="rooms-glow rooms-glow--tr" />
+          <div className="rooms-card rooms-card--narrow">
+            <div className="rooms-card-border">
+              <div className="rooms-card-inner">
+                <div className="rooms-logo">
+                  <img src="/icon.png" alt="Footlol" />
+                </div>
+                <h1>Create a Room</h1>
+                <div className="create-room-form">
+                  <div className="create-room-label">Room Name</div>
+                  <input value={roomName} onChange={handleChange} type="text" maxLength={30} />
+                  <div className="create-room-hint">Minimum 6 characters</div>
+                  <button disabled={roomName.length < 6} onClick={handleClick}>Create</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -36,4 +46,4 @@ const Login = () => {
   );
 }
 
-export default Login;
+export default CreateRoom;

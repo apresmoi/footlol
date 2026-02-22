@@ -44,6 +44,8 @@ const TeamSelect = () => {
       <Header>
       </Header>
       <Container>
+        <div className="cs-glow cs-glow--bl" />
+        <div className="cs-glow cs-glow--tr" />
         <div className="champion-select">
           <Team side="LEFT">
             {calculated.LEFT.map(player => <PlayerComponent
@@ -57,7 +59,12 @@ const TeamSelect = () => {
               onTransferAdmin={handleTransferAdmin}
             />)}
           </Team>
-          <ChampionPool disabledChampions={calculated.disabledChampions} champions={context.champions} onClick={handleChampionSelect} />
+          <div className="pool-column">
+            <div className="pool-logo">
+              <img src="/icon.png" alt="Footlol" />
+            </div>
+            <ChampionPool disabledChampions={calculated.disabledChampions} champions={context.champions} onClick={handleChampionSelect} />
+          </div>
           <Team side="RIGHT">
             {calculated.RIGHT.map(player => <PlayerComponent
               ready={player.ready}
@@ -72,7 +79,7 @@ const TeamSelect = () => {
           </Team>
         </div>
         {context.self &&
-          <div className="team-select-ready">
+          <div className="cs-ready">
             <a className={context.self.ready ? "ready" : ""} onClick={handleReadyClick}>READY</a>
             {context.self.admin && <a className="return-to-lobby" onClick={handleReturnToLobby}>RETURN TO LOBBY</a>}
           </div>}
@@ -102,9 +109,9 @@ const PlayerComponent = ({ player, isSelf, ready, selfAdmin, isAdmin, onRemove, 
       <img src={player.champion ? `${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${player.champion}.png` : null} />
     </div>
     <div>{player.name}</div>
-    {selfAdmin && !isAdmin && !isSelf && <div onClick={handleTransferAdmin} className="player-transfer-admin" />}
-    {selfAdmin && !isAdmin && <div onClick={handleRemovePlayer} className="player-remove" />}
-    {isAdmin && <div className="player-admin" />}
+    {selfAdmin && !isAdmin && !isSelf && <div onClick={handleTransferAdmin} className="player-transfer-admin" data-tooltip="Transfer admin" />}
+    {selfAdmin && !isAdmin && <div onClick={handleRemovePlayer} className="player-remove" data-tooltip="Kick player" />}
+    {isAdmin && <div className="player-admin" data-tooltip="Room admin" />}
   </div>
 }
 

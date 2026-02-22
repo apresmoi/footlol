@@ -68,7 +68,8 @@ export class ShacoW extends CircleCollideable {
                         const interval = setInterval(() => {
                             if (iterations < 1500) {
                                 iterations += 50
-                                target.setPosition(target.getPosition().add(direction.multiply(1).setY(Math.random() * 10 - 2)))
+                                const jitter = new Vector(Math.random() * 2 - 1, Math.random() * 2 - 1)
+                                target.setPosition(target.getPosition().add(direction.multiply(1.5).add(jitter)))
                             } else {
                                 clearInterval(interval)
                             }

@@ -1,3 +1,27 @@
+// Ambient background glows
+.ts-glow {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    z-index: 0;
+
+    &--bl {
+        bottom: -5%;
+        left: -5%;
+        width: 40%;
+        height: 50%;
+        background: radial-gradient(ellipse at center, rgba(190, 145, 50, 0.18) 0%, rgba(190, 145, 50, 0) 70%);
+    }
+
+    &--tr {
+        top: -8%;
+        right: -3%;
+        width: 35%;
+        height: 45%;
+        background: radial-gradient(ellipse at center, rgba(190, 145, 50, 0.12) 0%, rgba(190, 145, 50, 0) 70%);
+    }
+}
+
 .team-select {
     display: grid;
     grid-template-columns: minmax(250px, 1fr) minmax(340px, 1.2fr) minmax(250px, 1fr);
@@ -6,17 +30,46 @@
     margin: 0 auto;
     padding: 18px;
     align-items: stretch;
+    position: relative;
+    z-index: 1;
+
+    .chat-column {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-logo {
+        text-align: center;
+        margin-bottom: -40px;
+        position: relative;
+        z-index: 3;
+
+        img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.6));
+        }
+    }
 
     .chat,
     .team {
-        border: 1px solid var(--line-soft);
+        border: 1px solid rgba(160, 130, 60, 0.25);
         border-radius: 14px;
-        background: var(--panel-bg-elevated);
-        box-shadow: var(--shadow-lg);
+        background: linear-gradient(
+            175deg,
+            rgba(12, 18, 32, 0.95) 0%,
+            rgba(16, 24, 42, 0.92) 40%,
+            rgba(12, 18, 32, 0.95) 100%
+        );
+        box-shadow:
+            0 18px 50px rgba(0, 0, 0, 0.45),
+            0 0 1px rgba(160, 130, 60, 0.3);
     }
 
     .chat {
-        height: clamp(520px, 70vh, 720px);
+        flex: 1;
         max-height: none;
         display: flex;
         flex-direction: column;
@@ -57,32 +110,33 @@
             display: flex;
             gap: 8px;
             padding: 5px;
-            border-top: 1px solid var(--line-soft);
+            border-top: 1px solid rgba(160, 130, 60, 0.2);
+            background: rgba(6, 10, 20, 0.4);
 
             input {
                 flex: 1;
                 margin: 0;
                 height: 100%;
-                border: 1px solid var(--line-soft);
+                border: 1px solid rgba(160, 130, 60, 0.2);
                 border-radius: 8px;
                 font-size: 0.95rem;
                 padding: 0 10px;
                 color: var(--text-main);
-                background: var(--input-bg);
+                background: rgba(10, 16, 30, 0.85);
                 outline: none;
 
                 &:focus {
-                    border-color: var(--accent);
-                    box-shadow: 0 0 0 2px rgba(198, 166, 94, 0.24);
+                    border-color: rgba(198, 166, 94, 0.5);
+                    box-shadow: 0 0 0 2px rgba(198, 166, 94, 0.15);
                 }
             }
 
             button {
                 width: 82px;
-                border: 1px solid var(--btn-primary-border);
+                border: 1px solid rgba(214, 183, 118, 0.35);
                 border-radius: 8px;
-                background: var(--btn-primary);
-                color: var(--btn-primary-text);
+                background: linear-gradient(180deg, #8f6f3a, #6d5028);
+                color: #f6e6c1;
                 font-family: var(--font-ui);
                 font-weight: 700;
                 cursor: pointer;
@@ -105,20 +159,21 @@
             padding: 10px;
             text-align: center;
             color: var(--text-main);
-            font-family: var(--font-ui);
+            font-family: var(--font-display);
             font-weight: 700;
-            letter-spacing: 0.8px;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            border-bottom: 1px solid var(--line-soft);
+            border-bottom: 1px solid rgba(160, 130, 60, 0.2);
             cursor: pointer;
+            border-radius: 13px 13px 0 0;
         }
 
         &.left .team-title {
-            background: var(--team-left-header);
+            background: linear-gradient(180deg, rgba(35, 113, 197, 0.45), rgba(24, 80, 144, 0.2));
         }
 
         &.right .team-title {
-            background: var(--team-right-header);
+            background: linear-gradient(180deg, rgba(196, 89, 116, 0.38), rgba(142, 56, 78, 0.18));
         }
 
         .player {
@@ -127,10 +182,10 @@
             display: flex;
             align-items: center;
             font-size: 1.02rem;
-            background: var(--team-player-bg);
-            border: 1px solid var(--line-soft);
+            background: rgba(12, 18, 32, 0.8);
+            border: 1px solid rgba(160, 130, 60, 0.18);
             border-radius: 10px;
-            box-shadow: var(--team-player-shadow);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.26);
 
             &.ready {
                 border-color: rgba(77, 201, 143, 0.8);
@@ -194,14 +249,23 @@
     width: min(1220px, 100%);
     margin: 16px auto 0;
     padding: 14px 18px;
-    border: 1px solid var(--line-soft);
+    border: 1px solid rgba(160, 130, 60, 0.25);
     border-radius: 14px;
-    background: var(--panel-bg-elevated);
-    box-shadow: var(--shadow-lg);
+    background: linear-gradient(
+        175deg,
+        rgba(12, 18, 32, 0.95) 0%,
+        rgba(16, 24, 42, 0.92) 40%,
+        rgba(12, 18, 32, 0.95) 100%
+    );
+    box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.45),
+        0 0 1px rgba(160, 130, 60, 0.3);
     display: flex;
     gap: 24px;
     justify-content: center;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
 
     .config-row {
         display: flex;
@@ -226,9 +290,9 @@
 
     .config-btn {
         padding: 6px 14px;
-        border: 1px solid var(--line-soft);
+        border: 1px solid rgba(160, 130, 60, 0.2);
         border-radius: 8px;
-        background: rgba(15, 23, 40, 0.7);
+        background: rgba(10, 16, 30, 0.7);
         color: var(--text-muted);
         font-family: var(--font-ui);
         font-weight: 600;
@@ -258,34 +322,68 @@
     width: min(1220px, 100%);
     margin: 12px auto 0;
     text-align: center;
+    position: relative;
+    z-index: 1;
 
     a {
         display: inline-block;
-        border: 1px solid var(--btn-primary-border);
-        border-radius: 12px;
         width: 320px;
         max-width: 90%;
-        padding: 14px 18px;
+        height: 54px;
+        line-height: 54px;
         font-size: 1.5rem;
-        line-height: 1;
-        background: var(--btn-primary);
-        color: var(--btn-primary-text);
-        font-family: var(--font-ui);
+        background: linear-gradient(
+            180deg,
+            #c9a044 0%,
+            #b8923a 30%,
+            #a07e30 60%,
+            #8a6b26 100%
+        );
+        border: none;
+        border-top: 1px solid rgba(240, 210, 130, 0.45);
+        border-bottom: 1px solid rgba(100, 75, 25, 0.6);
+        border-radius: 10px;
+        color: #fff;
+        font-family: var(--font-display);
         font-weight: 700;
-        letter-spacing: 1px;
+        letter-spacing: 1.2px;
         cursor: pointer;
         transition: filter 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+        box-shadow:
+            0 4px 14px rgba(0, 0, 0, 0.35),
+            inset 0 1px 0 rgba(255, 230, 160, 0.2),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 
         &:hover {
-            filter: brightness(1.08);
+            filter: brightness(1.12);
             transform: translateY(-1px);
-            box-shadow: 0 10px 24px rgba(128, 96, 44, 0.32);
+            box-shadow:
+                0 6px 22px rgba(180, 140, 50, 0.25),
+                inset 0 1px 0 rgba(255, 230, 160, 0.25),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+        }
+
+        &:active {
+            transform: translateY(0);
+            filter: brightness(0.95);
         }
 
         &.ready {
-            background: var(--btn-success);
-            border-color: var(--btn-success-border);
-            box-shadow: 0 10px 24px rgba(38, 140, 89, 0.32);
+            background: linear-gradient(180deg, #38b070, #2b9058);
+            border-top: 1px solid rgba(120, 255, 180, 0.35);
+            border-bottom: 1px solid rgba(20, 80, 50, 0.6);
+            box-shadow:
+                0 4px 14px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(120, 255, 180, 0.15),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+
+            &:hover {
+                box-shadow:
+                    0 6px 22px rgba(38, 140, 89, 0.3),
+                    inset 0 1px 0 rgba(120, 255, 180, 0.2),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+            }
 
             &:before {
                 margin-right: 8px;
@@ -293,7 +391,6 @@
                 content: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="26px" height="26px" viewBox="0 0 512 512"><ellipse fill="%234DC98F" cx="256" cy="256" rx="256" ry="255.832" /><polygon fill="white" points="235.472,392.08 114.432,297.784 148.848,253.616 223.176,311.52 345.848,134.504 391.88,166.392 " /></svg>');
             }
         }
-
     }
 }
 
@@ -302,10 +399,17 @@
         grid-template-columns: 1fr;
         padding: 14px;
 
+        .chat-column {
+            order: 3;
+        }
+
         .chat {
             min-height: 320px;
             height: auto;
-            order: 3;
+        }
+
+        .chat-logo {
+            display: none;
         }
 
         .team {

@@ -82,29 +82,38 @@ const Rooms = () => {
       </Header>
       <Container>
         <div className="rooms">
-          <div className="rooms-box">
-            <h1>Select a Room</h1>
-            <div className="rooms-list">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Room name</th>
-                    <th>Status</th>
-                    <th>Players</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {context.rooms.map(room =>
-                    <tr key={room.id} onClick={() => handleRoomClick(room)}>
-                      <td>{room.name}</td>
-                      <td><RoomStatus room={room} /></td>
-                      <td>{room.players}/{(room.config?.maxPlayersPerTeam ?? 5) * 2}</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+          <div className="rooms-glow rooms-glow--bl" />
+          <div className="rooms-glow rooms-glow--tr" />
+          <div className="rooms-card">
+            <div className="rooms-card-border">
+              <div className="rooms-card-inner">
+                <div className="rooms-logo">
+                  <img src="/icon.png" alt="Footlol" />
+                </div>
+                <h1>Select a Room</h1>
+                <div className="rooms-list">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Room name</th>
+                        <th>Status</th>
+                        <th>Players</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {context.rooms.map(room =>
+                        <tr key={room.id} onClick={() => handleRoomClick(room)}>
+                          <td>{room.name}</td>
+                          <td><RoomStatus room={room} /></td>
+                          <td>{room.players}/{(room.config?.maxPlayersPerTeam ?? 5) * 2}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                <button onClick={handleClick}>Create new Room</button>
+              </div>
             </div>
-            <button onClick={handleClick}>Create new Room</button>
           </div>
         </div>
       </Container>
