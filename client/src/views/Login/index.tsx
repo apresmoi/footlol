@@ -48,6 +48,7 @@ const Login = () => {
                     <div className="login-hint">Max 12 characters</div>
                     <button onClick={handleClick}>Join</button>
                   </div>
+                  <div className="login-version">{__APP_VERSION__}</div>
                 </div>
               </div>
             </div>
