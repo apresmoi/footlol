@@ -9,6 +9,7 @@ const socket_io_1 = require("socket.io");
 const matter_js_1 = require("matter-js");
 const room_1 = require("./classes/room");
 const champions_1 = require("./league/champions");
+const globals_1 = require("./globals");
 const decomp = require('poly-decomp');
 matter_js_1.Common.setDecomp(decomp);
 const ENV_DEVELOPMENT = process.env.NODE_ENV === "development";
@@ -54,10 +55,16 @@ app.get('/api/rooms', function (req, res) {
         .send(Object
         .keys(matches)
         .map(id => {
+        const room = matches[id];
+        const secondsElapsed = Math.trunc(room.__seconds / globals_1.timeConstant);
+        const secondsRemaining = room.__seconds_limit - secondsElapsed;
         return {
             id,
-            name: matches[id]._name,
-            players: io.of(id).sockets.size
+            name: room._name,
+            players: io.of(id).sockets.size,
+            config: room._config,
+            stage: room._stage,
+            endsAt: room._stage === 'FIELD' ? Date.now() + secondsRemaining * 1000 : null
         };
     }));
 });

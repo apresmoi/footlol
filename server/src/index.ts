@@ -5,6 +5,7 @@ import { Common } from 'matter-js';
 import { Room } from './classes/room';
 import { champions } from './league/champions';
 import { Champion } from './league/classes';
+import { timeConstant } from './globals';
 
 const decomp = require('poly-decomp');
 Common.setDecomp(decomp);
@@ -62,10 +63,16 @@ app.get('/api/rooms', function (req, res) {
     .send(Object
       .keys(matches)
       .map(id => {
+        const room = matches[id]
+        const secondsElapsed = Math.trunc(room.__seconds / timeConstant)
+        const secondsRemaining = room.__seconds_limit - secondsElapsed
         return {
           id,
-          name: matches[id]._name,
-          players: io.of(id).sockets.size
+          name: room._name,
+          players: io.of(id).sockets.size,
+          config: room._config,
+          stage: room._stage,
+          endsAt: room._stage === 'FIELD' ? Date.now() + secondsRemaining * 1000 : null
         }
       }));
 });

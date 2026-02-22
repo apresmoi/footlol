@@ -54,6 +54,11 @@ export interface MatchResults {
     goals: ScoreGoal[]
 }
 
+export interface RoomConfig {
+    matchDurationSeconds: number
+    maxPlayersPerTeam: number
+}
+
 export interface PlayerMessage {
     name: string
     message: string
@@ -131,6 +136,7 @@ export interface UpdatePayload {
     kick: boolean
     victory?: VictoryResult
     matchResults?: MatchResults
+    config?: RoomConfig
 }
 
 export interface LoginSuccessPayload extends UpdatePayload {
@@ -176,6 +182,9 @@ export type Room = {
     id: string
     name: string
     players: number
+    config?: RoomConfig
+    stage?: RoomStage
+    endsAt?: number | null
 }
 export interface ApplicationContextProviderState {
     name: string
@@ -195,6 +204,7 @@ export interface ApplicationContextProviderState {
     victory?: VictoryResult
     countdown?: number
     matchResults?: MatchResults
+    config?: RoomConfig
 }
 
 export interface IApplicationContext extends ApplicationContextProviderState {
@@ -216,4 +226,5 @@ export interface IApplicationContext extends ApplicationContextProviderState {
     requestChangeSide: (side: string) => void
     requestTransferAdmin: (id: string) => void
     requestReturnToLobby: () => void
+    requestConfigChange: (config: Partial<RoomConfig>) => void
 }

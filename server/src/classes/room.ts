@@ -1,5 +1,5 @@
 import Player from "./collideables/player"
-import { RoomStage, IChatMessage, ResetType, TeamSide } from "../types"
+import { RoomStage, IChatMessage, ResetType, TeamSide, RoomConfig } from "../types"
 import { Field } from "./field"
 import { ChampionName } from "../league/classes"
 import { objectToBinary, binaryToObject } from '../utilities/conversion'
@@ -103,6 +103,10 @@ export class Room extends Field {
             socket.on('request_return_to_lobby', () => {
                 self.returnToLobby(socket)
             })
+            socket.on('request_config_change', (binary) => {
+                const payload = binaryToObject(binary)
+                self.tryChangeConfig(socket, payload.config)
+            })
         });
     }
 
@@ -163,7 +167,7 @@ export class Room extends Field {
     }
 
     addPlayer(id: string, name: string, champion: ChampionName): boolean {
-        if (['TEAM_SELECT'].includes(this._stage) && this._connectedPlayers().length < 10)
+        if (['TEAM_SELECT'].includes(this._stage) && this._connectedPlayers().length < this._config.maxPlayersPerTeam * 2)
             return super.addPlayer(id, name, champion)
         return false
     }
@@ -198,6 +202,14 @@ export class Room extends Field {
         if (!admin || !admin._admin || !target || targetId === client.id) return
         admin._admin = false
         target._admin = true
+        this._emit()
+    }
+
+    tryChangeConfig(client: Socket, config: Partial<RoomConfig>) {
+        const admin = this._players[client.id]
+        if (!admin || !admin._admin) return
+        if (this._stage !== 'TEAM_SELECT') return
+        this.updateConfig(config)
         this._emit()
     }
 
@@ -247,6 +259,7 @@ export class Room extends Field {
             victory: this._gameEnded === true ? this._victorySide : null,
             effects: this._serializeEffects(),
             matchResults: this._matchResults || null,
+            config: this._config,
             // debug: DEBUG ?  this._getAllObjects() : []
         }
     }

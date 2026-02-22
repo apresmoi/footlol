@@ -1,4 +1,4 @@
-import { Player, PlayerMessage, MessageSubscribers, UpdatePayload, Vector, GoalPayload, PlayerReadyPayload, StageChangePayload, LoginSuccessPayload } from "./types"
+import { Player, PlayerMessage, MessageSubscribers, UpdatePayload, Vector, GoalPayload, PlayerReadyPayload, StageChangePayload, LoginSuccessPayload, RoomConfig } from "./types"
 import { io, Socket } from 'socket.io-client';
 import { objectToBinary, binaryToObject } from '../utils/conversion'
 import { playSound } from './sounds'
@@ -12,6 +12,7 @@ const REQUEST_KICK_PLAYER = 'request_kick_player'
 const REQUEST_CHANGE_SIDE = 'request_change_side'
 const REQUEST_TRANSFER_ADMIN = 'request_transfer_admin'
 const REQUEST_RETURN_TO_LOBBY = 'request_return_to_lobby'
+const REQUEST_CONFIG_CHANGE = 'request_config_change'
 
 const LOGIN_SUCCESS = 'login_success'
 const PLAYER_JOIN = 'player_join'
@@ -123,6 +124,7 @@ class RoomSocket {
     requestChangeSide = (side: string) => this._sendMessage(REQUEST_CHANGE_SIDE, objectToBinary({ side }))
     requestTransferAdmin = (id: string) => this._sendMessage(REQUEST_TRANSFER_ADMIN, objectToBinary({ id }))
     requestReturnToLobby = () => this._chatSocket.emit(REQUEST_RETURN_TO_LOBBY)
+    requestConfigChange = (config: Partial<RoomConfig>) => this._sendMessage(REQUEST_CONFIG_CHANGE, objectToBinary({ config }))
 
 
     subscribeLoginSuccess = (callback: (payload: LoginSuccessPayload) => void) => {

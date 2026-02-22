@@ -7,7 +7,7 @@ import { Engine, World, Events, Body, IEventTimestamped } from 'matter-js'
 import { RectCollideable, Collideable, CircleCollideable, CompoundCollideable, PolygonCollideable } from "./collideables/physics"
 import Wall from "./collideables/wall"
 import Goal from "./collideables/goal"
-import { TeamSide, VictoryResult, RoomSensors, ResetType, ICollideableEventCollision } from "../types"
+import { TeamSide, VictoryResult, RoomSensors, ResetType, ICollideableEventCollision, RoomConfig } from "../types"
 import TurnWall from "./collideables/turnwall"
 import { Score, ConvertedGoal } from "./score"
 import { BallCategory, AbilityStunCategory, AbilityEffectCategory, AbilityProjectileCategory } from "./collideables/categories"
@@ -75,9 +75,11 @@ export class Field {
         this._mountWalls()
     }
 
+    _config: RoomConfig = { matchDurationSeconds: 600, maxPlayersPerTeam: 5 }
+
     __leave_countdown = 10
     __countdown = 5
-    __seconds_limit = 600 + this.__countdown
+    __seconds_limit = this._config.matchDurationSeconds + this.__countdown
     __seconds = 0
 
     _emit = () => {
@@ -234,7 +236,7 @@ export class Field {
         }, { 'LEFT': 0, 'RIGHT': 0 })
         const side: TeamSide = sideLengths.RIGHT >= sideLengths.LEFT ? 'LEFT' : 'RIGHT'
 
-        if (players.length < 10) {
+        if (players.length < this._config.maxPlayersPerTeam * 2) {
             this._players[id] = new Player(id,
                 name,
                 champion,
@@ -252,7 +254,7 @@ export class Field {
             r[p._side]++
             return r
         }, { 'LEFT': 0, 'RIGHT': 0 })
-        if (sideLengths[side] < 5) {
+        if (sideLengths[side] < this._config.maxPlayersPerTeam) {
             this._players[id].setSide(side);
             this._recalculatePlayerPositions();
             return true
@@ -322,6 +324,16 @@ export class Field {
             this._players[id].dematerialize()
             this._players[id] = new Player(id, this._players[id]._name, null, this._players[id]._startPosition, this._players[id]._side, i === 0)
         })
+    }
+
+    updateConfig(config: Partial<RoomConfig>) {
+        if (config.matchDurationSeconds !== undefined) {
+            this._config.matchDurationSeconds = config.matchDurationSeconds
+            this.__seconds_limit = this._config.matchDurationSeconds + this.__countdown
+        }
+        if (config.maxPlayersPerTeam !== undefined) {
+            this._config.maxPlayersPerTeam = config.maxPlayersPerTeam
+        }
     }
 
     onGoal = (side: TeamSide, player: Player | null) => { }
@@ -635,7 +647,8 @@ export class Field {
             countdown: this.__countdown > seconds ? this.__countdown - seconds : 0,
             victory: this._gameEnded ? this._victorySide : null,
             effects: this._serializeEffects(),
-            matchResults: this._matchResults || null
+            matchResults: this._matchResults || null,
+            config: this._config
         }
     }
 }

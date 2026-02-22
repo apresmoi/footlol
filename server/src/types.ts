@@ -31,6 +31,11 @@ export interface ICollideableEventCollision extends IEventCollision<Engine> {
     pairs: Array<ICollideablePair>;
 }
 
+export interface RoomConfig {
+    matchDurationSeconds: number
+    maxPlayersPerTeam: number
+}
+
 export type IChatMessage = {
     player: Player,
     message: string,

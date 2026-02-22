@@ -263,6 +263,10 @@ export const ApplicationContextProvider = ({ children }) => {
     socketRef.current?.requestReturnToLobby()
   }, [])
 
+  const requestConfigChange = useCallback((config: Partial<import('./types').RoomConfig>) => {
+    socketRef.current?.requestConfigChange(config)
+  }, [])
+
   const updateRooms = useCallback(() => {
     fetch('/api/rooms')
       .then(response => response.json())
@@ -305,7 +309,8 @@ export const ApplicationContextProvider = ({ children }) => {
     requestKickPlayer,
     requestChangeSide,
     requestTransferAdmin,
-    requestReturnToLobby
+    requestReturnToLobby,
+    requestConfigChange
   }}>
     {children}
   </ApplicationContext.Provider>)

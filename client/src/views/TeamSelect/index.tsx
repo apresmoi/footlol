@@ -3,6 +3,7 @@ import { Container, Header, Wrapper } from '../../layout';
 import "./styles.scss"
 import Chat from './Chat';
 import { ApplicationContext } from '../../store';
+import { RoomConfig } from '../../store/types';
 
 const TeamSelect = () => {
   const context = useContext(ApplicationContext)
@@ -62,10 +63,16 @@ const TeamSelect = () => {
             />)}
           </Team>
         </div>
-        {context.self &&
+        {context.self && <>
+          <RoomConfigPanel
+            config={context.config}
+            isAdmin={context.self.admin}
+            onConfigChange={context.requestConfigChange}
+          />
           <div className="team-select-ready">
             <a className={context.self.ready ? "ready" : ""} onClick={handleReadyClick}>READY</a>
-          </div>}
+          </div>
+        </>}
       </Container>
     </Wrapper>
   );
@@ -95,10 +102,66 @@ const PlayerComponent = ({ player, isSelf, ready, selfAdmin, isAdmin, onRemove, 
       <img src={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/profileicon/25.png`} />
     </div>
     <div>{player.name}</div>
-    {selfAdmin && !isAdmin && !isSelf && <div onClick={handleTransferAdmin} className="player-transfer-admin" />}
-    {selfAdmin && !isAdmin && <div onClick={handleRemovePlayer} className="player-remove" />}
-    {isAdmin && <div className="player-admin" />}
+    {selfAdmin && !isAdmin && !isSelf && <div onClick={handleTransferAdmin} className="player-transfer-admin" data-tooltip="Transfer admin" />}
+    {selfAdmin && !isAdmin && <div onClick={handleRemovePlayer} className="player-remove" data-tooltip="Kick player" />}
+    {isAdmin && <div className="player-admin" data-tooltip="Room admin" />}
   </div >
+}
+
+const DURATION_OPTIONS = [
+  { label: '3 min', value: 180 },
+  { label: '5 min', value: 300 },
+  { label: '10 min', value: 600 },
+  { label: '15 min', value: 900 },
+]
+
+const TEAM_SIZE_OPTIONS = [
+  { label: '1v1', value: 1 },
+  { label: '2v2', value: 2 },
+  { label: '3v3', value: 3 },
+  { label: '4v4', value: 4 },
+  { label: '5v5', value: 5 },
+]
+
+const RoomConfigPanel = ({ config, isAdmin, onConfigChange }: {
+  config?: RoomConfig
+  isAdmin: boolean
+  onConfigChange: (config: Partial<RoomConfig>) => void
+}) => {
+  if (!config) return null
+
+  return (
+    <div className="room-config">
+      <div className="config-row">
+        <span className="config-label">Duration</span>
+        <div className="config-options">
+          {DURATION_OPTIONS.map(opt => (
+            <button
+              key={opt.value}
+              className={`config-btn ${config.matchDurationSeconds === opt.value ? 'active' : ''} ${isAdmin ? 'admin' : ''}`}
+              onClick={() => isAdmin && onConfigChange({ matchDurationSeconds: opt.value })}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="config-row">
+        <span className="config-label">Team Size</span>
+        <div className="config-options">
+          {TEAM_SIZE_OPTIONS.map(opt => (
+            <button
+              key={opt.value}
+              className={`config-btn ${config.maxPlayersPerTeam === opt.value ? 'active' : ''} ${isAdmin ? 'admin' : ''}`}
+              onClick={() => isAdmin && onConfigChange({ maxPlayersPerTeam: opt.value })}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default TeamSelect;

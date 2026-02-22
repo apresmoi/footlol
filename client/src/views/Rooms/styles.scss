@@ -55,11 +55,17 @@
                 }
 
                 tr>:first-child {
-                    width: calc(100% - 20px);
+                    width: auto;
+                }
+
+                tr>:nth-child(2) {
+                    width: 160px;
+                    white-space: nowrap;
                 }
 
                 tr>:last-child {
-                    width: 40px;
+                    width: 80px;
+                    text-align: center;
                 }
 
                 tbody {
@@ -67,6 +73,17 @@
                         cursor: pointer;
                         background: rgba(224, 193, 121, 0.12);
                     }
+                }
+
+                .room-stage {
+                    font-size: 0.85rem;
+                    font-family: var(--font-ui);
+                    letter-spacing: 0.3px;
+
+                    &.stage-team_select { color: #7ec87e; }
+                    &.stage-champion_select { color: #d4a845; }
+                    &.stage-field { color: #5eaaef; }
+                    &.stage-end { color: var(--text-muted); }
                 }
             }
         }
