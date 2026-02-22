@@ -1,81 +1,74 @@
-# Repository Working Guide (Local Agent Notes)
-
-This file is for local agent/operator workflow notes. It is intentionally git-ignored.
+# Footlol — Agent Working Guide
 
 ## Project Overview
 
-- App: Footlol (real-time multiplayer football arena game)
-- Frontend: React + Vite (`/client`)
-- Backend: Node.js + Express + Socket.IO + TypeScript (`/server`)
-- Infra: Docker Compose for local and EC2
+Footlol is a real-time multiplayer football arena game played in the browser. Players join rooms, pick teams, select League of Legends-inspired champions with unique abilities, and compete in physics-based soccer matches.
+
+- **Frontend**: React 19 + Vite + TypeScript + SCSS (`/client`)
+- **Backend**: Node.js + Express + Socket.IO + Matter.js + TypeScript (`/server`)
+- **Infra**: Docker Compose, Caddy (edge/TLS), Nginx (static serving)
+- **Site**: https://footlol.com
+
+## Architecture
+
+```
+Browser ←→ Caddy (TLS, gzip) ←→ Nginx (static) + Express/Socket.IO (game server)
+```
+
+- Client is a React SPA served by Nginx in production
+- Game server runs a 40 Hz physics loop (25ms ticks) with Matter.js
+- Client ↔ Server communicate via Socket.IO with binary-encoded JSON
+- Each room is a Socket.IO namespace (`/roomId`)
+- One default room `/ao` always exists; dynamic rooms get 20-char random IDs
+
+### Data Flow
+
+1. Player enters name → REST `POST /api/rooms` or selects room via `GET /api/rooms`
+2. Socket connects to namespace → `login_success` returns full room state
+3. Stages progress: `TEAM_SELECT` → `CHAMPION_SELECT` → `FIELD` → `END`
+4. During `FIELD`: server runs physics at 40 Hz, broadcasts `update` events with serialized state
+5. Client renders SVG-based game view from serialized positions
 
 ## Key Paths
 
-- `/client` - web client
-- `/server` - game server and API
-- `/ops/Caddyfile` - edge routing/TLS config
-- `/docker-compose.dev.yml` - local stack
-- `/docker-compose.ec2.yml` - production/EC2 stack
-- `/ec2-cli-deploy.local.md` - local EC2 deploy runbook
+| Path | Purpose |
+|------|---------|
+| `/client` | React + Vite web client |
+| `/server` | Express + Socket.IO game server |
+| `/ops/Caddyfile` | Edge routing and TLS |
+| `/docker-compose.dev.yml` | Local development stack |
+| `/docker-compose.ec2.yml` | Production EC2 stack |
 
 ## Local Development
 
-Start full local stack:
-
+Full stack via Docker:
 ```bash
 docker compose -f docker-compose.dev.yml up -d --build
+# Client: http://localhost:5000 | Server: http://localhost:5001
 ```
 
-Stop local stack:
-
+Without Docker:
 ```bash
-docker compose -f docker-compose.dev.yml down
-```
-
-Non-Docker client dev:
-
-```bash
-cd client
-npm ci
-npm run dev
-```
-
-Non-Docker server dev:
-
-```bash
-cd server
-npm ci
-npm run start-dev
+# Terminal 1
+cd client && npm ci && npm run dev
+# Terminal 2
+cd server && npm ci && npm run start-dev
 ```
 
 ## Validation Before Shipping
 
-- Client tests:
-
 ```bash
-cd client
-npm test
+cd client && npm test       # Vitest
+cd server && npm run build  # TypeScript typecheck
+cd client && npm run build  # Vite production build
 ```
 
-- Server build/typecheck:
+## Commit Style
 
-```bash
-cd server
-npm run build
-```
-
-## EC2 Deploy
-
-- Use `/ec2-cli-deploy.local.md` for the exact remote deployment steps.
-- If using compose directly on host:
-
-```bash
-DOMAIN=footlol.com docker compose -f docker-compose.ec2.yml up -d --build
-```
+Use Conventional Commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`. Keep subjects short and clear. See `/CONTRIBUTING.md` for full PR checklist.
 
 ## Git and Safety Rules
 
-- Keep secrets and credentials out of git.
-- Do not commit certificates/keys (`*.pem`, `*.key`).
-- Keep local operator notes in ignored files (like this one).
-- Follow `/CONTRIBUTING.md` for coding and PR expectations.
+- Never commit secrets, credentials, keys, or certificates
+- Keep local operator notes in gitignored files
+- `*.pem`, `*.key`, `.env.local` must stay out of version control
