@@ -1,5 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=Cinzel:wght@500;600;700&display=swap');
 
+// Animated golden border
+@property --border-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes border-rotate {
+    to {
+        --border-angle: 360deg;
+    }
+}
+
 @font-face {
     font-family: 'Beaufort for LOL';
     src: url('/fonts/lol/BeaufortforLOL-Regular.otf') format('opentype');
