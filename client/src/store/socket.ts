@@ -10,12 +10,13 @@ const REQUEST_PLAYER_READY = 'request_player_ready'
 const REQUEST_CHAMPION_SELECT = 'request_champion_select'
 const REQUEST_KICK_PLAYER = 'request_kick_player'
 const REQUEST_CHANGE_SIDE = 'request_change_side'
+const REQUEST_TRANSFER_ADMIN = 'request_transfer_admin'
+const REQUEST_RETURN_TO_LOBBY = 'request_return_to_lobby'
 
 const LOGIN_SUCCESS = 'login_success'
 const PLAYER_JOIN = 'player_join'
 const PLAYER_LEAVE = 'player_leave'
 const PLAYER_READY = 'player_ready'
-const POSITION_CHANGE = 'position_change'
 const MESSAGE_SENT = 'message_sent'
 const STAGE_CHANGE = 'stage_change'
 const PLAYER_KICKED = 'player_kicked'
@@ -86,13 +87,6 @@ class RoomSocket {
             if (this._onMessageSubscribers.message_sent) this._onMessageSubscribers.message_sent(payload)
         });
 
-        //inside the game
-        this._chatSocket.on(POSITION_CHANGE, (binary) => {
-            const payload: Player = binaryToObject(binary)
-            // console.log('position_change', payload)
-            if (this._onMessageSubscribers.position_change) this._onMessageSubscribers.position_change(payload)
-        });
-
         this._chatSocket.on(UPDATE, (binary) => {
             const payload: UpdatePayload = binaryToObject(binary)
             // console.log('update', payload)
@@ -127,6 +121,8 @@ class RoomSocket {
     requestChampionSelect = (champion: string) => this._sendMessage(REQUEST_CHAMPION_SELECT, objectToBinary({ champion }))
     requestKickPlayer = (id: string) => this._sendMessage(REQUEST_KICK_PLAYER, objectToBinary({ id }))
     requestChangeSide = (side: string) => this._sendMessage(REQUEST_CHANGE_SIDE, objectToBinary({ side }))
+    requestTransferAdmin = (id: string) => this._sendMessage(REQUEST_TRANSFER_ADMIN, objectToBinary({ id }))
+    requestReturnToLobby = () => this._chatSocket.emit(REQUEST_RETURN_TO_LOBBY)
 
 
     subscribeLoginSuccess = (callback: (payload: LoginSuccessPayload) => void) => {
@@ -150,10 +146,6 @@ class RoomSocket {
     //chat
     subscribeMessageSent = (callback: (payload: PlayerMessage) => void) => {
         this._onMessageSubscribers[MESSAGE_SENT] = (payload) => callback(payload)
-    }
-    //game
-    subscribePositionChange = (callback: (payload: Player) => void) => {
-        this._onMessageSubscribers[POSITION_CHANGE] = (payload) => callback(payload)
     }
     subscribeUpdate = (callback: (payload: UpdatePayload) => void) => {
         this._onMessageSubscribers[UPDATE] = (payload) => callback(payload)

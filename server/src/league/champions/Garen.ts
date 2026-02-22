@@ -27,9 +27,9 @@ export default class Garen extends Champion {
                 case 'Q':
                     let acceleration = this._owner._acceleration
                     this._owner._acceleration = acceleration * 2
-                    setTimeout(() => {
+                    this._owner._timers.push(setTimeout(() => {
                         this._owner._acceleration = acceleration
-                    }, 1500);
+                    }, 1500))
                     return null
                 case 'W':
                     return new GarenW(this._spellW, this._owner._side, this._owner)

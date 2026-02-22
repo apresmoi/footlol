@@ -56,6 +56,7 @@ export default class Ahri extends Champion {
                                 resolve(null)
                             }
                         }, 10);
+                        this._owner._timers.push(interval)
                     })
                 default:
                     break;
@@ -98,10 +99,11 @@ export class AhriQ extends CircleCollideable {
                                 clearInterval(interval)
                             }
                         }, 20)
-                        setTimeout(() => {
+                        this._timers.push(interval)
+                        this._timers.push(setTimeout(() => {
                             this._expired = true
                             this.dematerialize()
-                        }, 1500);
+                        }, 1500))
                     }
                 }
             }

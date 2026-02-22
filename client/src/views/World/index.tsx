@@ -5,8 +5,7 @@ import Camera, { CameraPosition } from './Camera/Camera';
 import Score from './UI/Score';
 import { Container, Header, Wrapper } from '../../layout';
 import ActionBar from './UI/ActionBar';
-import Victory from './UI/Victory';
-import Defeat from './UI/Defeat';
+import MatchResult from './UI/MatchResult';
 import GameChat from './Chat';
 import Scoreboard from './UI/Scoreboard';
 
@@ -25,8 +24,7 @@ const World = () => {
             <GameChat />
             <ActionBar />
             <Scoreboard />
-            <Defeat />
-            <Victory />
+            <MatchResult />
           </KeyboardWrapper>
         </Camera>
       </Container>

@@ -3,6 +3,7 @@ import { RoomStage, IChatMessage, ResetType, TeamSide } from "../types"
 import { Field } from "./field"
 import { ChampionName } from "../league/classes"
 import { objectToBinary, binaryToObject } from '../utilities/conversion'
+import { champions } from "../league/champions"
 import { DEBUG } from "../globals"
 import { Namespace, Socket } from "socket.io";
 
@@ -95,6 +96,13 @@ export class Room extends Field {
                 self.tryChangeSide(socket, payload.side)
                 self._emit()
             })
+            socket.on('request_transfer_admin', (binary) => {
+                const payload = binaryToObject(binary)
+                self.transferAdmin(socket, payload.id)
+            })
+            socket.on('request_return_to_lobby', () => {
+                self.returnToLobby(socket)
+            })
         });
     }
 
@@ -169,17 +177,36 @@ export class Room extends Field {
 
     playerReady(client: Socket, ready: boolean) {
         const player = this._players[client.id]
-        if (player && this._stage === "TEAM_SELECT" || (player._champion && this._stage === "CHAMPION_SELECT")) {
+        if (player && (this._stage === "TEAM_SELECT" || (player._champion && this._stage === "CHAMPION_SELECT"))) {
             player.setReady(ready)
             this._tryStageChange()
         }
     }
 
     tryChangeChampion(client: Socket, champion: ChampionName) {
+        const player = this._players[client.id]
+        if (!player) return
+        if (!(champion in champions)) return
         if (!this._connectedPlayers().some(x => x._champion?.name === champion)) {
-            const player = this._players[client.id]
             player.setChampion(champion)
         }
+    }
+
+    transferAdmin(client: Socket, targetId: string) {
+        const admin = this._players[client.id]
+        const target = this._players[targetId]
+        if (!admin || !admin._admin || !target || targetId === client.id) return
+        admin._admin = false
+        target._admin = true
+        this._emit()
+    }
+
+    returnToLobby(client: Socket) {
+        const admin = this._players[client.id]
+        if (!admin || !admin._admin) return
+        if (this._stage === 'FIELD') this._endGame()
+        this._reset('RESET')
+        this._emit()
     }
 
     tryKickPlayer(client: Socket, id: string) {
@@ -219,6 +246,7 @@ export class Room extends Field {
             countdown: this.__countdown > seconds ? this.__countdown - seconds : 0,
             victory: this._gameEnded === true ? this._victorySide : null,
             effects: this._serializeEffects(),
+            matchResults: this._matchResults || null,
             // debug: DEBUG ?  this._getAllObjects() : []
         }
     }

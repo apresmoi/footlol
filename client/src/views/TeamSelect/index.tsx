@@ -18,6 +18,10 @@ const TeamSelect = () => {
     if (context.self.admin) context.requestKickPlayer(id);
   }
 
+  const handleTransferAdmin = (id: string) => {
+    if (context.self.admin) context.requestTransferAdmin(id);
+  }
+
   const handleTeamChange = (side: string) => {
     if (context.self.side !== side) context.requestChangeSide(side)
   }
@@ -39,6 +43,7 @@ const TeamSelect = () => {
               selfAdmin={context.self && context.self.admin}
               isAdmin={player.admin}
               onRemove={handleRemovePlayer}
+              onTransferAdmin={handleTransferAdmin}
             />)}
           </Team>
           <Chat />
@@ -53,6 +58,7 @@ const TeamSelect = () => {
               selfAdmin={context.self && context.self.admin}
               isAdmin={player.admin}
               onRemove={handleRemovePlayer}
+              onTransferAdmin={handleTransferAdmin}
             />)}
           </Team>
         </div>
@@ -77,15 +83,19 @@ const Team = ({ side, children, onTeamChange }) => {
   </div>
 }
 
-const PlayerComponent = ({ player, isSelf, ready, selfAdmin, isAdmin, onRemove }) => {
+const PlayerComponent = ({ player, isSelf, ready, selfAdmin, isAdmin, onRemove, onTransferAdmin }) => {
   const handleRemovePlayer = () => {
     if (onRemove) onRemove(player.id)
+  }
+  const handleTransferAdmin = () => {
+    if (onTransferAdmin) onTransferAdmin(player.id)
   }
   return <div className={`player ${isSelf ? 'self' : ""} ${ready ? 'ready' : ''}`}>
     <div>
       <img src={`${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/profileicon/25.png`} />
     </div>
     <div>{player.name}</div>
+    {selfAdmin && !isAdmin && !isSelf && <div onClick={handleTransferAdmin} className="player-transfer-admin" />}
     {selfAdmin && !isAdmin && <div onClick={handleRemovePlayer} className="player-remove" />}
     {isAdmin && <div className="player-admin" />}
   </div >

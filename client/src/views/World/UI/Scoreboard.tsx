@@ -23,7 +23,7 @@ const sortRows = (a: ScoreboardRow, b: ScoreboardRow): number => {
 }
 
 const Scoreboard = (props: ScoreboardProps) => {
-  const { score, players } = useContext(ApplicationContext)
+  const { score, players, self, requestReturnToLobby } = useContext(ApplicationContext)
   const width = props.width || 0
   const height = props.height || 0
 
@@ -152,6 +152,37 @@ const Scoreboard = (props: ScoreboardProps) => {
 
         {renderSide('LEFT', calculated.left, columnGap, '#7ec8ff')}
         {renderSide('RIGHT', calculated.right, columnGap * 2 + columnWidth, '#ff9ab5')}
+
+        {self?.admin && (
+          <g
+            className="match-result-lobby-btn"
+            onClick={() => requestReturnToLobby()}
+            cursor="pointer"
+          >
+            <rect
+              x={panelWidth / 2 - 90}
+              y={panelHeight - 42}
+              width={180}
+              height={32}
+              rx={8}
+              fill="rgba(80, 80, 100, 0.6)"
+              stroke="rgba(120, 120, 140, 0.5)"
+              strokeWidth={1}
+            />
+            <text
+              x={panelWidth / 2}
+              y={panelHeight - 26}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontFamily={UI_FONT}
+              fontWeight={600}
+              fontSize={13}
+              fill="#aabbcc"
+            >
+              RETURN TO LOBBY
+            </text>
+          </g>
+        )}
       </g>
     </g>
   )

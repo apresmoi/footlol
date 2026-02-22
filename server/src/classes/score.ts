@@ -1,4 +1,4 @@
-import { TeamSide } from "../types"
+import { TeamSide, VictoryResult } from "../types"
 import Player from "./collideables/player"
 
 export type ConvertedGoal = {
@@ -42,11 +42,10 @@ export class Score {
         return null
     }
 
-    getWinner(): TeamSide {
-        if (this._goals.length) {
-            return this._left > this._right ? 'LEFT' : 'RIGHT'
-        }
-        return 'LEFT'
+    getWinner(): VictoryResult {
+        if (this._left > this._right) return 'LEFT'
+        if (this._right > this._left) return 'RIGHT'
+        return 'TIE'
     }
 
     serialize() {

@@ -4,6 +4,7 @@ import Player from "./classes/collideables/player"
 
 export type RoomStage = 'TEAM_SELECT' | 'CHAMPION_SELECT' | 'FIELD' | 'END'
 export type TeamSide = 'LEFT' | 'RIGHT'
+export type VictoryResult = 'LEFT' | 'RIGHT' | 'TIE'
 export type RoomSensors = 'LEFT_GOAL' | 'RIGHT_GOAL'
 export type ResetType = 'GOAL' | 'RESET'
 

@@ -7,9 +7,9 @@ import { Engine, World, Events, Body, IEventTimestamped } from 'matter-js'
 import { RectCollideable, Collideable, CircleCollideable, CompoundCollideable, PolygonCollideable } from "./collideables/physics"
 import Wall from "./collideables/wall"
 import Goal from "./collideables/goal"
-import { TeamSide, RoomSensors, ResetType, ICollideableEventCollision } from "../types"
+import { TeamSide, VictoryResult, RoomSensors, ResetType, ICollideableEventCollision } from "../types"
 import TurnWall from "./collideables/turnwall"
-import { Score } from "./score"
+import { Score, ConvertedGoal } from "./score"
 import { BallCategory, AbilityStunCategory, AbilityEffectCategory, AbilityProjectileCategory } from "./collideables/categories"
 import Ring from "./collideables/ring"
 
@@ -25,8 +25,9 @@ export class Field {
     _world: World
     _score: Score = new Score()
     _startTime: Date
-    _victorySide: TeamSide = 'LEFT'
+    _victorySide: VictoryResult = 'LEFT'
     _gameEnded: boolean = false
+    _matchResults: { score: { left: number, right: number }, goals: ConvertedGoal[] } | null = null
 
     _goal: boolean = false
     _sideTurn: TeamSide = 'LEFT' // this is the side that will start with control of the ball
@@ -89,6 +90,7 @@ export class Field {
         this._score = new Score()
         this._gameEnded = false
         this._victorySide = 'LEFT'
+        this._matchResults = null
         this._effectCollideables = []
         this._connectedPlayers().forEach(player => {
             player.clearStates()
@@ -121,8 +123,12 @@ export class Field {
 
     _endGame() {
         console.log('_endGame')
+        Events.off(this._engine, 'collisionStart', this._handleCollisionsStart)
+        Events.off(this._engine, 'collisionEnd', this._handleCollisionsEnd)
+        Events.off(this._engine, 'afterUpdate', this._handleAfterUpdate)
         clearInterval(this._interval);
         this._victorySide = this._score.getWinner()
+        this._matchResults = { score: { left: this._score._left, right: this._score._right }, goals: [...this._score._goals] }
         this._gameEnded = true
         this.__seconds = 0;
         this._startTime = null;
@@ -155,6 +161,9 @@ export class Field {
             }, 2900);
         }
         else if (type === 'RESET') {
+            Events.off(this._engine, 'collisionStart', this._handleCollisionsStart)
+            Events.off(this._engine, 'collisionEnd', this._handleCollisionsEnd)
+            Events.off(this._engine, 'afterUpdate', this._handleAfterUpdate)
             clearInterval(this._interval);
             clearTimeout(this._contdownTimeout);
             console.log('reset game')
@@ -162,6 +171,7 @@ export class Field {
             this._victorySide = 'LEFT'
             this._sideTurn = 'LEFT'
             this._gameEnded = false
+            this._matchResults = null
             this.__seconds = 0;
             this._startTime = null;
             this._goal = false;
@@ -624,7 +634,8 @@ export class Field {
             time: this.__seconds_limit - seconds,
             countdown: this.__countdown > seconds ? this.__countdown - seconds : 0,
             victory: this._gameEnded ? this._victorySide : null,
-            effects: this._serializeEffects()
+            effects: this._serializeEffects(),
+            matchResults: this._matchResults || null
         }
     }
 }

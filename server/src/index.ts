@@ -85,7 +85,7 @@ app.post('/api/rooms', (req, res) => {
     })
     return;
   }
-  res.status(500).send({
+  res.status(400).send({
     error: "Name min length 6"
   })
 })

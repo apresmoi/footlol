@@ -34,6 +34,7 @@ const resetState = {
   time: null,
   countdown: null,
   victory: null,
+  matchResults: null,
   players: {},
   effects: [],
   debug: [],
@@ -106,12 +107,6 @@ export const ApplicationContextProvider = ({ children }) => {
           name: "GameServer",
           message: `Player ${player.name} has joined.`
         }]
-      }))
-    })
-    activeSocket.subscribePositionChange((player) => {
-      setState((prev) => ({
-        ...prev,
-        players: { ...prev.players, [player.id]: player }
       }))
     })
     activeSocket.subscribePlayerLeave((player) => {
@@ -260,6 +255,14 @@ export const ApplicationContextProvider = ({ children }) => {
     socketRef.current?.requestChangeSide(side)
   }, [])
 
+  const requestTransferAdmin = useCallback((id: string) => {
+    socketRef.current?.requestTransferAdmin(id)
+  }, [])
+
+  const requestReturnToLobby = useCallback(() => {
+    socketRef.current?.requestReturnToLobby()
+  }, [])
+
   const updateRooms = useCallback(() => {
     fetch('/api/rooms')
       .then(response => response.json())
@@ -300,7 +303,9 @@ export const ApplicationContextProvider = ({ children }) => {
     requestChampionSelect,
     disconnectSocket,
     requestKickPlayer,
-    requestChangeSide
+    requestChangeSide,
+    requestTransferAdmin,
+    requestReturnToLobby
   }}>
     {children}
   </ApplicationContext.Provider>)

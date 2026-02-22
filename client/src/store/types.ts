@@ -47,6 +47,12 @@ export interface ScoreGoal {
 }
 
 export type RoomStage = 'TEAM_SELECT' | 'CHAMPION_SELECT' | 'FIELD' | 'END'
+export type VictoryResult = 'LEFT' | 'RIGHT' | 'TIE'
+
+export interface MatchResults {
+    score: { left: number, right: number }
+    goals: ScoreGoal[]
+}
 
 export interface PlayerMessage {
     name: string
@@ -123,6 +129,8 @@ export interface UpdatePayload {
     stage: RoomStage
     effects: Array<CircleEffect | RectEffect | CompoundEffect>
     kick: boolean
+    victory?: VictoryResult
+    matchResults?: MatchResults
 }
 
 export interface LoginSuccessPayload extends UpdatePayload {
@@ -136,7 +144,6 @@ export type MessageSubscribers = {
     player_ready?: (payload: PlayerReadyPayload) => void
     stage_change?: (payload: StageChangePayload) => void
     player_kicked?: () => void
-    position_change?: (payload: Player) => void
     message_sent?: (payload: PlayerMessage) => void
     update?: (payload: UpdatePayload) => void
 }
@@ -185,8 +192,9 @@ export interface ApplicationContextProviderState {
     effects: Array<CircleEffect | RectEffect | CompoundEffect>
     debug: Array<Effect>,
     players: { [x: string]: Player }
-    victory?: 'LEFT' | 'RIGHT'
+    victory?: VictoryResult
     countdown?: number
+    matchResults?: MatchResults
 }
 
 export interface IApplicationContext extends ApplicationContextProviderState {
@@ -206,4 +214,6 @@ export interface IApplicationContext extends ApplicationContextProviderState {
     requestChampionSelect: (champion: string) => void
     requestKickPlayer: (id: string) => void
     requestChangeSide: (side: string) => void
+    requestTransferAdmin: (id: string) => void
+    requestReturnToLobby: () => void
 }

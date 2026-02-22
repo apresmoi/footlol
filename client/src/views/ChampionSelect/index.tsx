@@ -27,6 +27,18 @@ const TeamSelect = () => {
     context.requestChampionSelect(champion)
   }
 
+  const handleRemovePlayer = (id: string) => {
+    if (context.self.admin) context.requestKickPlayer(id);
+  }
+
+  const handleTransferAdmin = (id: string) => {
+    if (context.self.admin) context.requestTransferAdmin(id);
+  }
+
+  const handleReturnToLobby = () => {
+    context.requestReturnToLobby()
+  }
+
   return (
     <Wrapper>
       <Header>
@@ -34,16 +46,35 @@ const TeamSelect = () => {
       <Container>
         <div className="champion-select">
           <Team side="LEFT">
-            {calculated.LEFT.map(player => <PlayerComponent ready={player.ready} isSelf={context.self && player.id === context.self.id} key={player.id} player={player} />)}
+            {calculated.LEFT.map(player => <PlayerComponent
+              ready={player.ready}
+              isSelf={context.self && player.id === context.self.id}
+              key={player.id}
+              player={player}
+              selfAdmin={context.self && context.self.admin}
+              isAdmin={player.admin}
+              onRemove={handleRemovePlayer}
+              onTransferAdmin={handleTransferAdmin}
+            />)}
           </Team>
           <ChampionPool disabledChampions={calculated.disabledChampions} champions={context.champions} onClick={handleChampionSelect} />
           <Team side="RIGHT">
-            {calculated.RIGHT.map(player => <PlayerComponent ready={player.ready} isSelf={context.self && player.id === context.self.id} key={player.id} player={player} />)}
+            {calculated.RIGHT.map(player => <PlayerComponent
+              ready={player.ready}
+              isSelf={context.self && player.id === context.self.id}
+              key={player.id}
+              player={player}
+              selfAdmin={context.self && context.self.admin}
+              isAdmin={player.admin}
+              onRemove={handleRemovePlayer}
+              onTransferAdmin={handleTransferAdmin}
+            />)}
           </Team>
         </div>
         {context.self &&
           <div className="team-select-ready">
             <a className={context.self.ready ? "ready" : ""} onClick={handleReadyClick}>READY</a>
+            {context.self.admin && <a className="return-to-lobby" onClick={handleReturnToLobby}>RETURN TO LOBBY</a>}
           </div>}
       </Container>
     </Wrapper>
@@ -59,12 +90,21 @@ const Team = ({ side, children }) => {
   </div>
 }
 
-const PlayerComponent = ({ player, isSelf, ready }) => {
+const PlayerComponent = ({ player, isSelf, ready, selfAdmin, isAdmin, onRemove, onTransferAdmin }) => {
+  const handleRemovePlayer = () => {
+    if (onRemove) onRemove(player.id)
+  }
+  const handleTransferAdmin = () => {
+    if (onTransferAdmin) onTransferAdmin(player.id)
+  }
   return <div className={`player ${isSelf ? 'self' : ""} ${ready ? 'ready' : ''}`}>
     <div>
       <img src={player.champion ? `${window.location.protocol}//ddragon.leagueoflegends.com/cdn/10.9.1/img/champion/${player.champion}.png` : null} />
     </div>
     <div>{player.name}</div>
+    {selfAdmin && !isAdmin && !isSelf && <div onClick={handleTransferAdmin} className="player-transfer-admin" />}
+    {selfAdmin && !isAdmin && <div onClick={handleRemovePlayer} className="player-remove" />}
+    {isAdmin && <div className="player-admin" />}
   </div>
 }
 

@@ -16,6 +16,7 @@ export const ApplicationContext = React.createContext<IApplicationContext>(
         players: {},
         champions: [],
         victory: null,
+        matchResults: null,
         effects: [],
         debug: [],
         messages: [],
@@ -32,6 +33,8 @@ export const ApplicationContext = React.createContext<IApplicationContext>(
         requestChampionSelect: (champion: string) => { },
         requestKickPlayer: (id: string) => { },
         requestChangeSide: (side: string) => { },
+        requestTransferAdmin: (id: string) => { },
+        requestReturnToLobby: () => { },
         disconnectSocket: () => { }
     })
 

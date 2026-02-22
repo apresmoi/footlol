@@ -27,9 +27,9 @@ export default class Shaco extends Champion {
             switch (ability) {
                 case 'Q':
                     this._owner.makeInvisible()
-                    setTimeout(() => {
+                    this._owner._timers.push(setTimeout(() => {
                         this._owner.makeVisible()
-                    }, 10000);
+                    }, 10000))
                     return null
                 case 'W':
                     return new ShacoW(this._spellW, this._owner._side, this._owner)
@@ -73,10 +73,11 @@ export class ShacoW extends CircleCollideable {
                                 clearInterval(interval)
                             }
                         }, 50)
-                        setTimeout(() => {
+                        this._timers.push(interval)
+                        this._timers.push(setTimeout(() => {
                             this._expired = true
                             this.dematerialize()
-                        }, 1500);
+                        }, 1500))
                     }
                 }
             }

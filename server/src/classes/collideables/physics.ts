@@ -32,6 +32,7 @@ export class Collideable {
     _slowUntil: number = 0
     _slowMultiplier: number = 1
 
+    _timers: NodeJS.Timeout[] = []
     _triggers: { [key: string]: ((payload?: any) => void)[] } = {}
 
     constructor(position: Vector) {
@@ -106,6 +107,8 @@ export class Collideable {
 
     dematerialize() {
         if (this._mounted && this._world) {
+            this._timers.forEach(t => { clearTimeout(t); clearInterval(t) })
+            this._timers = []
             this._mounted = false;
             this._mountedTS = null
             World.remove(this._world, this._body);

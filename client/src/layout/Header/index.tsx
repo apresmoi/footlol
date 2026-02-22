@@ -1,7 +1,7 @@
 import React from 'react'
 
 export interface HeaderProps {
-  children: any
+  children?: any
 }
 
 const Header = (props: HeaderProps) => {
